@@ -15,7 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+
+from chat import views as chat_views
+from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', chat_views.home, name="home"),
+
+    # AUTHENTICATION
+    path('signup/', users_views.signupuser, name="signupuser"),
+    path('login/', users_views.loginuser, name="loginuser"),
+    path('logout/', users_views.logoutuser, name="logoutuser"),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

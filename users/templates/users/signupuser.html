@@ -1,0 +1,54 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block title %}Signup/Login | Orgachat{% endblock title %}
+
+{% block description %}Orgachat helps you organize your messages and life. Create and account or login and start
+organizing your chat{% endblock description %}
+
+{% block content %}
+<script src="{% static 'users/js/signupuser.js' %}"></script>
+<link rel="stylesheet" href="{% static 'users/css/signupuser.css' %}">
+
+<div class="form-wrap">
+    <div class="tabs">
+        <h3 class="signup-tab"><a href="#" class="active" style="text-decoration: none;">Sign Up</a></h3>
+        <h3 class="login-tab"><a href="#" class="" style="text-decoration: none;">Login</a></h3>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="tabs-content">
+        <div id="signup-tab-content" class="active">
+            <form class="signup-form" action="{% url 'signupuser' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username"
+                    name="username" required maxlength="30">
+                <input type="email" class="input" id="id_email" autocomplete="off" placeholder="Email (optional)"
+                    name="email">
+                <input type="password" class="input" id="id_password1" autocomplete="off" name="password1"
+                    placeholder="Password" required>
+                <input type="password" class="input" id="id_password2" autocomplete="off" name="password2"
+                    placeholder="Confirm password" required>
+                <input type="submit" class="button" value="Sign Up">
+            </form>
+            <div class="help-text">
+                <!-- <p>By signing up, you agree to our</p>
+                <p><a href="#We dont have one for now">Terms of service</a></p> -->
+            </div>
+        </div>
+
+        <!--LOGIN-->
+        <div id="login-tab-content">
+            <form class="login-form" action="{% url 'loginuser' %}" method="post">
+                {% csrf_token %}
+                <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username" name="username" required>
+                <input type="password" class="input" id="id_password" autocomplete="off" placeholder="Password" name="password">
+                <input type="submit" class="button" value="Login">
+            </form>
+            <!-- <div class="help-text">
+                <p><a href="#">Forget your password?</a></p>
+            </div> -->
+        </div>
+    </div>
+</div>
+{% endblock content %}
