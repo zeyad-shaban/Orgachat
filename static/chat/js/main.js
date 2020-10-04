@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var last_scroll_top = 0;
         window.onscroll = function () {
             scroll_top = this.scrollY;
-            console.log(this.scrollY)
             if (scroll_top < last_scroll_top) {
                 document.querySelector('.navbar-main').classList.remove('scrolled-down');
                 document.querySelector('.navbar-main').classList.add('scrolled-up');

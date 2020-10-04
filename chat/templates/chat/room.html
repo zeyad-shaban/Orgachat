@@ -8,6 +8,14 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
 <script src="{% static 'chat/js/room.js' %}"></script>
+
+<audio id="notification_sound">
+    <source src="{% static 'chat/data/notification.wav' %}" type="audio/wav">
+    <source src="{% static 'chat/data/notification.ogg' %}" type="audio/ogg">
+    <source src="{% static 'chat/data/notification.mpeg' %}" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
 <div class="container">
     <div class="messages">
         {% for message in room.message_set.all %}
@@ -79,9 +87,44 @@
     </div>
 
     <script>
+        // -------------------
+        // WEBSOCKET SETUP
+        // -------------------
+        var wsStart = 'ws://'
+        var hostName = window.location.hostname + ':8000'
+        if (window.location.protocol.includes('https')) {
+            wsStart = 'wss://'
+            hostName = window.location.hostname
+        };
+        let endpoint = wsStart + hostName + '/ws' + window.location.pathname
+        console.log(endpoint)
+        var socket = new WebSocket(endpoint);
+
+        socket.onmessage = function (e) {
+            data = JSON.parse(e.data);
+            var sender = 'other'
+            var username = data.username
+            if (data.username == "{{ user.username }}") {
+                sender = 'self';
+                username = 'You'
+            }
+            document.querySelector('.messages').innerHTML += `
+            <div class="message ${sender}">
+            <p>${username} &mdash; ${data.area}:</p>
+            <p>${data.content}</p>
+        </div>
+            `
+            document.querySelector('#notification_sound').play()
+        }
+        socket.onerror = function (e) {
+            alert("SERVER ERROR 500, You won't be able to see messages unless you refresh,")
+        }
+        socket.onclose = function (e) {}
+
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('#sendMessage').onclick = function (e) {
                 e.preventDefault();
+                // ------------AJAX: SEND AND MESSAGE---------------
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function (e) {
                     if (this.readyState == 4 && this.status == 200) {
@@ -97,6 +140,11 @@
                 }
                 xhr.send(JSON.stringify(data));
 
+                // ---------------WEBSOCKET: ECHO MESSAGE---------------
+                socket.send(JSON.stringify({
+                    'content': document.querySelector('#id_content').value,
+                    'area': document.querySelector('#id_area').firstElementChild.innerHTML,
+                }));
             }
         });
     </script>
