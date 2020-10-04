@@ -20,13 +20,20 @@ def home(request):
 
 
 @csrf_exempt
-def room(request, room_id):
+def room(request, room_id, area_id=None):
     room = get_object_or_404(Room, pk=room_id)
     if request.method == 'GET':
         for message in room.message_set.all():
             message.is_read = True
             message.save()
-        return render(request, 'chat/room.html', {'room': room})
+
+        room_messages = room.message_set.all()
+        if request.GET.get('area_id'):
+            print('----------------THERE IS AN AREA----------------')
+            area = get_object_or_404(Area, pk=request.GET.get('area_id'))
+            room_messages = room.message_set.filter(area=area)
+            print('----------------THERE IS AN AREA----------------')
+        return render(request, 'chat/room.html', {'room': room, 'room_messages': room_messages, })
     else:
         data = json.loads(request.body)
         area = get_object_or_404(Area, pk=data.get('area'))
@@ -42,12 +49,15 @@ def room(request, room_id):
         return redirect('chat:room', room_id=room_id)
 
 # ----------Area------------
+
+
 def create_area(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     area = Area.objects.create(title=request.POST.get('title'), room=room)
     area.save()
     messages.success(request, 'Successfully created area')
     return redirect('chat:room', room_id=room.id)
+
 
 def mute_area(request, area_id):
     area = get_object_or_404(Area, pk=area_id)

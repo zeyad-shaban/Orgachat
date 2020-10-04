@@ -9,7 +9,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, code):
-        await self.channel_layer.group_discord(self.group_name, self.channel_layer)
+        await self.channel_layer.group_discard(self.group_name, self.channel_layer)
 
     async def receive(self, text_data):
         message_json = json.loads(text_data)

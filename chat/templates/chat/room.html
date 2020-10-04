@@ -18,7 +18,7 @@
 
 <div class="container">
     <div class="messages">
-        {% for message in room.message_set.all %}
+        {% for message in room_messages %}
         <div class="message {% if message.user == user %} self{% else %} other{% endif %}">
             {% if message.user == user %}
             <p>You{% else %}{{ message.user }} {% endif %} {% for area in message.area.all %}&mdash; {{ area.title }}
@@ -46,7 +46,7 @@
                 <ul>
                     {% for area in room.area_set.all %}
                     <li>
-                        <a href="#{{area.title}}">{{ area.title }}</a>
+                        <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
                         {% if user in area.muted_users.all %}
                         <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
                                 class="fas fa-volume-mute"></i> Unmute</a>
@@ -59,6 +59,12 @@
                 </ul>
             </div>
             <div class="area-add">
+                <div class="">
+                    <a href="{% url 'home' %}" class="btn text-white"><img src="{% static 'chat/img/favicon.png' %}">
+                        Orgachat</a>
+                    <a href="{% url 'home' %}" class="btn text-white float-right mr-4"><i class="fas fa-users"></i>
+                        Users</a>
+                </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
                     <input type="text" name="title" id="id_title" placeholder="Add area" required maxlength="30">
