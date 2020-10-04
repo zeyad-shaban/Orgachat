@@ -53,6 +53,26 @@ body {
 }
 
 
+
+/* ---------------------- */
+/* MESSAGES */
+/* ---------------------- */
+
+.message {
+    margin-bottom: 40px;
+    padding: 20px
+}
+
+.self,
+.other {
+    border-radius: 5px;
+}
+
+.self {
+    background-color: #7dde6e94;
+    width: 70%;
+}
+
 /* --------------------- */
 /* SIDEBAR */
 /* --------------------- */
@@ -160,12 +180,12 @@ body {
     margin-top: 40px;
 }
 
-.areas-all ul{
+.areas-all ul {
     list-style: none;
     margin-left: 15px;
 }
 
-.areas-all ul li{
+.areas-all ul li {
     margin-bottom: 20px;
 }
 
@@ -173,6 +193,7 @@ body {
     text-decoration: none;
     color: white;
 }
+
 /* ------------Add area----------- */
 .area-add {
     position: absolute;

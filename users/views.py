@@ -4,6 +4,7 @@ from django.contrib.auth import backends, logout
 from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, authenticate
 User = get_user_model()
 
@@ -13,6 +14,7 @@ def all_users(request):
     return render(request, 'users/all_users.html', {'users': users})
 
 
+@login_required
 def add_friend(request, user_id):
     friend = get_object_or_404(User, pk=user_id)
     request.user.friends.add(friend)

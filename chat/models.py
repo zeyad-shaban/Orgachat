@@ -45,10 +45,13 @@ class Room(models.Model):
 
     def last_message(self):
         last_message = self.message_set.all().last()
-        sender = last_message.user
-        if sender == current_request().user:
-            sender = 'You'
-        return f'{sender} - {last_message.area.all().first().title}: {last_message}'
+        if last_message:
+            sender = last_message.user
+            if sender == current_request().user:
+                sender = 'You'
+            return f'{sender} - {last_message.area.all().first().title}: {last_message}'
+        else:
+            return ''
 
 
 class Area(models.Model):
