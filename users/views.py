@@ -1,9 +1,48 @@
+from chat.models import Area, Room
 from django.contrib import messages
 from django.contrib.auth import backends, logout
+from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model, login, authenticate
 User = get_user_model()
+
+
+def all_users(request):
+    users = User.objects.filter(~Q(id=request.user.id))
+    return render(request, 'users/all_users.html', {'users': users})
+
+
+def add_friend(request, user_id):
+    friend = get_object_or_404(User, pk=user_id)
+    request.user.friends.add(friend)
+    friend.friends.add(request.user)
+    room = Room.objects.create(name=friend.username, type="friend")
+    room.save()
+    room.chatters.add(request.user)
+    room.chatters.add(friend)
+    area = Area.objects.create(title='all', room=room)
+    area.save()
+    messages.success(
+        request, f'You are friends now, start chatting with {friend.username} <a href="/">Here</a>')
+    return redirect('users:all_users')
+
+
+def remove_friend(request, user_id):
+    friend = get_object_or_404(User, pk=user_id)
+    request.user.friends.remove(friend)
+    friend.friends.remove(request.user)
+    rooms = Room.objects.filter(type='friend')
+    for room in rooms:
+        if request.user in room.chatters.all() and friend in room.chatters.all():
+            room.delete()
+    messages.success(
+        request, f'You removed {friend.username} from your friend list')
+    return redirect('users:all_users')
+
+# ------------------
+# AUTHENTICATION
+# ------------------
 
 
 def signupuser(request):

@@ -1,0 +1,103 @@
+{% extends 'chat/base.html' %}
+{% load static %}
+
+{% block title %}{{ room.title }} | Orgachat{% endblock title %}
+
+{% block description %}Chat with your friends at Orgachat, {{ room.title }}{% endblock description %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
+<script src="{% static 'chat/js/room.js' %}"></script>
+<div class="container">
+    <div class="messages">
+        {% for message in room.message_set.all %}
+        <div class="message {% if message.user == user %} self{% else %} other{% endif %}">
+            {% if message.user == user %}
+            <p>You{% else %}{{ message.user }} {% endif %} {% for area in message.area.all %}&mdash; {{ area.title }}
+                {% endfor %}</p>
+            <p>{{ message.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="page-wrapper chiller-theme">
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+        <i class="fas fa-bars"></i>
+    </a>
+    <nav id="sidebar" class="sidebar-wrapper">
+        <div class="sidebar-content">
+            <div class="sidebar-brand">
+                <a href="#" class="btn text-white">Areas</a>
+                <div id="close-sidebar">
+                    <i class="fas fa-times text-white"></i>
+                </div>
+            </div>
+            <!-- sidebar-header  -->
+            <div class="areas-all">
+                <ul>
+                    {% for area in room.area_set.all %}
+                    <li>
+                        <a href="#{{area.title}}">{{ area.title }}</a>
+                        {% if user in area.muted_users.all %}
+                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
+                                class="fas fa-volume-mute"></i> Unmute</a>
+                        {% else %}
+                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4"><i
+                                class="fas fa-volume-up"></i> Mute</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="area-add">
+                <form action="{% url 'chat:create_area' room.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="title" id="id_title" placeholder="Add area" required maxlength="30">
+                    <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
+                            class="fas fa-plus-circle" style="font-size: 200%; color: #4CD137;"></i></button>
+                </form>
+            </div>
+    </nav>
+    <!-- sidebar-wrapper  -->
+
+    <div class="send-message">
+        <form action="{% url 'chat:room' room.id %}" method="post" class="form-inline">
+            {% csrf_token %}
+            <input type="text" name="content" id="id_content" class="form-control" placeholder="Type your message"
+                required>
+            <div class="message-options">
+                <select name="area" id="id_area">
+                    {% for area in room.area_set.all %}
+                    <option value="{{ area.id }}">{{ area.title }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success" id="sendMessage"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('#sendMessage').onclick = function (e) {
+                e.preventDefault();
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function (e) {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.querySelector('#id_content').value = '';
+                    }
+                }
+                xhr.open("POST", "{% url 'chat:room' room.id %}", true);
+                xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
+                data = {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'content': document.querySelector('#id_content').value,
+                    'area': parseInt(document.querySelector('#id_area').value),
+                }
+                xhr.send(JSON.stringify(data));
+
+            }
+        });
+    </script>
+    {% endblock content %}

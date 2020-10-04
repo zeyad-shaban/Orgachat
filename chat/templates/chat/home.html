@@ -6,4 +6,13 @@
 
 {% block content %}
 
+<div class="container">
+    {% for room in rooms %}
+    <p>{{ room.title }}<span class="badge badge-danger ml-3 p-2"
+            style="border-radius: 50%;">{{ room.unread_count }}</span></p>
+    <p>{{ room.last_message }}</p>
+    <a href="{% url 'chat:room' room.id %}" class="btn btn-success"><i class="far fa-comments"></i> Chat</a>
+    <hr>
+    {% endfor %}
+</div>
 {% endblock content %}

@@ -1,0 +1,21 @@
+{% extends 'chat/base.html' %}
+
+{% block title %}All Users | Orgachat{% endblock title %}
+
+{% block description %}Explore Orgachat community, find friends and start chatting with them
+now!{% endblock description %}
+
+{% block content %}
+<div class="container">
+    {% for auser in users %}
+    {{auser.username}}
+    {% if auser in user.friends.all %}
+    <a href="{% url 'users:remove_friend' auser.id %}" class="btn btn-danger">Remove friend</a>
+    {% else %}
+    <a href="{% url 'users:add_friend' auser.id %}" class="btn btn-success">Add friend</a>
+    {% endif %}
+    <br>
+    <br>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -25,7 +25,8 @@ SECRET_KEY = 'hm=gq9#go8p)an2t-ncuwcul53oexrb+-m1tyv-%*13@x%sp1%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com', 'orgachat.pythonanywhere.com']
+ALLOWED_HOSTS = ['www.orgachat.com',
+                 'orgachat.com', 'orgachat.pythonanywhere.com']
 
 
 # Application definition
@@ -52,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Imports
+    'users.get_request.RequestMiddleware',
 ]
 
 ROOT_URLCONF = 'orgachat.urls'
