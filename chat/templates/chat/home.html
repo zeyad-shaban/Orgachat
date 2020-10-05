@@ -15,4 +15,27 @@
     <hr>
     {% endfor %}
 </div>
+<button type="button" class="btn btn-success" onclick="openModal('#addGroup')">
+    <i class="fas fa-plus"></i>
+</button>
+<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addGroupLabel">Add Group</h5>
+                <button type="button" class="close" onclick="closeModal('#addGroup')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'chat:create_group' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
+                        class="from-control">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

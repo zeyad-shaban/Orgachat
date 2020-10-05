@@ -1,3 +1,4 @@
+from os import execlp
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
@@ -27,9 +28,6 @@ class Room(models.Model):
         else:
             return self.name
 
-    def __str__(self):
-        return str(self.title())
-
     def unread_count(self):
         unread_messages = self.message_set.filter(is_read=False)
         output = []
@@ -42,13 +40,19 @@ class Room(models.Model):
             output = len(output)
         return output
 
+    def __str__(self):
+        return str(self.title())
+
     def last_message(self):
         last_message = self.message_set.all().last()
         if last_message:
             sender = last_message.user
             if sender == current_request().user:
                 sender = 'You'
-            return f'{sender} - {last_message.area.title}: {last_message}'
+            try:
+                return f'{sender} - {last_message.area.title}: {last_message}'
+            except:
+                return ''
         else:
             return ''
 

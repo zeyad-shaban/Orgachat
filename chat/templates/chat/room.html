@@ -65,9 +65,15 @@
             </div>
             <div class="area-add">
                 <div class="">
+                    {% if room.type == 'group' %}
+                    <button type="button" class="btn text-white" onclick="openModal('#options')">
+                        <i class="fas fa-cog"></i> Options</button>
+                    <br>
+                    {% endif %}
                     <a href="{% url 'home' %}" class="btn text-white"><img src="{% static 'chat/img/favicon.png' %}">
                         Orgachat</a>
-                    <a href="{% url 'home' %}" class="btn text-white float-right mr-4"><i class="fas fa-users"></i>
+                    <a href="{% url 'users:all_users' %}" class="btn text-white float-right mr-4"><i
+                            class="fas fa-users"></i>
                         Users</a>
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
@@ -97,8 +103,96 @@
         </form>
     </div>
 
+    <!-- --------------------- -->
+    <!-- MODALS -->
+    <!-- --------------------- -->
+    <div class="modal fade" id="options" tabindex="-1" role="dialog" aria-labelledby="optionsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="optionsLabel">Options</h5>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group list-group-horizontal">
+                        <li class="list-group-item option-item active" data-target="#option-invite"
+                            style="cursor: pointer;"><i class="fas fa-user-plus"></i> Invite</li>
+                        <li class="list-group-item option-item" data-target="#option-members" style="cursor: pointer;">
+                            <i class="fas fa-users"></i> Members</li>
+                        <li class="list-group-item option-item" data-target="#option-settings" style="cursor: pointer;">
+                            Settings</li>
+                    </ul>
+                    <br>
+                    <br>
+                    <div id="option-invite" class="option-menu">
+                        {% for auser in users %}
+                        <p>{{ auser.username }}
+                            <a href="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
+                                    class="fas fa-plus"></i> Add</a>
+                        </p>
+                        <br>
+                        {% endfor %}
+                    </div>
+                    <div id="option-members" class="option-menu" style="display: none;">
+                        {% for member in room.chatters.all %}
+                        <p>{{ member.username }}
+                            <a href="{% url 'chat:remove_user' member.id room.id %}" class="btn btn-danger"
+                                onclick="return confirm('You are about to remove {{ member.username }} Out of {{ room.name }}. Other members will know who removed him')"><i
+                                    class="fas fa-minus"></i> Remove</a>
+                        </p>
+                        <br>
+                        {% endfor %}
+                    </div>
+                    <div id="option-settings" class="option-menu" style="display: none;">
+                        <h3 style="text-align: center;">{{ room.title }}</h3>
+                        <br>
+                        Under developing
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'chat:room' room.id %}" class="btn btn-primary">Done</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // ---------------------------
+            // INTERFACE
+            // ---------------------------
+            // ----------Toggle Options------------
+            var optionBtns = document.querySelectorAll('.option-item')
+            var options = document.querySelectorAll('.option-menu')
+            for (btn of optionBtns) {
+                btn.onclick = function (e) {
+                    for (btn of optionBtns) {
+                        btn.classList.remove('active')
+                    };
+                    for (option of options) {
+                        option.style.display = 'none';
+                    };
+                    this.classList.add('active')
+                    document.querySelector(this.getAttribute('data-target')).style.display = 'block';
+                }
+            }
+            // ------------Invite members------------
+            var inviteBtns = document.querySelectorAll('.invite-btn')
+            for (inviteBtn of inviteBtns) {
+                inviteBtn.onclick = function (e) {
+                    e.preventDefault();
+                    this.parentNode.style.display = 'none';
+                    let xhrInvite = new XMLHttpRequest();
+                    xhrInvite.onreadystatechange = function (e) {
+                        if (this.readyState == 4 && this.status == 200) {}
+                    }
+                    xhrInvite.open('GET', this.getAttribute('href'), true)
+                    xhrInvite.send()
+                }
+            }
+            // --------------------------
+            // FUNCTIONS
+            // --------------------------
             document.querySelector('#sendMessage').onclick = function (e) {
                 e.preventDefault();
                 if (document.querySelector('#id_content').value == '' || !document.querySelector(

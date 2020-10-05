@@ -20,4 +20,28 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     } catch (error) {}
 
+    // -------------------------
+    // REUSABLE
+    // -------------------------
+    // var modalBtns = document.querySelectorAll('.modal-link');
+    // for (modalBtn of modalBtns) {
+    //     modalBtn.onclick = function (e) {
+
+    //     }
+    // }
 })
+var backdrop = document.getElementById('backdrop')
+
+function openModal(dataTarget) {
+    let modal = document.querySelector(dataTarget)
+    backdrop.style.display = 'block'
+    modal.style.display = 'block'
+    modal.classList.add('show')
+}
+
+function closeModal(dataTarget) {
+    let modal = document.querySelector(dataTarget);
+    backdrop.style.display = 'none';
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+}
