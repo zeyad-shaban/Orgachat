@@ -29,23 +29,15 @@ def room(request, room_id, area_id=None):
 
         room_messages = room.message_set.all()
         if request.GET.get('area_id'):
-            print('----------------THERE IS AN AREA----------------')
             area = get_object_or_404(Area, pk=request.GET.get('area_id'))
             room_messages = room.message_set.filter(area=area)
-            print('----------------THERE IS AN AREA----------------')
         return render(request, 'chat/room.html', {'room': room, 'room_messages': room_messages, })
     else:
         data = json.loads(request.body)
         area = get_object_or_404(Area, pk=data.get('area'))
-        all_area = Area.objects.filter(
-            (Q(title='all') | Q(title='All')), room=room)[0]
         message = Message.objects.create(
-            user=request.user, content=data.get('content'), room=room)
+            user=request.user, content=data.get('content'), room=room, area=area)
         message.save()
-        message.area.add(area)
-        if all_area and not all_area == area:
-            message.area.add(all_area)
-
         return redirect('chat:room', room_id=room_id)
 
 # ----------Area------------
@@ -65,5 +57,18 @@ def mute_area(request, area_id):
         area.muted_users.remove(request.user)
     else:
         area.muted_users.add(request.user)
-    print(area.muted_users.all())
+    return redirect('chat:room', area.room.id)
+
+# --------------Star-----------------
+
+
+def star_area(request, area_id):
+    area = get_object_or_404(Area, pk=area_id)
+    if request.user in area.star_users.all():
+        area.star_users.remove(request.user)
+    else:
+        for aarea in area.room.area_set.all():
+            if request.user in aarea.star_users.all():
+                aarea.star_users.remove(request.user)
+        area.star_users.add(request.user)
     return redirect('chat:room', area.room.id)

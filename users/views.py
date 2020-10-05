@@ -23,7 +23,7 @@ def add_friend(request, user_id):
     room.save()
     room.chatters.add(request.user)
     room.chatters.add(friend)
-    area = Area.objects.create(title='all', room=room)
+    area = Area.objects.create(title='Unorganized', room=room)
     area.save()
     messages.success(
         request, f'You are friends now, start chatting with {friend.username} <a href="/">Here</a>')

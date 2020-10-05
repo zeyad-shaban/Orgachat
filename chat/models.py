@@ -34,9 +34,8 @@ class Room(models.Model):
         unread_messages = self.message_set.filter(is_read=False)
         output = []
         for message in unread_messages:
-            for area in message.area.all():
-                if not current_request().user in area.muted_users.all():
-                    output.append(message)
+            if not current_request().user in message.area.muted_users.all():
+                output.append(message)
         if len(output) <= 0:
             output = ''
         else:
@@ -49,7 +48,7 @@ class Room(models.Model):
             sender = last_message.user
             if sender == current_request().user:
                 sender = 'You'
-            return f'{sender} - {last_message.area.all().first().title}: {last_message}'
+            return f'{sender} - {last_message.area.title}: {last_message}'
         else:
             return ''
 
@@ -58,6 +57,7 @@ class Area(models.Model):
     title = models.CharField(max_length=30)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     muted_users = models.ManyToManyField(User, blank=True)
+    star_users = models.ManyToManyField(User, blank=True, related_name='star_users')
 
     def __str__(self):
         return self.title
@@ -66,7 +66,8 @@ class Area(models.Model):
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    area = models.ManyToManyField(Area, blank=True)
+    area = models.ForeignKey(
+        Area, on_delete=models.SET_NULL, blank=True, null=True)
     content = models.TextField()
     is_read = models.BooleanField(default=False)
 
@@ -75,9 +76,8 @@ class Message(models.Model):
 
     def is_muted(self):
         show = True
-        for aarea in self.area.all():
-            if current_request().user in aarea.muted_users.all():
-                pass
-            else:
-                show = False
+        if current_request().user in self.message.area.muted_users.all():
+            pass
+        else:
+            show = False
         return show

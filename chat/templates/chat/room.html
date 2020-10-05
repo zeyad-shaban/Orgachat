@@ -21,8 +21,7 @@
         {% for message in room_messages %}
         <div class="message {% if message.user == user %} self{% else %} other{% endif %}">
             {% if message.user == user %}
-            <p>You{% else %}{{ message.user }} {% endif %} {% for area in message.area.all %}&mdash; {{ area.title }}
-                {% endfor %}</p>
+            <p>You{% else %}{{ message.user }}{% endif %} &mdash; {{ message.area.title }}</p>
             <p>{{ message.content }}</p>
         </div>
         {% endfor %}
@@ -44,9 +43,17 @@
             <!-- sidebar-header  -->
             <div class="areas-all">
                 <ul>
+                    <li><a href="{% url 'chat:room' room.id %}">All</a></li>
                     {% for area in room.area_set.all %}
                     <li>
                         <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
+                        {% if user in area.star_users.all %}
+                        <a href="{% url 'chat:star_area' area.id %}" class="float-right mr-4" style="color: #EBC12C"><i
+                                class="fas fa-star"></i></a>
+                        {% else %}
+                        <a href="{% url 'chat:star_area' area.id %}" class="float-right mr-4 text-muted"><i
+                                class="far fa-star"></i></a>
+                        {% endif %}
                         {% if user in area.muted_users.all %}
                         <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
                                 class="fas fa-volume-mute"></i> Unmute</a>
@@ -107,7 +114,10 @@
         var socket = new WebSocket(endpoint);
 
         socket.onmessage = function (e) {
+            // todo not show message if in a different room
             data = JSON.parse(e.data);
+            console.log(data.area_id)
+            console.log(data.area)
             var sender = 'other'
             var username = data.username
             if (data.username == "{{ user.username }}") {
@@ -147,9 +157,11 @@
                 xhr.send(JSON.stringify(data));
 
                 // ---------------WEBSOCKET: ECHO MESSAGE---------------
+                let area = document.getElementById('id_area')
                 socket.send(JSON.stringify({
                     'content': document.querySelector('#id_content').value,
-                    'area': document.querySelector('#id_area').firstElementChild.innerHTML,
+                    'area': area.options[area.selectedIndex].text,
+                    'area_id': document.querySelector('#id_area').value
                 }));
             }
         });

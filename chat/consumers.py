@@ -17,7 +17,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             'type': 'send_message',
             'content': message_json['content'],
             'area': message_json['area'],
-            'username': self.scope['user'].username
+            'area_id': message_json['area_id'],
+            'username': self.scope['user'].username,
 
         })
 
