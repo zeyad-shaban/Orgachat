@@ -4,7 +4,7 @@ from django.http.response import JsonResponse
 from chat.models import Area, Message, Room
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -19,7 +19,6 @@ def home(request):
             return redirect('signupuser')
 
 
-@csrf_exempt
 def room(request, room_id, area_id=None):
     room = get_object_or_404(Room, pk=room_id)
     if request.method == 'GET':
@@ -39,6 +38,24 @@ def room(request, room_id, area_id=None):
             user=request.user, content=data.get('content'), room=room, area=area)
         message.save()
         return redirect('chat:room', room_id=room_id)
+
+
+def load_messages(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    data = json.loads(request.body)
+    new_messages = room.message_set.filter(
+        ~Q(user=request.user), Q(id__gt=data.get('last_id')))
+    print(new_messages)
+    print(data.get('last_id'))
+    json_new_messages = []
+    for message in new_messages:
+        json_new_messages.append({
+            'user': message.user.username,
+            'content': message.content,
+            'area': message.area.title,
+            'id': message.id
+        })
+    return JsonResponse({'new_messages': json_new_messages})
 
 # ----------Area------------
 

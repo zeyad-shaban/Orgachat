@@ -57,7 +57,8 @@ class Area(models.Model):
     title = models.CharField(max_length=30)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     muted_users = models.ManyToManyField(User, blank=True)
-    star_users = models.ManyToManyField(User, blank=True, related_name='star_users')
+    star_users = models.ManyToManyField(
+        User, blank=True, related_name='star_users')
 
     def __str__(self):
         return self.title
@@ -70,6 +71,7 @@ class Message(models.Model):
         Area, on_delete=models.SET_NULL, blank=True, null=True)
     content = models.TextField()
     is_read = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.content[:50]

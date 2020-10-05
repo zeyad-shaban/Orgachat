@@ -10,16 +10,14 @@
 <script src="{% static 'chat/js/room.js' %}"></script>
 
 <audio id="notification_sound">
-    <source src="{% static 'chat/data/notification.wav' %}" type="audio/wav">
-    <source src="{% static 'chat/data/notification.ogg' %}" type="audio/ogg">
-    <source src="{% static 'chat/data/notification.mpeg' %}" type="audio/mpeg">
+    <source src="{% static 'chat/data/notification.flac' %}" type="audio/flac">
     Your browser does not support the audio element.
 </audio>
 
 <div class="container">
     <div class="messages">
         {% for message in room_messages %}
-        <div class="message {% if message.user == user %} self{% else %} other{% endif %}">
+        <div class="message {% if message.user == user %} self{% else %} other{% endif %}" data-id="{{ message.id }}">
             {% if message.user == user %}
             <p>You{% else %}{{ message.user }}{% endif %} &mdash; {{ message.area.title }}</p>
             <p>{{ message.content }}</p>
@@ -100,70 +98,77 @@
     </div>
 
     <script>
-        // -------------------
-        // WEBSOCKET SETUP
-        // -------------------
-        var wsStart = 'ws://'
-        var hostName = window.location.hostname + ':8000'
-        if (window.location.protocol.includes('https')) {
-            wsStart = 'wss://'
-            hostName = window.location.hostname
-        };
-        let endpoint = wsStart + hostName + '/ws' + window.location.pathname
-        console.log(endpoint)
-        var socket = new WebSocket(endpoint);
-
-        socket.onmessage = function (e) {
-            // todo not show message if in a different room
-            data = JSON.parse(e.data);
-            console.log(data.area_id)
-            console.log(data.area)
-            var sender = 'other'
-            var username = data.username
-            if (data.username == "{{ user.username }}") {
-                sender = 'self';
-                username = 'You'
-            }
-            document.querySelector('.messages').innerHTML += `
-            <div class="message ${sender}">
-            <p>${username} &mdash; ${data.area}:</p>
-            <p>${data.content}</p>
-        </div>
-            `
-            document.querySelector('#notification_sound').play()
-        }
-        socket.onerror = function (e) {
-            alert("SERVER ERROR 500, You won't be able to see messages unless you refresh,")
-        }
-        socket.onclose = function (e) {}
-
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('#sendMessage').onclick = function (e) {
                 e.preventDefault();
-                // ------------AJAX: SEND AND MESSAGE---------------
-                let xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function (e) {
-                    if (this.readyState == 4 && this.status == 200) {
-                        document.querySelector('#id_content').value = '';
+                if (document.querySelector('#id_content').value == '' || !document.querySelector(
+                        '#id_content').value) {
+                    return false
+                } else {
+                    // ------------SEND AND MESSAGE---------------
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function (e) {
+                        if (this.readyState == 4 && this.status == 200) {
+                            let content = document.querySelector('#id_content').value
+                            document.querySelector('#id_content').value = '';
+                            let areaDiv = document.getElementById('id_area')
+                            let area = areaDiv.options[areaDiv.selectedIndex].text
+                            let lastId = parseInt(document.querySelectorAll('.message')[document
+                                .querySelectorAll('.message').length - 1].getAttribute(
+                                'data-id'))
+                            document.querySelector('.messages').innerHTML += `
+            <div class="message self" data-id=${lastId+1}>
+            <p>You &mdash; ${area}:</p>
+            <p>${content}</p>
+        </div>
+            `
+                            document.querySelector('#notification_sound').play()
+                        }
                     }
+                    xhr.open("POST", "{% url 'chat:room' room.id %}", true);
+                    xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
+                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                    data = {
+                        'content': document.querySelector('#id_content').value,
+                        'area': parseInt(document.querySelector('#id_area').value),
+                    }
+                    xhr.send(JSON.stringify(data));
                 }
-                xhr.open("POST", "{% url 'chat:room' room.id %}", true);
-                xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
-                data = {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    'content': document.querySelector('#id_content').value,
-                    'area': parseInt(document.querySelector('#id_area').value),
-                }
-                xhr.send(JSON.stringify(data));
-
-                // ---------------WEBSOCKET: ECHO MESSAGE---------------
-                let area = document.getElementById('id_area')
-                socket.send(JSON.stringify({
-                    'content': document.querySelector('#id_content').value,
-                    'area': area.options[area.selectedIndex].text,
-                    'area_id': document.querySelector('#id_area').value
-                }));
             }
+            // -------------LOAD NEW MESSAGES-----------------
+            var xhrLoad = new XMLHttpRequest();
+            xhrLoad.onreadystatechange = function (e) {
+                if (this.readyState == 4 && this.status == 200) {
+                    let response = JSON.parse(this.responseText);
+                    let newMessages = response.new_messages
+                    if (!newMessages || newMessages.length <= 0) {
+                        return false
+                    } else {
+                        for (message of newMessages) {
+                            document.querySelector('.messages').innerHTML += `
+                        <div class="message other" data-id="${message.id}">
+            <p>${message.user} &mdash;${message.area}:</p>
+            <p>${message.content}</p>
+        </div>
+                        `
+                            document.querySelector('#notification_sound').play()
+                        }
+                    }
+                };
+            };
+            setInterval(() => {
+                xhrLoad.open('POST', "{% url 'chat:load_messages' room.id %}", true)
+                xhrLoad.setRequestHeader('Content-type', "application/x-www-form-urlencode");
+                xhrLoad.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+                let dataLoad = {
+                    'last_id': parseInt(document.querySelectorAll('.message')[document
+                        .querySelectorAll(
+                            '.message').length - 1].getAttribute('data-id')),
+                };
+
+                xhrLoad.send(JSON.stringify(dataLoad))
+            }, 3000)
         });
     </script>
-    {% endblock content %}
+</div>
+{% endblock content %}
