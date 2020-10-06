@@ -7,6 +7,16 @@
 {% block content %}
 
 <div class="container">
+    {% if rooms.count <= 0 %}
+    <p>Find and add your friends <a href="{% url 'users:all_users' %}">Here</a></p>
+    <p>Or add a chat group</p>
+    <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
+    <br>
+    <br>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    {% endif %}
     {% for room in rooms %}
     <p>{{ room.title }}<span class="badge badge-danger ml-3 p-2"
             style="border-radius: 50%;">{{ room.unread_count }}</span></p>
@@ -15,8 +25,9 @@
     <hr>
     {% endfor %}
 </div>
-<button type="button" class="btn btn-success" onclick="openModal('#addGroup')">
-    <i class="fas fa-plus"></i>
+<button type="button" class="btn btn-success" onclick="openModal('#addGroup')"
+    style="border-radius: 50%; padding: 7px; position: absolute; bottom: 30px; right: 30px; font-size: 130%">
+    <i class="fas fa-plus"></i> Add Group
 </button>
 <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
