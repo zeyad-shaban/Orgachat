@@ -11,7 +11,8 @@
     <p>Find and add your friends <a href="{% url 'users:all_users' %}">Here</a></p>
     <p>Or click on the bottom right button to add a chat group</p>
     <p>Add areas from the left sidebar</p>
-    <p>We will make an in-depth explainer video soon, so make sure to subscribe to our <a href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA">YouTube channel</a></p>
+    <p>We will make an in-depth explainer video soon, so make sure to subscribe to our <a
+            href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA">YouTube channel</a></p>
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
     <br>
     <br>
@@ -30,8 +31,13 @@
     {% endfor %}
 </div>
 <button type="button" class="btn btn-success" onclick="openModal('#addGroup')"
-    style="border-radius: 50%; padding: 7px; position: absolute; bottom: 30px; right: 30px; font-size: 130%">
+    style="border-radius: 200px; padding: 7px; position: absolute; bottom: 30px; right: 30px; font-size: 130%">
     <i class="fas fa-plus"></i> Add Group
+</button>
+<button type="button" class="btn btn-warning text-white"
+    style="border-radius: 200px; padding: 7px; position: absolute; top: 70px; right: 30px; font-size: 130%"
+    id="addToHomescreen">Add
+    to Homescreen
 </button>
 <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
@@ -53,4 +59,33 @@
         </div>
     </div>
 </div>
+<script>
+    let deferredPrompt;
+    const addBtn = document.querySelector('#addToHomescreen');
+    // addBtn.style.display = 'none';
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Update UI to notify the user they can add to home screen
+        addBtn.style.display = 'block';
+
+        addBtn.addEventListener('click', (e) => {
+            // hide our user interface that shows our A2HS button
+            // addBtn.style.display = 'none';
+            // Show the prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
+    });
+</script>
 {% endblock content %}
