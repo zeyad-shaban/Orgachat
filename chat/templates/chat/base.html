@@ -16,6 +16,23 @@
         gtag('config', 'UA-179713611-1');
     </script>
     <!-- END Global site tag (gtag.js) - Google Analytics -->
+
+    <!-- Favicon Start -->
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'chat/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'chat/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'chat/favicons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'chat/favicons/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'chat/favicons/safari-pinned-tab.svg' %}" color="#4cd137">
+    <link rel="shortcut icon" href="{% static 'chat/favicons/favicon.ico' %}">
+    <meta name="apple-mobile-web-app-title" content="Orgachat">
+    <meta name="application-name" content="Orgachat">
+    <meta name="msapplication-TileColor" content="#4cd137">
+    <meta name="msapplication-config" content="{% static 'chat/favicons/browserconfig.xml' %}">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Favicon ends -->
+
     <!-- Libraries -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
@@ -24,7 +41,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% block description %}{% endblock description %}">
-    <link rel="shortcut icon" type="image/png" href="{% static 'chat/img/favicon.png' %}">
     <title>{% block title %} {% endblock title %}</title>
 </head>
 
