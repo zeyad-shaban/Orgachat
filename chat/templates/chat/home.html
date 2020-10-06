@@ -13,9 +13,11 @@
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
     <br>
     <br>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen></iframe>
+    <div class="iframe-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+    </div>
     {% endif %}
     {% for room in rooms %}
     <p>{{ room.title }}<span class="badge badge-danger ml-3 p-2"
