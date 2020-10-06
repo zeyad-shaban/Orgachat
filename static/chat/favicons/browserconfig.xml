@@ -2,7 +2,7 @@
 <browserconfig>
     <msapplication>
         <tile>
-            <square150x150logo src="ORGACHATPATH/mstile-150x150.png"/>
+            <square150x150logo src="/static/chat/favicons/mstile-150x150.png"/>
             <TileColor>#4cd137</TileColor>
         </tile>
     </msapplication>
