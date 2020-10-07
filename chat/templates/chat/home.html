@@ -21,28 +21,6 @@
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
     <br>
     <br>
-    <section>
-        <div class="video-container">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-        </div>
-    </section>
-    <br>
-    <br>
-    <section>
-        <ul>
-            <li>Gmail: officialorgachat@gmail.com </li>
-            <br>
-            <li><a href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA" target="_blank">YouTube channel</a>
-            </li>
-            <br>
-            <li>Or send us a message here :)</li>
-            <br>
-            <p>WE ARE MORE THAN HAPPY TO HEAR YOUR OPINION 😍</p>
-            <br>
-        </ul>
-    </section>
     {% endif %}
     {% for room in rooms %}
     <p>{{ room.title }}<span class="badge badge-danger ml-3 p-2"
@@ -82,6 +60,15 @@
     </div>
 </div>
 <script>
+    // ==========Survey Monkey=======
+    (function (t, e, s, o) {
+        var n, c, l;
+        t.SMCX = t.SMCX || [], e.getElementById(o) || (n = e.getElementsByTagName(s), c = n[n.length - 1], l = e
+            .createElement(s), l.type = "text/javascript", l.async = !0, l.id = o, l.src =
+            "https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd86QI2P093kSXZ_2Bob1kVnKEoJReaEZg_2FFTM1ZslL2XaC.js",
+            c.parentNode.insertBefore(l, c))
+    })(window, document, "script", "smcx-sdk");
+    // ==========Survey Monkey=======
     let deferredPrompt;
     const addBtn = document.querySelector('#addToHomescreen');
     addBtn.style.display = 'none';

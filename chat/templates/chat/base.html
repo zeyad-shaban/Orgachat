@@ -69,6 +69,39 @@
                     <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users"></i> Users</a>
                 </li>
             </ul>
+            <div class="dropdown">
+                <button class="btn" onclick="toggleDropdown('#mainDropdown')"><i class="fas fa-caret-down"
+                        style="font-size: 34px; color: #EBC12C;"></i></button>
+                <div class="dropdown-menu" id="mainDropdown">
+                    <!-- AddToAny BEGIN -->
+                    <div>
+                        <div class="justify-content-center row mb-2 mt-2">
+                            <a href="https://www.addtoany.com/add_to/facebook_messenger?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
+                                target="_blank"><img src="https://static.addtoany.com/buttons/facebook_messenger.svg"
+                                    width="32" height="32" style="background-color:#0084FF"></a>
+                            <span class="mr-2"></span>
+                            <a href="https://www.addtoany.com/add_to/whatsapp?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
+                                target="_blank"><img src="https://static.addtoany.com/buttons/whatsapp.svg" width="32"
+                                    height="32" style="background-color:#12AF0A"></a>
+                            <span class="mr-2"></span>
+                            <a href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
+                                target="_blank"><img src="https://static.addtoany.com/buttons/telegram.svg" width="32"
+                                    height="32" style="background-color:#2CA5E0"></a>
+                            <span class="mr-2"></span>
+                            <a href="https://www.addtoany.com/share#url=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;title="
+                                target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32"
+                                    height="32" style="background-color:#0166FF"></a>
+                            <span class="mr-2"></span>
+                        </div>
+                    </div>
+                    <!-- AddToAny END -->
+                    <a class="dropdown-item" href="#UNDER_DEVELOPMENT">About</a>
+                    <a class="dropdown-item" href="#">Feedback</a>
+                    <a class="dropdown-item" href="#"
+                        onclick="return alert('officialorgachat@gmail.com   Youtube channels: search for Orgachat')">FAQ
+                        and Contact</a>
+                </div>
+            </div>
         </nav>
 
         {% if messages %}

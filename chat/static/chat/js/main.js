@@ -45,3 +45,12 @@ function closeModal(dataTarget) {
     modal.style.display = 'none';
     modal.classList.remove('show');
 }
+
+function toggleDropdown(dataTarget) {
+    let dropdown = document.querySelector(dataTarget)
+    if (dropdown.style.display == 'block') {
+        dropdown.style.display = 'none'
+    } else {
+        dropdown.style.display = 'block'
+    }
+};
