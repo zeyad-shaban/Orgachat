@@ -8,19 +8,41 @@
 
 <div class="container">
     {% if rooms.count <= 0 %}
-    <p>Find and add your friends <a href="{% url 'users:all_users' %}">Here</a></p>
-    <p>Or click on the bottom right button to add a chat group</p>
-    <p>Add areas from the left sidebar</p>
-    <p>We will make an in-depth explainer video soon, so make sure to subscribe to our <a
-            href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA">YouTube channel</a></p>
+    <br>
+    <div class="alert alert-danger">Known issue: Make sure to refresh the page after sending the "first message" or you
+        won't see any new messages.</div>
+    <section>
+
+        <h2>Instructions</h2>
+        <p>Find and add your friends <a href="{% url 'users:all_users' %}">Here</a></p>
+        <p>Click on the bottom right button to add a chat group</p>
+        <p>Add areas from the left sidebar (Areas are used to divide the chat)</p>
+    </section>
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
     <br>
     <br>
-    <div class="video-container">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-    </div>
+    <section>
+        <div class="video-container">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/xAJIVX5tXeg" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+    </section>
+    <br>
+    <br>
+    <section>
+        <ul>
+            <li>Gmail: officialorgachat@gmail.com </li>
+            <br>
+            <li><a href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA" target="_blank">YouTube channel</a>
+            </li>
+            <br>
+            <li>Or send us a message here :)</li>
+            <br>
+            <p>WE ARE MORE THAN HAPPY TO HEAR YOUR OPINION 😍</p>
+            <br>
+        </ul>
+    </section>
     {% endif %}
     {% for room in rooms %}
     <p>{{ room.title }}<span class="badge badge-danger ml-3 p-2"
@@ -31,7 +53,7 @@
     {% endfor %}
 </div>
 <button type="button" class="btn btn-success" onclick="openModal('#addGroup')"
-    style="border-radius: 200px; padding: 7px; position: absolute; bottom: 30px; right: 30px; font-size: 130%">
+    style="border-radius: 200px; padding: 7px; position: fixed; bottom: 30px; right: 30px; font-size: 130%">
     <i class="fas fa-plus"></i> Add Group
 </button>
 <button type="button" class="btn btn-warning text-white"

@@ -87,8 +87,6 @@ body {
 #show-sidebar,
 #close-sidebar {
     -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -ms-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
@@ -130,6 +128,8 @@ body {
     top: 10px;
     border-radius: 0 4px 4px 0px;
     width: 35px;
+    -webkit-transition-delay: 0.3s;
+    -o-transition-delay: 0.3s;
     transition-delay: 0.3s;
 }
 
@@ -153,13 +153,19 @@ body {
 
 .sidebar-wrapper .sidebar-brand {
     padding: 10px 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
 .sidebar-wrapper .sidebar-brand>a {
     text-transform: uppercase;
     font-weight: bold;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
 }
 

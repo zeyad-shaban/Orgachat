@@ -50,8 +50,8 @@ def remove_friend(request, user_id):
 def signupuser(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            messages.warning(request, 'You are logged in')
-            return redirect('signupuser')
+            messages.warning(request, 'You are already logged in')
+            return redirect('home')
         else:
             return render(request, 'users/signupuser.html')
     else:
