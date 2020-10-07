@@ -54,23 +54,21 @@
                     class="d-inline-block align-top mr-1" alt="" loading="lazy">
                 Orgachat
             </a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    {% if not request.user.is_authenticated %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'signupuser' %}">Sign Up / In</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#Under_Developing"><i class="far fa-user-circle"></i>
-                            {{ user.username }}</a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users"></i> Users</a>
-                    </li>
-                </ul>
-            </div>
+            <ul class="navbar-nav">
+                {% if not request.user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'signupuser' %}">Sign Up / In</a>
+                </li>
+                {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="#Under_Developing"><i class="far fa-user-circle"></i>
+                        {{ user.username }}</a>
+                </li>
+                {% endif %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users"></i> Users</a>
+                </li>
+            </ul>
         </nav>
 
         {% if messages %}

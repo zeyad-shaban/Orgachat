@@ -36,6 +36,8 @@ body {
     left: 0;
     z-index: 1030;
     background-color: #4cd137;
+    white-space: nowrap;
+    overflow-x: auto;
 }
 
 .scrolled-down {
