@@ -38,17 +38,8 @@ body {
     background-color: #4cd137;
 }
 
-.navbar-main ul {
-    overflow-x: scroll;
-    white-space: nowrap;
-}
-
 .nav-item {
     margin-right: 25px
-}
-
-#mainDropdown {
-    overflow-x: visible !important;
 }
 
 .scrolled-down {
