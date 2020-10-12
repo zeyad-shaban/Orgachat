@@ -92,3 +92,5 @@ def loginuser(request):
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
+        messages.success(request, 'Logout out successfullly')
+        return redirect('signupuser')
