@@ -16,6 +16,9 @@
 
 <div class="container">
     <div class="messages">
+        {% if room_messages.count <= 0 %}
+        <div class="alert alert-info">Please make sure to refresh the page after sending the first message.  We will fix that soon. Thanks</div>
+        {% endif %}
         {% for message in room_messages %}
         <div class="message {% if message.user == user %} self{% else %} other{% endif %}" data-id="{{ message.id }}">
             {% if message.user == user %}
@@ -33,7 +36,7 @@
     <nav id="sidebar" class="sidebar-wrapper">
         <div class="sidebar-content">
             <div class="sidebar-brand">
-                <a href="#" class="btn text-white">Areas</a>
+                <a href="#" class="btn text-white"> Chat Dividers</a>
                 <div id="close-sidebar">
                     <i class="fas fa-times text-white"></i>
                 </div>
@@ -42,6 +45,7 @@
             <div class="areas-all">
                 <ul>
                     <li><a href="{% url 'chat:room' room.id %}">All</a></li>
+                    {% if not room.area_set.count <= 1 %}
                     {% for area in room.area_set.all %}
                     <li>
                         <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
@@ -61,6 +65,7 @@
                         {% endif %}
                     </li>
                     {% endfor %}
+                    {% endif %}
                 </ul>
             </div>
             <div class="area-add">
@@ -78,7 +83,7 @@
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="Add area" required maxlength="30">
+                    <input type="text" name="title" id="id_title" placeholder="Add chat divider" required maxlength="30">
                     <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
                             class="fas fa-plus-circle" style="font-size: 200%; color: #4CD137;"></i></button>
                 </form>

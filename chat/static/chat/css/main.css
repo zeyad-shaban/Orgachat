@@ -64,6 +64,20 @@ body {
 /* REUSABLE */
 /* ------------------ */
 
+/* ------Headings---------- */
+h2 {
+    margin: 15px 0;
+}
+
+h2:after {
+    content: " ";
+    display: block;
+    background-color: #4CD137;
+    width: 160px;
+    height: 2px;
+    margin: 15px auto;
+}
+
 /* Iframes */
 .video-container iframe {
     max-width: 100%;

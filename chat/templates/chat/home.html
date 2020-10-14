@@ -9,14 +9,14 @@
 <div class="container">
     {% if rooms.count <= 0 %}
     <br>
-    <div class="alert alert-danger">Known issue: Make sure to refresh the page after sending the "first message" or you
-        won't see any new messages.</div>
     <section>
-
         <h2>Instructions</h2>
-        <p>Find and add your friends <a href="{% url 'users:all_users' %}">Here</a></p>
-        <p>Click on the bottom right button to add a chat group</p>
-        <p>Add areas from the left sidebar (Areas are used to divide the chat)</p>
+        <p>Find and add your friends <a href="{% url 'users:all_users' %}" target="_blank">Here</a></p>
+        <p>Ask others to search for you by giving them your username</p>
+        <p>The only information anyone can access (including us) is your username</p>
+        <div class="alert alert-info">If you entered your email developers can see it but no one else. We will use it to
+            contact you and make sure that you are happy with our app. Unsubscribing is very easy and we won't spam you
+        </div>
     </section>
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
     <br>
