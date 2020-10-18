@@ -92,3 +92,9 @@ h2:after {
 .btn-warning {
     background-color: #EBC12C;
 }
+
+/* ---------Displaying-------- */
+.hide {
+    transform: scale(0);
+    transition: all 0.4s cubic-bezier(0.565, -0.260, 0.255, 1.410)
+}

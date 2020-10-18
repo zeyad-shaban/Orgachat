@@ -9,6 +9,10 @@ from django.contrib.auth import get_user_model, login, authenticate
 User = get_user_model()
 
 
+def profile(request):
+    return render(request, "users/profile.html")
+
+
 def all_users(request):
     users = User.objects.filter(~Q(id=request.user.id))
     return render(request, 'users/all_users.html', {'users': users})

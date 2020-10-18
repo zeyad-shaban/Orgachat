@@ -33,8 +33,9 @@ def room(request, room_id, area_id=None):
         if not request.user in room.chatters.all():
             raise PermissionDenied
         for message in room.message_set.all():
-            message.is_read = True
-            message.save()
+            if message.user != request.user:
+                message.is_read = True
+                message.save()
 
         room_messages = room.message_set.all()
         if request.GET.get('area_id'):
@@ -45,9 +46,33 @@ def room(request, room_id, area_id=None):
         data = json.loads(request.body)
         area = get_object_or_404(Area, pk=data.get('area'))
         message = Message.objects.create(
-            user=request.user, content=data.get('content'), room=room, area=area)
+            user=request.user, text=data.get('text'), room=room, area=area)
         message.save()
         return redirect('chat:room', room_id=room_id)
+
+
+@login_required
+def save_file_message(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    area = get_object_or_404(Area, pk=int(request.POST.get('area')))
+    
+    if request.FILES.get("video"):
+        message = Message.objects.create(user=request.user, video=request.FILES.get(
+            'video'), room=room, area=area)
+        message.save()
+    elif request.FILES.get("image"):
+        message = Message.objects.create(user=request.user, image=request.FILES.get(
+            'image'), room=room, area=area)
+        message.save()
+    elif request.FILES.get("file"):
+        message = Message.objects.create(user=request.user, file=request.FILES.get(
+            'file'), room=room, area=area)
+        message.save()
+    elif request.FILES.get("audio"):
+        message = Message.objects.create(user=request.user, audio=request.FILES.get(
+            'audio'), room=room, area=area)
+        message.save()
+    return redirect("chat:room", room_id=room.id)
 
 
 @login_required
@@ -59,12 +84,17 @@ def load_messages(request, room_id):
     new_messages = room.message_set.filter(
         ~Q(user=request.user), Q(id__gt=data.get('last_id')))
     json_new_messages = []
+
     for message in new_messages:
+        isText = False
+        if message.text:
+            isText = True
         json_new_messages.append({
             'user': message.user.username,
-            'content': message.content,
             'area': message.area.title,
-            'id': message.id
+            'id': message.id,
+            'content': message.content(),
+            "isText" : isText,
         })
     return JsonResponse({'new_messages': json_new_messages})
 
@@ -92,7 +122,7 @@ def remove_user(request, user_id, room_id):
     room = get_object_or_404(Room, pk=room_id)
     room.chatters.remove(user)
     message = Message.objects.create(
-        room=room, content=f"{request.user.username} removed {user.username}", user=request.user)
+        room=room, text=f"{request.user.username} removed {user.username}", user=request.user)
     message.save()
     return redirect('chat:room', room_id=room_id)
 

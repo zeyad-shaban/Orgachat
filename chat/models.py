@@ -1,4 +1,4 @@
-from os import execlp
+import os
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
@@ -32,7 +32,7 @@ class Room(models.Model):
         unread_messages = self.message_set.filter(is_read=False)
         output = []
         for message in unread_messages:
-            if not current_request().user in message.area.muted_users.all():
+            if not current_request().user in message.area.muted_users.all() and message.user != current_request().user:
                 output.append(message)
         if len(output) <= 0:
             output = 0
@@ -73,13 +73,50 @@ class Message(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     area = models.ForeignKey(
         Area, on_delete=models.SET_NULL, blank=True, null=True)
-    content = models.TextField()
+
+    text = models.TextField(blank=True, null=True)
+    video = models.FileField(upload_to="chat/room/vid", blank=True, null=True)
+    image = models.FileField(upload_to="chat/room/img", blank=True, null=True)
+    file = models.FileField(upload_to="chat/room/file", blank=True, null=True)
+    audio = models.FileField(upload_to="chat/room/aud", blank=True, null=True)
+
     is_read = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.content[:50]
-
+    def content(self):
+        if self.text:
+            return self.text
+        elif self.video:
+            return f"""
+            <video width="320" height="240" controls>
+                        <source src="{self.video.url}" type="video/mp4">
+                        <source src="{self.video.url}" type="video/mov">
+                        <source src="{self.video.url}" type="video/wmv">
+                        <source src="{self.video.url}" type="video/avi">
+                        <source src="{self.video.url}" type="video/avchd">
+                      Your browser does not support the video tag.
+                      </video> 
+            """
+        elif self.image:
+            return f'<img src="{self.image.url}" alt="">'
+        elif self.file:
+            return f'<p><a href="{self.file.url}" download><i class="fas fa-download"></i> {self.filename()}</a></p>'
+        elif self.audio:
+            return f"""
+            <audio controls>
+                        <source src="{self.audio.url}" type="audio/pcm">
+                        <source src="{self.audio.url}" type="audio/wav">
+                        <source src="{self.audio.url}" type="audio/aiff">
+                            <source src="{self.audio.url}" type="audio/mp3">
+                                <source src="{self.audio.url}" type="audio/aac">
+                                <source src="{self.audio.url}" type="audio/ogg">
+                                <source src="{self.audio.url}" type="audio/flac">
+                                <source src="{self.audio.url}" type="audio/wma">
+                      Your browser does not support the audio element.
+                      </audio>
+            """
+        else:
+            return self.text
 
     def is_muted(self):
         show = True
@@ -88,3 +125,21 @@ class Message(models.Model):
         else:
             show = False
         return show
+
+    def filename(self):
+        if self.video:
+            return os.path.basename(self.video.name)
+        elif self.image:
+            return os.path.basename(self.image.name)
+        elif self.file:
+            return os.path.basename(self.file.name)
+        elif self.audio:
+            return os.path.basename(self.audio.name)
+        else:
+            return self.text
+
+    def __str__(self):
+        if self.text:
+            return self.text[:50]
+        else:
+            return ""

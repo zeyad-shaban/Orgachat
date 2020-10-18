@@ -17,53 +17,54 @@
 <!-- ------------------- -->
 <!-- CHAT -->
 <!-- ------------------- -->
-<div class="chat">
-    <div class="chat-header clearfix">
-        <img src="{% static 'chat/img/def.png' %}" alt="" />
+<div class="menu">
+    <a href="{% url 'home' %}" class="back"><i class="fa fa-angle-left"></i> <img src="{% static 'chat/img/def.png' %}"
+            draggable="false" /></a>
+    <div class="name">{{ room.title }}</div>
+    <div class="members"><b>You</b>, ...</div>
+    <i class="fa fa-paperclip" id="attachFileBtn" onclick="openModal('#attachFile');"></i>
+</div>
 
-        <div class="chat-about">
-            <div class="chat-with">Chat with {{ room.name }}</div>
-            <small class="chat-num-messages"
-                style="{% if room.unread_count > 0 %} #ff0000 {% endif %}">{{room.unread_count}} new messages</small>
-        </div>
-    </div> <!-- end chat-header -->
-
-    <div class="chat-history">
-        <ul style="list-style: none;" class="messages">
-            {% if room_messages.count <= 0 %}
-            <li class="chatMessage" data-id="0"></li>
-            {% endif %}
-            {% for room_message in room_messages %}
-            <li class="chatMessage" data-id="{{ room_message.id }}">
-                <div class="message-data {% if room_message.user == user%} align-right {% endif %}">
-                    <span class="message-data-time">{{ room_message.date|timesince }}</span> &nbsp; &nbsp;
-                    <span class="message-data-name">{{ room_message.user }}</span> <i
-                        class="fa fa-circle {% if room_message.user == user %} me {% else %} online {% endif %}"></i>
-                </div>
-                <div
-                    class="message {% if room_message.user == user %}other-message float-right {% else %} my-message {% endif %}">
-                    {{ room_message.content }}
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div> <!-- end chat-history -->
-
-    <form action="{% url 'chat:room' room.id %}" method="POST" class="chat-message clearfix">
+<ol class="chat">
+    <ul style="list-style: none;" class="messages">
+        {% if room_messages.count <= 0 %}
+        <li class="message" data-id="0"></li>
+        {% endif %}
+        {% for room_message in room_messages %}
+        <li class="message {% if room_message.user == user %}self {% else %} other {% endif %}"
+            data-id="{{ room_message.id }}">
+            <div class="msg">
+                <p>{% if room_message.user == user %}You
+                    {% else %}{{room_message.user}}{% endif %}{% if room_message.area %} &mdash; {{ room_message.area }}
+                    {% endif %}</p>
+                {% if room_message.text %}
+                <p>{{ room_message.content }}</p>
+                {% else %}
+                {{ room_message.content|safe }}
+                <br>
+                {% endif %}
+                <time>{{ room_message.date|timesince }}</time>
+            </div>
+        </li>
+        {% endfor %}
+</ol>
+<div class="typezone">
+    <form action="{% url 'chat:room' room.id %}" method="POST">
         {% csrf_token %}
-        <textarea name="content" id="content" placeholder="Type your message" rows="1" required></textarea>
-        <label for="area">Area: </label>
-        <select name="area" id="area" style="width: 155px">
-            {% for area in room.area_set.all %}
-            <option value="{{ area.id }}">{{ area.title }}</option>
-            {% endfor %}
-        </select>
-        <i class="fas fa-microphone"></i>&nbsp;&nbsp;&nbsp;
-        <i class="fa fa-paperclip"></i>
+        <textarea type="text" name="text" id="messageText" placeholder="Say something" rows="1" required></textarea>
+        <div class="areaSelector hide">
+            <label for="area">Area: </label>
+            <select name="area" id="area" style="width: 155px">
+                {% for area in room.area_set.all %}
+                <option value="{{ area.id }}">{{ area.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <i class="fas fa-microphone" id="record"></i>
         <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
     </form>
+</div>
 
-</div> <!-- end chat -->
 <!-- TODO change text area displaying -->
 <!-- ---------------------- -->
 <!-- SIDEBAR -->
@@ -130,56 +131,116 @@
             </div>
     </nav>
     <!-- sidebar-wrapper  -->
+</div>
 
-    <!-- --------------------- -->
-    <!-- MODALS -->
-    <!-- --------------------- -->
-    <div class="modal fade" id="options" tabindex="-1" role="dialog" aria-labelledby="optionsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="optionsLabel">Options</h5>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul class="list-group list-group-horizontal">
-                        <li class="list-group-item option-item active" data-target="#option-invite"
-                            style="cursor: pointer;"><i class="fas fa-user-plus"></i> Invite</li>
-                        <li class="list-group-item option-item" data-target="#option-members" style="cursor: pointer;">
-                            <i class="fas fa-users"></i> Members</li>
-                        <li class="list-group-item option-item" data-target="#option-settings" style="cursor: pointer;">
-                            Settings</li>
-                    </ul>
+<!-- --------------------- -->
+<!-- MODALS -->
+<!-- --------------------- -->
+
+<!-- ---------Group Options---------- -->
+<div class="modal fade" id="options" tabindex="-1" role="dialog" aria-labelledby="optionsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="optionsLabel">Options</h5>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-horizontal">
+                    <li class="list-group-item option-item active" data-target="#option-invite"
+                        style="cursor: pointer;"><i class="fas fa-user-plus"></i> Invite</li>
+                    <li class="list-group-item option-item" data-target="#option-members" style="cursor: pointer;">
+                        <i class="fas fa-users"></i> Members</li>
+                    <li class="list-group-item option-item" data-target="#option-settings" style="cursor: pointer;">
+                        Settings</li>
+                </ul>
+                <br>
+                <br>
+                <div id="option-invite" class="option-menu">
+                    {% for auser in users %}
+                    <p>{{ auser.username }}
+                        <a href="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
+                                class="fas fa-plus"></i> Add</a>
+                    </p>
                     <br>
+                    {% endfor %}
+                </div>
+                <div id="option-members" class="option-menu" style="display: none;">
+                    {% for member in room.chatters.all %}
+                    <p>{{ member.username }}
+                        <a href="{% url 'chat:remove_user' member.id room.id %}" class="btn btn-danger"
+                            onclick="return confirm('You are about to remove {{ member.username }} Out of {{ room.name }}. Other members will know who removed him')"><i
+                                class="fas fa-minus"></i> Remove</a>
+                    </p>
                     <br>
-                    <div id="option-invite" class="option-menu">
-                        {% for auser in users %}
-                        <p>{{ auser.username }}
-                            <a href="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
-                                    class="fas fa-plus"></i> Add</a>
-                        </p>
-                        <br>
-                        {% endfor %}
-                    </div>
-                    <div id="option-members" class="option-menu" style="display: none;">
-                        {% for member in room.chatters.all %}
-                        <p>{{ member.username }}
-                            <a href="{% url 'chat:remove_user' member.id room.id %}" class="btn btn-danger"
-                                onclick="return confirm('You are about to remove {{ member.username }} Out of {{ room.name }}. Other members will know who removed him')"><i
-                                    class="fas fa-minus"></i> Remove</a>
-                        </p>
-                        <br>
-                        {% endfor %}
-                    </div>
-                    <div id="option-settings" class="option-menu" style="display: none;">
-                        <h3 style="text-align: center;">{{ room.title }}</h3>
-                        <br>
-                        Under developing
-                    </div>
+                    {% endfor %}
                 </div>
-                <div class="modal-footer">
-                    <a href="{% url 'chat:room' room.id %}" class="btn btn-primary">Done</a>
+                <div id="option-settings" class="option-menu" style="display: none;">
+                    <h3 style="text-align: center;">{{ room.title }}</h3>
+                    <br>
+                    Under developing
                 </div>
+            </div>
+            <div class="modal-footer">
+                <a href="{% url 'chat:room' room.id %}" class="btn btn-primary">Done</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------Attach file------------ -->
+<div class="modal fade" id="attachFile" tabindex="-1" role="dialog" aria-labelledby="attachFileLabel" aria-hidden="true"
+    style="margin-top: 5%">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#attachFile')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'chat:save_file_message' room.id %}" method="post" enctype="multipart/form-data">
+                    <div style="display: none;">
+                        {% csrf_token %}
+                        <label for="uploadVideo">Video</label>
+                        <input type="file" name="video" class="upload" id="uploadVideo" accept="video/*">
+
+                        <label for="uploadImage">Image</label>
+                        <input type="file" name="image" class="upload" id="uploadImage" accept="image/*">
+
+                        <label for="uploadFile">File</label>
+                        <input type="file" name="file" class="upload" id="uploadFile">
+
+                        <label for="uploadAudio">Audio</label>
+                        <input type="file" name="audio" class="upload" id="uploadAudio" accept="audio/*">
+
+                        <button type="submit" id="saveAttachedFile">Send</button>
+                    </div>
+                    <label for="area">Area </label>
+                    <select name="area" style="width: 155px">
+                        {% for area in room.area_set.all %}
+                        <option value="{{ area.id }}">{{ area.title }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <br>
+                <button onclick="document.querySelector('#uploadVideo').click()"
+                    class="btn btn-outline-success mr-3 ml-3 mb-3">
+                    <i class="fas fa-video"></i> Video
+                </button>
+                <button onclick="document.querySelector('#uploadImage').click()"
+                    class="btn btn-outline-success mr-3 mb-3">
+                    <i class="far fa-image"></i> Image
+                </button>
+                <button onclick="document.querySelector('#uploadFile').click()"
+                    class="btn btn-outline-success mr-3 mb-3">
+                    <i class="fas fa-file"></i> File
+                </button>
+                <button onclick="document.querySelector('#uploadAudio').click()"
+                    class="btn btn-outline-success mr-3 mb-3">
+                    <i class="fas fa-headphones"></i> Audio
+                </button>
             </div>
         </div>
     </div>
@@ -224,35 +285,29 @@
         // --------------------------
         document.querySelector('#sendMessage').onclick = function (e) {
             e.preventDefault();
-            if (document.querySelector('#content').value == '' || !document.querySelector(
-                    '#content').value) {
+            if (document.querySelector('#messageText').value == '' || !document.querySelector(
+                    '#messageText').value) {
                 return false
             } else {
                 // ------------SEND AND MESSAGE---------------
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function (e) {
                     if (this.readyState == 4 && this.status == 200) {
-                        let content = document.querySelector('#content').value
-                        document.querySelector('#content').value = '';
+                        let text = document.querySelector('#messageText').value
+                        document.querySelector('#messageText').value = '';
                         let areaDiv = document.getElementById('area')
                         let area = areaDiv.options[areaDiv.selectedIndex].text
-                        let lastId = parseInt(document.querySelectorAll('.chatMessage')[document
-                            .querySelectorAll('.chatMessage').length - 1].getAttribute(
+                        let lastId = parseInt(document.querySelectorAll('.message')[document
+                            .querySelectorAll('.message').length - 1].getAttribute(
                             'data-id'))
 
-                        document.querySelector(".messages").innerHTML += `
-                        <li class="chatMessage" data-id="${lastId + 1}">
-                <div class="message-data align-right">
-                    <span class="message-data-time">Now</span> &nbsp; &nbsp;
-                    <span class="message-data-name">$You</span> <i
-                        class="fa fa-circle me"></i>
-                </div>
-                <div
-                    class="message other-message float-right">
-                    ${content}
-                </div>
-            </li>
-            `
+                        document.querySelector(".messages").innerHTML += `<li class="message self" data-id="${lastId + 1}">
+            <div class="msg">
+                <p>You &mdash; ${area}</p>
+                <p>${text}</p>
+                <time>Now</time>
+            </div>
+        </li>`
                         document.querySelector('#notification_sound').play()
                     }
                 }
@@ -260,15 +315,15 @@
                 xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
                 xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
                 data = {
-                    'content': document.querySelector('#content').value,
+                    'text': document.querySelector('#messageText').value,
                     'area': parseInt(document.querySelector('#area').value),
                 }
                 xhr.send(JSON.stringify(data));
             }
         }
 
-// -------------LOAD NEW MESSAGES-----------------
-var xhrLoad = new XMLHttpRequest();
+        // -------------LOAD NEW MESSAGES-----------------
+        var xhrLoad = new XMLHttpRequest();
         xhrLoad.onreadystatechange = function (e) {
             if (this.readyState == 4 && this.status == 200) {
                 let response = JSON.parse(this.responseText);
@@ -277,20 +332,21 @@ var xhrLoad = new XMLHttpRequest();
                     return false
                 } else {
                     for (message of newMessages) {
-
+                        var content
+                        if (message.isText == "True" || message.isText){
+                            content = `<p>${message.content}</p>`
+                        } else {
+                            content = `${message.content}
+                            <br>`
+                        }
                         document.querySelector(".messages").innerHTML += `
-                        <li class="chatMessage" data-id="${message.id}">
-                <div class="message-data">
-                    <span class="message-data-time">Now</span> &nbsp; &nbsp;
-                    <span class="message-data-name">${message.user}</span> <i
-                        class="fa fa-circle online"></i>
-                </div>
-                <div
-                    class="message my-message ">
-                    ${message.content}
-                </div>
-            </li>
-                        `
+                        <li class="message other" data-id="${message.id}">
+            <div class="msg">
+                <p>${message.user} &mdash; ${message.area}</p>
+                ${content}
+                <time>Now</time>
+            </div>
+        </li>`
                         document.querySelector('#notification_sound').play()
                     }
                 }
@@ -300,7 +356,7 @@ var xhrLoad = new XMLHttpRequest();
             xhrLoad.open('POST', "{% url 'chat:load_messages' room.id %}", true)
             xhrLoad.setRequestHeader('Content-type', "application/x-www-form-urlencode");
             xhrLoad.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
-            let messages = document.querySelectorAll('.chatMessage')
+            let messages = document.querySelectorAll('.message')
             let dataLoad = {
                 'last_id': parseInt((messages)[messages.length - 1].getAttribute('data-id')),
             };
