@@ -6,6 +6,11 @@
 {% block description %}Chat with your friends at Orgachat, {{ room.title }}{% endblock description %}
 
 {% block content %}
+<!-- !!!!!!!!!!!!!!! -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+
+
 <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
 <script src="{% static 'chat/js/room.js' %}"></script>
 
@@ -322,6 +327,75 @@
             }
         }
 
+
+        // ----------------RECORD AUDIO MESSAGE----------------
+
+        const record = document.querySelector('#record')
+            let chunks = [];
+            // Check if getUserMedia is supported
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                    audio: true
+                }).then(function (stream) {
+                    let mediaRecorder = new MediaRecorder(stream);
+                    record.onclick = function (e) {
+                        if (record.style.color == '') {
+                            // Start recording
+                            mediaRecorder.start()
+                            record.style.color = "#4CD137";
+                            record.style.backgroundColor = "black";
+                            document.querySelector(".areaSelector").classList.remove("hide")
+                            mediaRecorder.ondataavailable = function (e) {
+                                chunks.push(e.data);
+                                // End recording
+                            };
+                        } else {
+                            record.style.color = '';
+                            record.style.backgroundColor = '';
+                            document.querySelector(".areaSelector").classList.add("hide")
+                            mediaRecorder.stop();
+                        }
+                        // Getting the blob
+                        mediaRecorder.onstop = function (e) {
+                            const blob = new Blob(chunks, {
+                                'type': 'audio/ogg; codecs=opus'
+                            });
+                            chunks = [];
+                            const audioURL = window.URL.createObjectURL(blob);
+                            // Sending to django
+                            e.preventDefault();
+                            var fd = new FormData();
+                            fd.append('audio', blob);
+                            fd.append('area', parseInt(document.querySelector('#area').value));
+                            fd.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+                            $.ajax({
+                                url: '{% url "chat:record_audio_message" room.id %}',
+                                type: 'POST',
+                                data: fd,
+                                processData: false,
+                                contentType: false,
+                                success: function (data) {
+                                    // todo show message
+                                    alert("Please refresh the page, we will fix it soon, thanks")
+                                },
+                                error: function () {
+                                    alert('Internal Server Error')
+                                }
+                            })
+                            // End sending to django
+                        }
+                        // End getting the blob
+                    }
+                }).catch(function (err) {
+                    alert(
+                        'Please allow the microphone permission to record voice messages'
+                    )
+                })
+            } else {
+                alert('Your browser doesn\'t support user recording audio')
+            }
+        
+        
         // -------------LOAD NEW MESSAGES-----------------
         var xhrLoad = new XMLHttpRequest();
         xhrLoad.onreadystatechange = function (e) {
@@ -363,6 +437,7 @@
 
             xhrLoad.send(JSON.stringify(dataLoad))
         }, 3000)
+
     });
 </script>
 {% endblock content %}

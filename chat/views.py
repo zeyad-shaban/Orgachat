@@ -76,6 +76,16 @@ def save_file_message(request, room_id):
 
 
 @login_required
+def record_audio_message(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    area = get_object_or_404(Area, pk=int(request.POST.get("area")))
+    message = Message.objects.create(user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
+    message.save()
+    return redirect("chat:room", room_id=room.id)
+
+
+
+@login_required
 def load_messages(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     if not request.user in room.chatters.all():

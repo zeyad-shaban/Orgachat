@@ -339,6 +339,7 @@ textarea:focus {
 
 #record {
     position: fixed;
+    cursor: pointer;
     left: 0px;
     width: 10%;
     height: 50px;

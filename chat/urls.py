@@ -6,9 +6,12 @@ app_name = 'chat'
 urlpatterns = [
     path('room/<int:room_id>/', views.room,
          kwargs={'area_id': None}, name='room'),
-     path('save_file_message/<int:room_id>/', views.save_file_message, name="save_file_message"),
     path('load_messages/<int:room_id>/',
          views.load_messages, name='load_messages'),
+
+     path('save_file_message/<int:room_id>/', views.save_file_message, name="save_file_message"),
+     path('save_file_message/<int:room_id>/', views.save_file_message, name="save_file_message"),
+     path('record_audio_message/<int:room_id>/', views.record_audio_message, name="record_audio_message"),
     # Group
     path('create-group/', views.create_group, name="create_group"),
     path('add-user/<int:user_id>/<int:room_id>/',
