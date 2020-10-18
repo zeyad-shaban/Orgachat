@@ -1,77 +1,190 @@
-/* ------------------ */
-/* SEND MESSAGE */
-/* ------------------ */
-.navbar-main {
-    display: none !important;
-}
+/* --------------------- */
+/* MESSAGES */
+/* --------------------- */
 
 body {
-    padding-bottom: 55px;
-    margin-top: 55px;
+    margin-top: 80px;
+    margin-bottom: 0px;
 }
 
-.send-message {
+.navbar-main {
+    display: none;
+}
+
+
+.chat {
+    width: 100%;
+    background: #f2f5f8;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: #434651;
+}
+
+.chat .chat-header {
+    height: 100px;
+    padding: 20px;
+    border-bottom: 2px solid white;
     position: fixed;
+    width: 100%;
+    top: 0px;
+    z-index: 9999;
+    background-color: #4CD137
+}
+
+.chat .chat-header img {
+    float: left;
+    border-radius: 50%;
+    padding-right: 10px
+}
+
+.chat .chat-header .chat-about {
+    float: left;
+    padding-left: 10px;
+    margin-top: 6px;
+}
+
+.chat .chat-header .chat-with {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.chat .chat-header .chat-num-messages {
+    color: #fff;
+}
+
+.chat .chat-history {
+    padding: 30px 30px 20px;
+    border-bottom: 2px solid white;
+    overflow-y: scroll;
+}
+
+.chat .chat-history .message-data {
+    margin-bottom: 15px;
+}
+
+.chat .chat-history .message-data-time {
+    color: #a8aab1;
+    padding-left: 6px;
+}
+
+.chat .chat-history .message {
+    color: white;
+    padding: 18px 20px;
+    line-height: 26px;
+    font-size: 16px;
+    border-radius: 7px;
+    margin-bottom: 30px;
+    width: 90%;
+    position: relative;
+}
+
+.chat .chat-history .message:after {
+    bottom: 100%;
+    left: 7%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: #86bb71;
+    border-width: 10px;
+    margin-left: -10px;
+}
+
+.chat .chat-history .my-message {
+    background: #86bb71;
+}
+
+.chat .chat-history .other-message {
+    background: #94c2ed;
+}
+
+.chat .chat-history .other-message:after {
+    border-bottom-color: #94c2ed;
+    left: 93%;
+}
+
+.chat .chat-message {
+    padding: 30px;
+    position: fixed;
+    width: 100%;
     bottom: 0;
-    right: 0;
-    left: 0;
+    background-color: #f2f5f8;
 }
 
-#id_content {
-    /* display:  block; */
-    width: 80%;
-}
-
-#id_area {
-    height: 50px;
-    width: 50px;
-    margin-left: 10px;
-    margin-right: 10px
-}
-
-#sendMessage {
-    width: 40px;
-    height: 40px;
-    text-align: center;
-}
-
-#sendMessage i {
-    display: inline-block;
-    font-size: 170%;
-}
-
-@media (max-width: 736px) {
-    #id_content {
-        width: 75%;
-    }
-}
-
-@media (max-width: 458px) {
-    #id_content {
-        width: 65%;
-    }
-}
-
-
-
-/* ---------------------- */
-/* MESSAGES */
-/* ---------------------- */
-
-.message {
-    margin-bottom: 40px;
-    padding: 20px
-}
-
-.self,
-.other {
+.chat .chat-message textarea {
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    font: 14px/22px "Lato", Arial, sans-serif;
+    margin-bottom: 10px;
     border-radius: 5px;
+    resize: none;
 }
 
-.self {
-    background-color: #7dde6e94;
-    width: 70%;
+.chat .chat-message .fa-microphone,
+.chat .chat-message .fa-paperclip {
+    font-size: 16px;
+    color: gray;
+    cursor: pointer;
 }
+
+.chat .chat-message button {
+    float: right;
+    color: #4CD137;
+    font-size: 30px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    background: #f2f5f8;
+}
+
+.chat .chat-message button:hover {
+    color: #75b1e8;
+}
+
+.online,
+.offline,
+.me {
+    margin-right: 3px;
+    font-size: 10px;
+}
+
+.online {
+    color: #86bb71;
+}
+
+.offline {
+    color: #e38968;
+}
+
+.me {
+    color: #94c2ed;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.float-right {
+    float: right;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+
 
 /* --------------------- */
 /* SIDEBAR */
@@ -125,7 +238,7 @@ body {
 #show-sidebar {
     position: fixed;
     left: 0;
-    top: 10px;
+    top: 120px;
     border-radius: 0 4px 4px 0px;
     width: 35px;
     -webkit-transition-delay: 0.3s;
@@ -205,3 +318,7 @@ body {
     position: absolute;
     bottom: 10px;
 }
+
+/* ------------------ */
+/* MESSAGES */
+/* ------------------ */

@@ -35,7 +35,7 @@ class Room(models.Model):
             if not current_request().user in message.area.muted_users.all():
                 output.append(message)
         if len(output) <= 0:
-            output = ''
+            output = 0
         else:
             output = len(output)
         return output
@@ -79,6 +79,7 @@ class Message(models.Model):
 
     def __str__(self):
         return self.content[:50]
+
 
     def is_muted(self):
         show = True

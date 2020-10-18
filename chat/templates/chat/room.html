@@ -14,21 +14,60 @@
     Your browser does not support the audio element.
 </audio>
 
-<div class="container">
-    <div class="messages">
-        {% if room_messages.count <= 0 %}
-        <div class="alert alert-info">Please make sure to refresh the page after sending the first message.  We will fix that soon. Thanks</div>
-        {% endif %}
-        {% for message in room_messages %}
-        <div class="message {% if message.user == user %} self{% else %} other{% endif %}" data-id="{{ message.id }}">
-            {% if message.user == user %}
-            <p>You{% else %}{{ message.user }}{% endif %} &mdash; {{ message.area.title }}</p>
-            <p>{{ message.content }}</p>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+<!-- ------------------- -->
+<!-- CHAT -->
+<!-- ------------------- -->
+<div class="chat">
+    <div class="chat-header clearfix">
+        <img src="{% static 'chat/img/def.png' %}" alt="" />
 
+        <div class="chat-about">
+            <div class="chat-with">Chat with {{ room.name }}</div>
+            <small class="chat-num-messages"
+                style="{% if room.unread_count > 0 %} #ff0000 {% endif %}">{{room.unread_count}} new messages</small>
+        </div>
+    </div> <!-- end chat-header -->
+
+    <div class="chat-history">
+        <ul style="list-style: none;" class="messages">
+            {% if room_messages.count <= 0 %}
+            <li class="chatMessage" data-id="0"></li>
+            {% endif %}
+            {% for room_message in room_messages %}
+            <li class="chatMessage" data-id="{{ room_message.id }}">
+                <div class="message-data {% if room_message.user == user%} align-right {% endif %}">
+                    <span class="message-data-time">{{ room_message.date|timesince }}</span> &nbsp; &nbsp;
+                    <span class="message-data-name">{{ room_message.user }}</span> <i
+                        class="fa fa-circle {% if room_message.user == user %} me {% else %} online {% endif %}"></i>
+                </div>
+                <div
+                    class="message {% if room_message.user == user %}other-message float-right {% else %} my-message {% endif %}">
+                    {{ room_message.content }}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div> <!-- end chat-history -->
+
+    <form action="{% url 'chat:room' room.id %}" method="POST" class="chat-message clearfix">
+        {% csrf_token %}
+        <textarea name="content" id="content" placeholder="Type your message" rows="1" required></textarea>
+        <label for="area">Area: </label>
+        <select name="area" id="area" style="width: 155px">
+            {% for area in room.area_set.all %}
+            <option value="{{ area.id }}">{{ area.title }}</option>
+            {% endfor %}
+        </select>
+        <i class="fas fa-microphone"></i>&nbsp;&nbsp;&nbsp;
+        <i class="fa fa-paperclip"></i>
+        <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+    </form>
+
+</div> <!-- end chat -->
+<!-- TODO change text area displaying -->
+<!-- ---------------------- -->
+<!-- SIDEBAR -->
+<!-- ---------------------- -->
 <div class="page-wrapper chiller-theme">
     <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
         <i class="fas fa-bars"></i>
@@ -43,7 +82,7 @@
             </div>
             <!-- sidebar-header  -->
             <div class="areas-all">
-                <ul>
+                <ul class="messages">
                     <li><a href="{% url 'chat:room' room.id %}">All</a></li>
                     {% if not room.area_set.count <= 1 %}
                     {% for area in room.area_set.all %}
@@ -83,30 +122,14 @@
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="Add chat divider" required maxlength="30">
+                    <input type="text" name="title" id="id_title" placeholder="Add chat divider" required
+                        maxlength="30">
                     <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
                             class="fas fa-plus-circle" style="font-size: 200%; color: #4CD137;"></i></button>
                 </form>
             </div>
     </nav>
     <!-- sidebar-wrapper  -->
-
-    <div class="send-message">
-        <form action="{% url 'chat:room' room.id %}" method="post" class="form-inline">
-            {% csrf_token %}
-            <input type="text" name="content" id="id_content" class="form-control" placeholder="Type your message"
-                required>
-            <div class="message-options">
-                <select name="area" id="id_area">
-                    {% for area in room.area_set.all %}
-                    <option value="{{ area.id }}">{{ area.title }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-success" id="sendMessage"><i
-                        class="fas fa-paper-plane"></i></button>
-            </div>
-        </form>
-    </div>
 
     <!-- --------------------- -->
     <!-- MODALS -->
@@ -160,114 +183,130 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // ---------------------------
-            // INTERFACE
-            // ---------------------------
-            // ----------Toggle Options------------
-            var optionBtns = document.querySelectorAll('.option-item')
-            var options = document.querySelectorAll('.option-menu')
-            for (btn of optionBtns) {
-                btn.onclick = function (e) {
-                    for (btn of optionBtns) {
-                        btn.classList.remove('active')
-                    };
-                    for (option of options) {
-                        option.style.display = 'none';
-                    };
-                    this.classList.add('active')
-                    document.querySelector(this.getAttribute('data-target')).style.display = 'block';
-                }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ---------------------------
+        // INTERFACE
+        // ---------------------------
+        // ----------Toggle Options------------
+        var optionBtns = document.querySelectorAll('.option-item')
+        var options = document.querySelectorAll('.option-menu')
+        for (btn of optionBtns) {
+            btn.onclick = function (e) {
+                for (btn of optionBtns) {
+                    btn.classList.remove('active')
+                };
+                for (option of options) {
+                    option.style.display = 'none';
+                };
+                this.classList.add('active')
+                document.querySelector(this.getAttribute('data-target')).style.display = 'block';
             }
-            // ------------Invite members------------
-            var inviteBtns = document.querySelectorAll('.invite-btn')
-            for (inviteBtn of inviteBtns) {
-                inviteBtn.onclick = function (e) {
-                    e.preventDefault();
-                    this.parentNode.style.display = 'none';
-                    let xhrInvite = new XMLHttpRequest();
-                    xhrInvite.onreadystatechange = function (e) {
-                        if (this.readyState == 4 && this.status == 200) {}
-                    }
-                    xhrInvite.open('GET', this.getAttribute('href'), true)
-                    xhrInvite.send()
-                }
-            }
-            // --------------------------
-            // FUNCTIONS
-            // --------------------------
-            document.querySelector('#sendMessage').onclick = function (e) {
+        }
+        // ------------Invite members------------
+        var inviteBtns = document.querySelectorAll('.invite-btn')
+        for (inviteBtn of inviteBtns) {
+            inviteBtn.onclick = function (e) {
                 e.preventDefault();
-                if (document.querySelector('#id_content').value == '' || !document.querySelector(
-                        '#id_content').value) {
+                this.parentNode.style.display = 'none';
+                let xhrInvite = new XMLHttpRequest();
+                xhrInvite.onreadystatechange = function (e) {
+                    if (this.readyState == 4 && this.status == 200) {}
+                }
+                xhrInvite.open('GET', this.getAttribute('href'), true)
+                xhrInvite.send()
+            }
+        }
+        // --------------------------
+        // MAIN FUNCTIONS
+        // --------------------------
+        document.querySelector('#sendMessage').onclick = function (e) {
+            e.preventDefault();
+            if (document.querySelector('#content').value == '' || !document.querySelector(
+                    '#content').value) {
+                return false
+            } else {
+                // ------------SEND AND MESSAGE---------------
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function (e) {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let content = document.querySelector('#content').value
+                        document.querySelector('#content').value = '';
+                        let areaDiv = document.getElementById('area')
+                        let area = areaDiv.options[areaDiv.selectedIndex].text
+                        let lastId = parseInt(document.querySelectorAll('.chatMessage')[document
+                            .querySelectorAll('.chatMessage').length - 1].getAttribute(
+                            'data-id'))
+
+                        document.querySelector(".messages").innerHTML += `
+                        <li class="chatMessage" data-id="${lastId + 1}">
+                <div class="message-data align-right">
+                    <span class="message-data-time">Now</span> &nbsp; &nbsp;
+                    <span class="message-data-name">$You</span> <i
+                        class="fa fa-circle me"></i>
+                </div>
+                <div
+                    class="message other-message float-right">
+                    ${content}
+                </div>
+            </li>
+            `
+                        document.querySelector('#notification_sound').play()
+                    }
+                }
+                xhr.open("POST", "{% url 'chat:room' room.id %}", true);
+                xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                data = {
+                    'content': document.querySelector('#content').value,
+                    'area': parseInt(document.querySelector('#area').value),
+                }
+                xhr.send(JSON.stringify(data));
+            }
+        }
+
+// -------------LOAD NEW MESSAGES-----------------
+var xhrLoad = new XMLHttpRequest();
+        xhrLoad.onreadystatechange = function (e) {
+            if (this.readyState == 4 && this.status == 200) {
+                let response = JSON.parse(this.responseText);
+                let newMessages = response.new_messages
+                if (!newMessages || newMessages.length <= 0) {
                     return false
                 } else {
-                    // ------------SEND AND MESSAGE---------------
-                    let xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function (e) {
-                        if (this.readyState == 4 && this.status == 200) {
-                            let content = document.querySelector('#id_content').value
-                            document.querySelector('#id_content').value = '';
-                            let areaDiv = document.getElementById('id_area')
-                            let area = areaDiv.options[areaDiv.selectedIndex].text
-                            let lastId = parseInt(document.querySelectorAll('.message')[document
-                                .querySelectorAll('.message').length - 1].getAttribute(
-                                'data-id'))
-                            document.querySelector('.messages').innerHTML += `
-            <div class="message self" data-id=${lastId+1}>
-            <p>You &mdash; ${area}:</p>
-            <p>${content}</p>
-        </div>
-            `
-                            document.querySelector('#notification_sound').play()
-                        }
-                    }
-                    xhr.open("POST", "{% url 'chat:room' room.id %}", true);
-                    xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
-                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-                    data = {
-                        'content': document.querySelector('#id_content').value,
-                        'area': parseInt(document.querySelector('#id_area').value),
-                    }
-                    xhr.send(JSON.stringify(data));
-                }
-            }
-            // -------------LOAD NEW MESSAGES-----------------
-            var xhrLoad = new XMLHttpRequest();
-            xhrLoad.onreadystatechange = function (e) {
-                if (this.readyState == 4 && this.status == 200) {
-                    let response = JSON.parse(this.responseText);
-                    let newMessages = response.new_messages
-                    if (!newMessages || newMessages.length <= 0) {
-                        return false
-                    } else {
-                        for (message of newMessages) {
-                            document.querySelector('.messages').innerHTML += `
-                        <div class="message other" data-id="${message.id}">
-            <p>${message.user} &mdash;${message.area}:</p>
-            <p>${message.content}</p>
-        </div>
-                        `
-                            document.querySelector('#notification_sound').play()
-                        }
-                    }
-                };
-            };
-            setInterval(() => {
-                xhrLoad.open('POST', "{% url 'chat:load_messages' room.id %}", true)
-                xhrLoad.setRequestHeader('Content-type', "application/x-www-form-urlencode");
-                xhrLoad.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
-                let dataLoad = {
-                    'last_id': parseInt(document.querySelectorAll('.message')[document
-                        .querySelectorAll(
-                            '.message').length - 1].getAttribute('data-id')),
-                };
+                    for (message of newMessages) {
 
-                xhrLoad.send(JSON.stringify(dataLoad))
-            }, 3000)
-        });
-    </script>
-</div>
+                        document.querySelector(".messages").innerHTML += `
+                        <li class="chatMessage" data-id="${message.id}">
+                <div class="message-data">
+                    <span class="message-data-time">Now</span> &nbsp; &nbsp;
+                    <span class="message-data-name">${message.user}</span> <i
+                        class="fa fa-circle online"></i>
+                </div>
+                <div
+                    class="message my-message ">
+                    ${message.content}
+                </div>
+            </li>
+                        `
+                        document.querySelector('#notification_sound').play()
+                    }
+                }
+            };
+        };
+        setInterval(() => {
+            xhrLoad.open('POST', "{% url 'chat:load_messages' room.id %}", true)
+            xhrLoad.setRequestHeader('Content-type', "application/x-www-form-urlencode");
+            xhrLoad.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+            let messages = document.querySelectorAll('.chatMessage')
+            let dataLoad = {
+                'last_id': parseInt((messages)[messages.length - 1].getAttribute('data-id')),
+            };
+
+            xhrLoad.send(JSON.stringify(dataLoad))
+        }, 3000)
+    });
+</script>
 {% endblock content %}
