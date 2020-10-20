@@ -19,4 +19,26 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector("#messageText").addEventListener("focusout", function (e) {
         document.querySelector(".areaSelector").classList.add("hide");
     })
+
+    document.querySelector("#scrollBottom").onclick = function (e) {
+        scroll({
+            top: window.scrollMaxY,
+            behavior: "smooth"
+        })
+    }
+    function toggleScrollDown() {
+        let messages = document.querySelectorAll('.message')
+        let lastMessageHeight = messages[messages.length - 1].offsetHeight
+        console.log(lastMessageHeight)
+        if (window.scrollY < window.scrollMaxY - lastMessageHeight) {
+            document.querySelector("#scrollBottom").style.display = "block"
+        }
+        else {
+            document.querySelector("#scrollBottom").style.display = "none"
+        }
+    }
+    toggleScrollDown()
+    window.addEventListener("scroll", function (e) {
+        toggleScrollDown()
+    })
 });

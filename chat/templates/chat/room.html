@@ -43,7 +43,7 @@
                     {% else %}{{room_message.user}}{% endif %}{% if room_message.area %} &mdash; {{ room_message.area }}
                     {% endif %}</p>
                 {% if room_message.text %}
-                <p>{{ room_message.content }}</p>
+                <p class="msg-txt">{{ room_message.content }}</p>
                 {% else %}
                 {{ room_message.content|safe }}
                 <br>
@@ -53,6 +53,7 @@
         </li>
         {% endfor %}
 </ol>
+<i class="fas fa-angle-double-down" id="scrollBottom"></i>
 <div class="typezone">
     <form action="{% url 'chat:room' room.id %}" method="POST">
         {% csrf_token %}
@@ -120,11 +121,6 @@
                         <i class="fas fa-cog"></i> Options</button>
                     <br>
                     {% endif %}
-                    <a href="{% url 'home' %}" class="btn text-white"><img src="{% static 'chat/img/favicon.png' %}">
-                        Orgachat</a>
-                    <a href="{% url 'users:all_users' %}" class="btn text-white float-right mr-4"><i
-                            class="fas fa-users"></i>
-                        Users</a>
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
@@ -297,33 +293,37 @@
                 // ------------SEND AND MESSAGE---------------
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function (e) {
-                    if (this.readyState == 4 && this.status == 200) {
-                        let text = document.querySelector('#messageText').value
-                        document.querySelector('#messageText').value = '';
-                        let areaDiv = document.getElementById('area')
-                        let area = areaDiv.options[areaDiv.selectedIndex].text
-                        let lastId = parseInt(document.querySelectorAll('.message')[document
-                            .querySelectorAll('.message').length - 1].getAttribute(
-                            'data-id'))
+                    if (this.readyState == 4 && this.status == 200) {}
+                }
+                if (document.querySelector("#messageText").value && document.querySelector("#messageText")
+                    .value != '') {
 
+                    xhr.open("POST", "{% url 'chat:room' room.id %}", true);
+                    xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
+                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                    data = {
+                        'text': document.querySelector('#messageText').value,
+                        'area': parseInt(document.querySelector('#area').value),
+                    }
+                    xhr.send(JSON.stringify(data));
+                    let text = document.querySelector('#messageText').value
+                    document.querySelector('#messageText').value = '';
+                    let areaDiv = document.getElementById('area')
+                    let area = areaDiv.options[areaDiv.selectedIndex].text
+                    let lastId = parseInt(document.querySelectorAll('.message')[document
+                        .querySelectorAll('.message').length - 1].getAttribute(
+                        'data-id'))
+                    if (text && text != '') {
                         document.querySelector(".messages").innerHTML += `<li class="message self" data-id="${lastId + 1}">
             <div class="msg">
                 <p>You &mdash; ${area}</p>
-                <p>${text}</p>
+                <p class="msg-txt">${text}</p>
                 <time>Now</time>
             </div>
         </li>`
                         document.querySelector('#notification_sound').play()
                     }
                 }
-                xhr.open("POST", "{% url 'chat:room' room.id %}", true);
-                xhr.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
-                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-                data = {
-                    'text': document.querySelector('#messageText').value,
-                    'area': parseInt(document.querySelector('#area').value),
-                }
-                xhr.send(JSON.stringify(data));
             }
         }
 
@@ -430,7 +430,7 @@
                     for (message of newMessages) {
                         var content
                         if (message.isText == "True" || message.isText) {
-                            content = `<p>${message.content}</p>`
+                            content = `<p class="msg-txt">${message.content}</p>`
                         } else {
                             content = `${message.content}
                             <br>`
