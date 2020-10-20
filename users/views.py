@@ -1,3 +1,4 @@
+from django.http import request
 from chat.models import Area, Room
 from django.contrib import messages
 from django.contrib.auth import backends, logout
@@ -98,3 +99,9 @@ def logoutuser(request):
         logout(request)
         messages.success(request, 'Logout out successfullly')
         return redirect('signupuser')
+
+# --------------------
+# FAQ and About
+# --------------------
+def about(request):
+    return render(request, "users/about.html")
