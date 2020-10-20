@@ -331,71 +331,93 @@
         // ----------------RECORD AUDIO MESSAGE----------------
 
         const record = document.querySelector('#record')
-            let chunks = [];
-            // Check if getUserMedia is supported
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({
-                    audio: true
-                }).then(function (stream) {
-                    let mediaRecorder = new MediaRecorder(stream);
-                    record.onclick = function (e) {
-                        if (record.style.color == '') {
-                            // Start recording
-                            mediaRecorder.start()
-                            record.style.color = "#4CD137";
-                            record.style.backgroundColor = "black";
-                            document.querySelector(".areaSelector").classList.remove("hide")
-                            mediaRecorder.ondataavailable = function (e) {
-                                chunks.push(e.data);
-                                // End recording
-                            };
-                        } else {
-                            record.style.color = '';
-                            record.style.backgroundColor = '';
-                            document.querySelector(".areaSelector").classList.add("hide")
-                            mediaRecorder.stop();
-                        }
-                        // Getting the blob
-                        mediaRecorder.onstop = function (e) {
-                            const blob = new Blob(chunks, {
-                                'type': 'audio/ogg; codecs=opus'
-                            });
-                            chunks = [];
-                            const audioURL = window.URL.createObjectURL(blob);
-                            // Sending to django
-                            e.preventDefault();
-                            var fd = new FormData();
-                            fd.append('audio', blob);
-                            fd.append('area', parseInt(document.querySelector('#area').value));
-                            fd.append('csrfmiddlewaretoken', "{{ csrf_token }}")
-                            $.ajax({
-                                url: '{% url "chat:record_audio_message" room.id %}',
-                                type: 'POST',
-                                data: fd,
-                                processData: false,
-                                contentType: false,
-                                success: function (data) {
-                                    // todo show message
-                                    alert("Please refresh the page, we will fix it soon, thanks")
-                                },
-                                error: function () {
-                                    alert('Internal Server Error')
-                                }
-                            })
-                            // End sending to django
-                        }
-                        // End getting the blob
+        let chunks = [];
+        // Check if getUserMedia is supported
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({
+                audio: true
+            }).then(function (stream) {
+                let mediaRecorder = new MediaRecorder(stream);
+                record.onclick = function (e) {
+                    if (record.style.color == '') {
+                        // Start recording
+                        mediaRecorder.start()
+                        record.style.color = "#4CD137";
+                        record.style.backgroundColor = "black";
+                        document.querySelector(".areaSelector").classList.remove("hide")
+                        mediaRecorder.ondataavailable = function (e) {
+                            chunks.push(e.data);
+                            // End recording
+                        };
+                    } else {
+                        record.style.color = '';
+                        record.style.backgroundColor = '';
+                        document.querySelector(".areaSelector").classList.add("hide")
+                        mediaRecorder.stop();
                     }
-                }).catch(function (err) {
-                    alert(
-                        'Please allow the microphone permission to record voice messages'
-                    )
-                })
-            } else {
-                alert('Your browser doesn\'t support user recording audio')
-            }
-        
-        
+                    // Getting the blob
+                    mediaRecorder.onstop = function (e) {
+                        const blob = new Blob(chunks, {
+                            'type': 'audio/ogg; codecs=opus'
+                        });
+                        chunks = [];
+                        const audioURL = window.URL.createObjectURL(blob);
+                        // Sending to django
+                        e.preventDefault();
+                        var fd = new FormData();
+                        fd.append('audio', blob);
+                        fd.append('area', parseInt(document.querySelector('#area').value));
+                        fd.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+                        $.ajax({
+                            url: '{% url "chat:record_audio_message" room.id %}',
+                            type: 'POST',
+                            data: fd,
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                let messages = document.querySelectorAll('.message')
+                                let lastId = parseInt((messages)[messages.length -
+                                    1].getAttribute('data-id'))
+                                let areaDiv = document.getElementById('area')
+                                let area = areaDiv.options[areaDiv.selectedIndex]
+                                    .text
+                                document.querySelector(".messages").innerHTML += `<li class="message self" data-id="${lastId + 1}">
+            <div class="msg">
+                <p>You &mdash; ${area}</p>
+                <audio controls>
+                        <source src="${audioURL}" type="audio/pcm">
+                        <source src="${audioURL}" type="audio/wav">
+                        <source src="${audioURL}" type="audio/aiff">
+                        <source src="${audioURL}" type="audio/mp3">
+                        <source src="${audioURL}" type="audio/aac">
+                        <source src="${audioURL}" type="audio/ogg">
+                        <source src="${audioURL}" type="audio/flac">
+                        <source src="${audioURL}" type="audio/wma">
+                    Your browser does not support the audio element.
+                </audio>
+                <time>Now</time>
+            </div>
+        </li>`
+                                document.querySelector('#notification_sound').play()
+                            },
+                            error: function () {
+                                alert('Internal Server Error')
+                            }
+                        })
+                        // End sending to django
+                    }
+                    // End getting the blob
+                }
+            }).catch(function (err) {
+                alert(
+                    'Please allow the microphone permission to record voice messages'
+                )
+            })
+        } else {
+            alert('Your browser doesn\'t support user recording audio')
+        }
+
+
         // -------------LOAD NEW MESSAGES-----------------
         var xhrLoad = new XMLHttpRequest();
         xhrLoad.onreadystatechange = function (e) {
@@ -407,7 +429,7 @@
                 } else {
                     for (message of newMessages) {
                         var content
-                        if (message.isText == "True" || message.isText){
+                        if (message.isText == "True" || message.isText) {
                             content = `<p>${message.content}</p>`
                         } else {
                             content = `${message.content}
