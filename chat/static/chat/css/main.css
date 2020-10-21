@@ -64,6 +64,10 @@ body {
 /* REUSABLE */
 /* ------------------ */
 
+section {
+    margin-bottom: 50px;
+}
+
 div.center{
     margin-left: auto;
     margin-right: auto;

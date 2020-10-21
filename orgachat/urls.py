@@ -23,6 +23,7 @@ from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('webpush/', include('webpush.urls')),
     path('', chat_views.home, name="home"),
 
     # Include

@@ -1,12 +1,22 @@
 {% extends 'chat/base.html' %}
+{% load webpush_notifications %}
 
 {% block title %}Home | Orgachat{% endblock title %}
 
-{% block description %}Have the most organized chat you can ever dream with here{% endblock description %}
+{% block description %}Have an organized chat with your friends.{% endblock description %}
 
 {% block content %}
 
 <div class="container">
+    <section>
+        <!-- Web push start -->
+        {% webpush_header %}
+        <i class="fas fa-bell" style="font-size:34px;"></i>{% webpush_button with_class="btn btn-outline-info" %}
+        <!-- Web push end -->
+        <a href="" class="btn btn-danger" onclick="return alert('Under developing, we will bring it soon')">Add To
+            homepage</a>
+        <small class="form-text text-muted">Make sure your that browser allows notification permission</small>
+    </section>
     {% if rooms.count <= 0 %}
     <br>
     <section>
@@ -62,7 +72,6 @@
     </div>
 </div>
 <script>
-
     let deferredPrompt;
     const addBtn = document.querySelector('#addToHomescreen');
     addBtn.style.display = 'none';
