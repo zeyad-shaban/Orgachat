@@ -37,8 +37,12 @@ organizing your chat{% endblock description %}
                 <input type="submit" class="button" value="Sign Up">
             </form>
             <div class="help-text">
-                <!-- <p>By signing up, you agree to our</p>
-                <p><a href="#We dont have one for now">Terms of service</a></p> -->
+                <small class="form-text text-muted">By signing up, you agree to our
+                    <a href="{% url 'info:termsandconditions' %}" target="_blank"
+                        onclick="openModal('#termsAndConditions'); return false">Terms and conditions</a>
+                    <a href="{% url 'info:privacypolicy' %}" target="_blank"
+                        onclick="openModal('#privacyPolicy'); return false"> Privacy Policy</a>
+                    <a href="{% url 'info:cookiepolicy' %}" onclick="openModal('#cookiePolicy'); return false" target="_blank"> Cookie Policy</a></small>
             </div>
         </div>
 
@@ -55,6 +59,352 @@ organizing your chat{% endblock description %}
             <!-- <div class="help-text">
                 <p><a href="#">Forget your password?</a></p>
             </div> -->
+        </div>
+    </div>
+</div>
+<!-- -------------------------- -->
+<!-- MODELS -->
+<!-- -------------------------- -->
+<!-- --------Terms and conditions -->
+<div class="modal fade" id="termsAndConditions" tabindex="-1" role="dialog" aria-labelledby="termsAndConditionsLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsAndConditionsLabel">Terms And conditions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#termsAndConditions')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrapper">
+                    <div class="page">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="center">
+                                        <h1>Terms and Conditions for Orgachat</h1>
+                                    </div>
+                                    <div class="center">
+                                        <h2>Introduction</h2>
+                                    </div>
+                                    <p>These Website Standard Terms and Conditions written on this webpage shall manage
+                                        your use of our
+                                        website, Orgachat accessible at https://orgachat.pythonanywhere.com.</p>
+                                    <p>These Terms will be applied fully and affect to your use of this Website. By
+                                        using this Website,
+                                        you agreed to accept all terms and conditions written in here. You must not use
+                                        this Website if
+                                        you disagree with any of these Website Standard Terms and Conditions. These
+                                        Terms and Conditions
+                                        have been generated with the help of the <a
+                                            href="https://www.termsandcondiitionssample.com">Terms And Conditiions
+                                            Sample</a> and the <a href="https://www.generateprivacypolicy.com">Privacy
+                                            Policy Generator</a>.</p>
+                                    <div class="center">
+                                        <h2>Intellectual Property Rights</h2>
+                                    </div>
+                                    <p>Other than the content you own, under these Terms, Orgachat and/or its licensors
+                                        own all the
+                                        intellectual property rights and materials contained in this Website.</p>
+                                    <p>You are granted limited license only for purposes of viewing the material
+                                        contained on this
+                                        Website.</p>
+                                    <div class="center">
+                                        <h2>Restrictions</h2>
+                                    </div>
+                                    <p>You are specifically restricted from all of the following:</p>
+                                    <ul>
+                                        <li>selling, sublicensing and/or otherwise commercializing any Website material;
+                                        </li>
+                                        <li>using this Website in any way that is or may be damaging to this Website;
+                                        </li>
+                                        <li>using this Website in any way that impacts user access to this Website;</li>
+                                        <li>using this Website contrary to applicable laws and regulations, or in any
+                                            way may cause harm
+                                            to the Website, or to any person or business entity;</li>
+                                        <li>engaging in any data mining, data harvesting, data extracting or any other
+                                            similar activity
+                                            in relation to this Website;</li>
+                                        <li>using this Website to engage in any advertising or marketing.</li>
+                                        <li>Performing any attacks to the website, known as hacking.</li>
+                                    </ul>
+                                    <div class="center">
+                                        <h2>Your Content</h2>
+                                    </div>
+                                    <p>In these Website Standard Terms and Conditions, "Your Content" shall mean any
+                                        audio, video text,
+                                        images or other material you choose to display on this Website. By displaying
+                                        Your Content, you
+                                        grant Orgachat a non-exclusive, worldwide irrevocable, sub licensable license to
+                                        use, reproduce,
+                                        adapt, publish, translate and distribute it in any and all media.</p>
+                                    <p>Your Content must be your own and must not be invading any third-party’s rights.
+                                        Orgachat
+                                        reserves the right to remove any of Your Content from this Website at any time
+                                        without notice.
+                                    </p>
+                                    <div class="center">
+                                        <h2>Your Privacy</h2>
+                                    </div>
+                                    <p>Please read <a href="{% url 'info:privacypolicy' %}" target="_blank">Privacy
+                                            Policy</a>.</p>
+                                    <div class="center">
+                                        <h2>No warranties</h2>
+                                    </div>
+                                    <p>This Website is provided "as is," with all faults, and Orgachat express no
+                                        representations or
+                                        warranties, of any kind related to this Website or the materials contained on
+                                        this Website.
+                                        Also, nothing contained on this Website shall be interpreted as advising you.
+                                    </p>
+                                    <h2>Limitation of liability</h2>
+                                    <p>In no event shall Orgachat, nor any of its officers, directors and employees,
+                                        shall be held
+                                        liable for anything arising out of or in any way connected with your use of this
+                                        Website whether
+                                        such liability is under contract. &nbsp;Orgachat, including its officers,
+                                        directors and
+                                        employees shall not be held liable for any indirect, consequential or special
+                                        liability arising
+                                        out of or in any way related to your use of this Website.</p>
+                                    <div class="center">
+                                        <h2>Indemnification</h2>
+                                    </div>
+                                    <p>You hereby indemnify to the fullest extent Orgachat from and against any and/or
+                                        all liabilities,
+                                        costs, demands, causes of action, damages and expenses arising in any way
+                                        related to your breach
+                                        of any of the provisions of these Terms.</p>
+                                    <div class="center">
+                                        <h2>Variation of Terms</h2>
+                                    </div>
+                                    <p>Orgachat may change the Terms, we will notifiy users through our website and
+                                        through email when
+                                        we do so.</p>
+                                    <div class="center">
+                                        <h2>Entire Agreement</h2>
+                                    </div>
+                                    <p>These Terms constitute the entire agreement between Orgachat and you in relation
+                                        to your use of
+                                        this Website, and supersede all prior agreements and understandings.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <small class="from-text text-muted">See in a stand alone page <a
+                        href="{% url 'info:termsandconditions' %}" target="_blank">Here</a></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="closeModal('#termsAndConditions')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ---------------Privacy Policy----------------->
+<div class="modal fade" id="privacyPolicy" tabindex="-1" role="dialog" aria-labelledby="privacyPolicyLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyLabel">Privacy Policy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#privacyPolicy')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wrapper">
+                    <div class="page">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="center">
+                                        <h1>Privacy Policy for Orgachat</h1>
+                                    </div>
+                                    <p>At Orgachat, accessible from https://orgachat.pythonanywhere.com, one of our main
+                                        priorities is
+                                        the privacy of our visitors. This Privacy Policy document contains types of
+                                        information that is
+                                        collected and recorded by Orgachat and how we use it.</p>
+                                    <p>If you have additional questions or require more information about our Privacy
+                                        Policy, do not
+                                        hesitate to contact us officialorgachat@gmail.com.</p>
+                                    <p>This Privacy Policy applies only to our online activities and is valid for
+                                        visitors to our
+                                        website with regards to the information that they shared and/or collect in
+                                        Orgachat. This policy
+                                        is not applicable to any information collected offline or via channels other
+                                        than this website.
+                                        Our Privacy Policy was created with the help of the <a
+                                            href="https://www.privacypolicygenerator.info">Privacy Policy Generator</a>
+                                        and the <a href="https://www.generateprivacypolicy.com/">Privacy Policy
+                                            Generator</a>.</p>
+                                    <div class="center">
+                                        <h2>Consent</h2>
+                                    </div>
+                                    <p>By using our website, you hereby consent to our Privacy Policy and agree to its
+                                        terms. For our
+                                        Terms and Conditions, please visit the <a
+                                            href="{% url  'info:termsandconditions' %}">Terms
+                                            &amp;
+                                            Conditions Generator</a>.</p>
+                                    <div class="center">
+                                        <h2>Information we collect & Why</h2>
+                                    </div>
+                                    <p>We collect essential data only</p>
+                                    <ul>
+                                        <li>Username of your choice</li>
+                                        <li>Emal (Optional): <small>Help us to contact you and get your feedback, also
+                                                notifiy you with
+                                                updates. You can prevent us from sending you any message by replying
+                                                with "No" or "لا",
+                                                Only developers can see your email address</small></li>
+                                        <li>Password: <small>We hash passwords before getting saved in our DataBase
+                                                which keeps your
+                                                password safe</small></li>
+                                        <li>Messages you send: <small>We have to keep them in our DataBase so you and
+                                                the person you
+                                                chat with can see your message. For web admins, we use messages as
+                                                numbers that tell us
+                                                whether our app is active or not.</small></li>
+                                        <p>We don't Share any of your messages nor see them</p>
+                                        <li>Profile Avatar (optional): <small>Which others can see to help them identify
+                                                you. others can
+                                                access your photo
+                                                from Orgachat website only and we, as admins, are not allowed to share
+                                                it outside
+                                                Orgachat without your permession</small>
+                                        </li>
+                                    </ul>
+                                    <div class="center">
+                                        <h2>Log Files</h2>
+                                    </div>
+                                    <p>Orgachat follows a standard procedure of using log files. These files log
+                                        visitors when they
+                                        visit websites. All hosting companies do this and a part of hosting services'
+                                        analytics. The
+                                        information collected by log files include internet protocol (IP) addresses,
+                                        browser type,
+                                        Internet Service Provider (ISP), date and time stamp, referring/exit pages, and
+                                        possibly the
+                                        number of clicks. These are not linked to any information that is personally
+                                        identifiable. The
+                                        purpose of the information is for analyzing trends, administering the site,
+                                        tracking users'
+                                        movement on the website, and gathering demographic information to improve the
+                                        website in the
+                                        right way.</p>
+                                    <div class="center">
+                                        <h2>Cookies 🍪😋</h2>
+                                    </div>
+                                    <p>Like any other website, Orgachat uses 'cookies'. These cookies are used to store
+                                        information
+                                        including visitors' preferences, and the pages on the website that the visitor
+                                        accessed or
+                                        visited. The information is used to optimize the users' experience by
+                                        customizing our web page
+                                        content based on visitors' browser type and/or other information.</p>
+                                    <p>A brief list of how we use cookies</p>
+                                    <ul>
+                                        <li>Keep you logged in instead of having to log in every 1 second through
+                                            sessions</li>
+                                        <li>Protect your data while submitting a form through the CSRF token</li>
+                                        <li>Analyze users behaviour which will help us in reports (As what pages users
+                                            bounce)</li>
+                                        <li>Using Google's 3rd pary cookie to target ads (This is the only way for us to
+                                            target ads as
+                                            we don't share or sell any of your data, because we care about your privacy
+                                            more)</li>
+                                    </ul>
+                                    <p>For more general information on cookies, please read <a
+                                            href="https://www.cookieconsent.com/what-are-cookies/">"What Are
+                                            Cookies"</a>.</p>
+                                    <div class="center">
+                                        <h2>Google Analytics Cookie</h2>
+                                    </div>
+                                    <p>However, visitors may choose to decline any of the cookies we provide (Which is
+                                        not recommanded)
+                                    </p>
+                                    <div class="center">
+                                        <h2>Third Party Privacy Policies</h2>
+                                    </div>
+                                    <p>Orgachat's Privacy Policy does not apply to other advertisers or websites. Thus,
+                                        we are advising
+                                        you to consult the respective Privacy Policies of these third-party ad servers
+                                        for more detailed
+                                        information. It may include their practices and instructions about how to
+                                        opt-out of certain
+                                        options. </p>
+                                    <p>You can choose to disable cookies through your individual browser options. To
+                                        know more detailed
+                                        information about cookie management with specific web browsers, it can be found
+                                        at the browsers'
+                                        respective websites.</p>
+                                    <div class="center">
+                                        <h2>CCPA Privacy Rights (Do Not Sell My Personal Information)</h2>
+                                    </div>
+                                    <p>Under the CCPA, among other rights, California consumers have the right to:</p>
+                                    <p>Request that a business that collects a consumer's personal data disclose the
+                                        categories and
+                                        specific pieces of personal data that a business has collected about consumers.
+                                    </p>
+                                    <p>Request that a business delete any personal data about the consumer that a
+                                        business has
+                                        collected.</p>
+                                    <p>Request that a business that sells a consumer's personal data, not sell the
+                                        consumer's personal
+                                        data.</p>
+                                    <p>If you make a request, we have one month to respond to you. If you would like to
+                                        exercise any of
+                                        these rights, please contact us officialorgachat@gmail.com .</p>
+                                    <div class="alert alert-info">We Will Never Sell Your Data</div>
+                                    <small class="from-text text-muted">See in a stand alone page <a
+                                            href="{% url 'info:privacypolicy' %}" target="_blank">Here</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="closeModal('#privacyPolicy')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- -------------Cookie Policy-------------- -->
+<div class="modal fade" id="cookiePolicy" tabindex="-1" role="dialog" aria-labelledby="cookiePolicyLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookiePolicyLabel">Cookie Policy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal('#cookiePolicy')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="center">
+                    <h2>Google Analytics</h2>
+                </div>
+                <p>We use Google Analytics cookie to collect information that can help us to improve faster</p>
+                <p>Information we collect are not personal data but behaviour data, this can include: What pages have
+                    the most bounce rate? How many times does users open our app and so on </p>
+                <div class="center">
+                    <h2>CSRF TOKEN</h2>
+                </div>
+                <p>Used to protect your data from hackers when submitting any form</p>
+                <small class="form-text text-muted">See in a stand alone page <a href="{% url 'info:cookiepolicy' %}" target="_blank">Here</a></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal('#cookiePolicy')">Close</button>
+            </div>
         </div>
     </div>
 </div>

@@ -1,0 +1,115 @@
+{% extends 'chat/base.html' %}
+{% block title %}Privacy Policy | Orgachat{% endblock title %}
+
+{% block description %}Orgachat Privacy Policy, what data do we collect and how we use them{% endblock description %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="center">
+                        <h1>Privacy Policy for Orgachat</h1>
+                    </div>
+                    <p>At Orgachat, accessible from https://orgachat.pythonanywhere.com, one of our main priorities is
+                        the privacy of our visitors. This Privacy Policy document contains types of information that is
+                        collected and recorded by Orgachat and how we use it.</p>
+                    <p>If you have additional questions or require more information about our Privacy Policy, do not
+                        hesitate to contact us officialorgachat@gmail.com.</p>
+                    <p>This Privacy Policy applies only to our online activities and is valid for visitors to our
+                        website with regards to the information that they shared and/or collect in Orgachat. This policy
+                        is not applicable to any information collected offline or via channels other than this website.
+                        Our Privacy Policy was created with the help of the <a
+                            href="https://www.privacypolicygenerator.info">Privacy Policy Generator</a> and the <a
+                            href="https://www.generateprivacypolicy.com/">Privacy Policy Generator</a>.</p>
+                    <div class="center">
+                        <h2>Consent</h2>
+                    </div>
+                    <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms. For our
+                        Terms and Conditions, please visit the <a href="{% url  'info:termsandconditions' %}">Terms
+                            &amp;
+                            Conditions Generator</a>.</p>
+                    <div class="center">
+                        <h2>Information we collect & Why</h2>
+                    </div>
+                    <p>We collect essential data only</p>
+                    <ul>
+                        <li>Username of your choice</li>
+                        <li>Emal (Optional): <small>Help us to contact you and get your feedback, also notifiy you with
+                                updates. You can prevent us from sending you any message by replying with "No" or "لا",
+                                Only developers can see your email address</small></li>
+                        <li>Password: <small>We hash passwords before getting saved in our DataBase which keeps your
+                                password safe</small></li>
+                        <li>Messages you send: <small>We have to keep them in our DataBase so you and the person you
+                                chat with can see your message. For web admins, we use messages as numbers that tell us
+                                whether our app is active or not.</small></li>
+                        <p>We don't Share any of your messages nor see them</p>
+                        <li>Profile Avatar (optional): <small>Which others can see to help them identify you. others can
+                                access your photo
+                                from Orgachat website only and we, as admins, are not allowed to share it outside
+                                Orgachat without your permession</small>
+                        </li>
+                    </ul>
+                    <div class="center">
+                        <h2>Log Files</h2>
+                    </div>
+                    <p>Orgachat follows a standard procedure of using log files. These files log visitors when they
+                        visit websites. All hosting companies do this and a part of hosting services' analytics. The
+                        information collected by log files include internet protocol (IP) addresses, browser type,
+                        Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the
+                        number of clicks. These are not linked to any information that is personally identifiable. The
+                        purpose of the information is for analyzing trends, administering the site, tracking users'
+                        movement on the website, and gathering demographic information to improve the website in the
+                        right way.</p>
+                    <div class="center">
+                        <h2>Cookies 🍪😋</h2>
+                    </div>
+                    <p>Like any other website, Orgachat uses 'cookies'. These cookies are used to store information
+                        including visitors' preferences, and the pages on the website that the visitor accessed or
+                        visited. The information is used to optimize the users' experience by customizing our web page
+                        content based on visitors' browser type and/or other information.</p>
+                    <p>A brief list of how we use cookies</p>
+                    <ul>
+                        <li>Keep you logged in instead of having to log in every 1 second through sessions</li>
+                        <li>Protect your data while submitting a form through the CSRF token</li>
+                        <li>Analyze users behaviour which will help us in reports (As what pages users bounce)</li>
+                        <li>Using Google's 3rd pary cookie to target ads (This is the only way for us to target ads as
+                            we don't share or sell any of your data, because we care about your privacy more)</li>
+                    </ul>
+                    <p>For more general information on cookies, please read <a
+                            href="https://www.cookieconsent.com/what-are-cookies/">"What Are Cookies"</a>.</p>
+                    <div class="center">
+                        <h2>Google Analytics Cookie</h2>
+                    </div>
+                    <p>However, visitors may choose to decline any of the cookies we provide (Which is not recommanded)
+                    </p>
+                    <div class="center">
+                        <h2>Third Party Privacy Policies</h2>
+                    </div>
+                    <p>Orgachat's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising
+                        you to consult the respective Privacy Policies of these third-party ad servers for more detailed
+                        information. It may include their practices and instructions about how to opt-out of certain
+                        options. </p>
+                    <p>You can choose to disable cookies through your individual browser options. To know more detailed
+                        information about cookie management with specific web browsers, it can be found at the browsers'
+                        respective websites.</p>
+                    <div class="center">
+                        <h2>CCPA Privacy Rights (Do Not Sell My Personal Information)</h2>
+                    </div>
+                    <p>Under the CCPA, among other rights, California consumers have the right to:</p>
+                    <p>Request that a business that collects a consumer's personal data disclose the categories and
+                        specific pieces of personal data that a business has collected about consumers.</p>
+                    <p>Request that a business delete any personal data about the consumer that a business has
+                        collected.</p>
+                    <p>Request that a business that sells a consumer's personal data, not sell the consumer's personal
+                        data.</p>
+                    <p>If you make a request, we have one month to respond to you. If you would like to exercise any of
+                        these rights, please contact us officialorgachat@gmail.com .</p>
+                    <div class="alert alert-info">We Will Never Sell Your Data</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

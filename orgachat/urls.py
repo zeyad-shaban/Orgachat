@@ -29,6 +29,7 @@ urlpatterns = [
     # Include
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),
+    path("info/", include("info.urls")),
 
     # AUTHENTICATION
     path('signup/', users_views.signupuser, name="signupuser"),

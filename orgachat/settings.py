@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Apps
     'users',
     'chat',
+    'info',
     # Packages
     'webpush',
     'django_cleanup',
