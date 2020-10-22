@@ -55,7 +55,7 @@
 </ol>
 <i class="fas fa-angle-double-down" id="scrollBottom"></i>
 <div class="typezone">
-    <form action="{% url 'chat:room' room.id %}" method="POST">
+    <form action="{% url 'chat:room' room.id %}" method="POST" id="sendMessageForm">
         {% csrf_token %}
         <textarea type="text" name="text" id="messageText" placeholder="Say something" rows="1" required></textarea>
         <div class="areaSelector hide">
@@ -201,7 +201,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'chat:save_file_message' room.id %}" method="post" enctype="multipart/form-data">
+                <form action="{% url 'chat:save_file_message' room.id %}" method="post" enctype="multipart/form-data" id="attachFilesForm">
                     <div style="display: none;">
                         {% csrf_token %}
                         <label for="uploadVideo">Video</label>
