@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', function () {
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('User accepted the A2HS prompt');
-                    // var xhr = new XMLHttpRequest()
-                    // xhr.open("GET", "/metrics/user_installed/", true)
-                    // xhr.send()
+                    var xhr = new XMLHttpRequest()
+                    xhr.open("GET", "/metrics/user_installed/", true)
+                    xhr.send()
                 } else {
                     console.log('User dismissed the A2HS prompt');
                 }
