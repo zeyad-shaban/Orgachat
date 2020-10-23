@@ -36,11 +36,13 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
-
     // Displaying err
-    if (document.querySelector("#addToHomescreen").style.display == "none" || document
-        .querySelector("#addToHomescreen").style.display == "") {
+    if (document.querySelector("#addToHomescreen").style.display == "none") {
+        // Showo err message
         document.querySelector("#errInstallApp").style.display = "block"
+    } else {
+        // Hide err message
+        document.querySelector("#errInstallApp").style.display = "none"
     }
 
 
