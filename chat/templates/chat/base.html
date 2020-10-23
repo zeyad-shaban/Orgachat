@@ -1,4 +1,6 @@
 {% load static %}
+{% load webpush_notifications %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,27 +17,6 @@
 
         gtag('config', 'UA-179713611-1');
     </script>
-    <!-- END Global site tag (gtag.js) - Google Analytics -->
-
-    <!-- Google Tag Manager -->
-    <!-- <script>
-        (function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start': new Date().getTime(),
-                event: 'gtm.js'
-            });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-TF2LM2J');
-    </script> -->
-    <!-- End Google Tag Manager -->
-
     <!-- Favicon Start -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'chat/favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'chat/favicons/favicon-32x32.png' %}">
@@ -73,52 +54,43 @@
             <a class="navbar-brand" style="margin-right: 30px !important" href="{% url 'home' %}">
                 <img src="{% static 'chat/img/favicon.png' %}" width="40" height="40"
                     class="d-inline-block align-top mr-1" alt="" loading="lazy">
-                Orgachat
+                <span class="nav-label">Orgachat</span>
             </a>
             <ul class="navbar-nav">
                 {% if not request.user.is_authenticated %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'signupuser' %}">Sign Up / In</a>
+                    <a class="nav-link" href="{% url 'signupuser' %}"><span class="nav-label">Sign Up / In</span></a>
                 </li>
                 {% else %}
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'users:profile' %}"><i class="far fa-user-circle"></i>
-                        {{ user.username }}</a>
+                        <span class="nav-label">{{ user.username }}</span></a>
                 </li>
                 {% endif %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users"></i> Users</a>
+                    <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users"></i> <span
+                            class="nav-label">Users</span></a>
                 </li>
             </ul>
             <div class="dropdown">
-                <button class="btn" onclick="toggleDropdown('#mainDropdown')"><i class="fas fa-caret-down"
-                        style="font-size: 34px; color: #EBC12C;"></i></button>
+                <button class="btn" onclick="toggleDropdown('#mainDropdown')"><i class="fas fa-ellipsis-h"
+                        style="font-size: 40px; color: #ff0000;"></i></button>
                 <div class="dropdown-menu" id="mainDropdown">
-                    <!-- AddToAny BEGIN -->
-                    <div>
-                        <div class="justify-content-center row mb-2 mt-2">
-                            <a href="https://www.addtoany.com/add_to/facebook_messenger?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
-                                target="_blank"><img src="https://static.addtoany.com/buttons/facebook_messenger.svg"
-                                    width="32" height="32" style="background-color:#0084FF"></a>
-                            <span class="mr-2"></span>
-                            <a href="https://www.addtoany.com/add_to/whatsapp?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
-                                target="_blank"><img src="https://static.addtoany.com/buttons/whatsapp.svg" width="32"
-                                    height="32" style="background-color:#12AF0A"></a>
-                            <span class="mr-2"></span>
-                            <a href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;linkname="
-                                target="_blank"><img src="https://static.addtoany.com/buttons/telegram.svg" width="32"
-                                    height="32" style="background-color:#2CA5E0"></a>
-                            <span class="mr-2"></span>
-                            <a href="https://www.addtoany.com/share#url=https%3A%2F%2Forgachat.pythonanywhere.com%2F%3Futm_source%3Dorgachat%26utm_medium%3Dreffered%26utm_term%3Dmultiple%2520nonsense%2520messages&amp;title="
-                                target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32"
-                                    height="32" style="background-color:#0166FF"></a>
-                            <span class="mr-2"></span>
-                        </div>
-                    </div>
-                    <!-- AddToAny END -->
-                    <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
-                    <a class="dropdown-item" href="https://www.surveymonkey.com/r/5WMYSSX" target="_blank">Feedback</a>
+                    <button class="dropdown-item btn {% if not user or not user.is_installed%} btn-install {% endif %}" onclick="openModal('#installOrgachat')"><i
+                            class="fas fa-download"></i> Install Orgachat</button>
+                    <br>
+
+                    <button class="btn dropdown-item" style="position: relative;">
+                        <i class="fas fa-bell"
+                            style="font-size: 20px; margin-top: 10px; position: absolute; left: 0px;"></i>{% webpush_header %}{% webpush_button with_class="btn float-right" %}
+                    </button>
+
+                    <button type="button" class="btn" onclick="openModal('#addGroup')"><i class="fas fa-plus"></i> Add
+                        Group</button>
+
+                    <!-- <a class="dropdown-item" href="https://www.surveymonkey.com/r/5WMYSSX" target="_blank">Feedback</a> -->
                     <hr>
+                    <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
                     <form action="{% url 'logoutuser' %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="dropdown-item"
@@ -137,7 +109,7 @@
                 {% endif %}
                 {{ message|safe }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true" onclick="this.style.display = 'none'">&times;</span>
                 </button>
             </div>
             {% endfor %}
@@ -148,11 +120,87 @@
     <main>
         {% block content %}{% endblock content %}
         <div class="modal-backdrop show fade" id="backdrop" style="display: none;"></div>
+
+        <!-- ------------------------------- -->
+        <!-- Modal -->
+        <!-- ------------------------------- -->
+
+        <!-- -----------Install--------- -->
+        <div class="modal fade" id="installOrgachat" tabindex="-1" role="dialog" aria-labelledby="installOrgachatLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="left flex">
+                                <br>
+                                <h1 class="title">Orgachat. Perfect for</h1>
+                                <br>
+                                <ul>
+                                    <li>Managing teams</li>
+                                    <li>organizing chat</li>
+                                    <li>having more organized life!</li>
+                                </ul>
+                            </div>
+                            <div class="right center">
+                                <img src="{% static 'chat/img/logo.png' %}" alt="" width="100" height="100"
+                                    loading="lazy">
+                                    {% if user.is_authenticated %}
+                                <div class="btn" id="addToHomescreen">
+                                    <div class="btn-install">
+                                        <div class="btn-text flex text-white">
+                                            Install Now
+                                        </div>
+                                        <div class="btn-icon">
+                                            <i class="far fa-arrow-alt-circle-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <p class="btn-rose p-2">Please Login first</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger" id="errInstallApp" style="display: none;">make sure you are using
+                        <b>Google Chrome</b> and the app isn't already installed
+                        on your device, or you won't be able to download Orgachat.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="closeModal('#installOrgachat')">No thanks</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ---------Add Group---------- -->
+        <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addGroupLabel">Add Group</h5>
+                        <button type="button" class="close" onclick="closeModal('#addGroup')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'chat:create_group' %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
+                                class="from-control">
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
     <script src="{% static 'chat/js/main.js' %}"></script>
-    
+
     <!-- Service Worker.js -->
     <script>
         if ('serviceWorker' in navigator) {

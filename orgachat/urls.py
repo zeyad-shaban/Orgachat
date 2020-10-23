@@ -35,6 +35,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),
     path("info/", include("info.urls")),
+    path("metrics/", include("metrics.urls")),
 
     # AUTHENTICATION
     path('signup/', users_views.signupuser, name="signupuser"),

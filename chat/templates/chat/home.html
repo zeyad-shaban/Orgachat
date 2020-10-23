@@ -1,6 +1,5 @@
 {% extends 'chat/base.html' %}
 {% load static %}
-{% load webpush_notifications %}
 
 {% block title %}Home | Orgachat{% endblock title %}
 
@@ -9,19 +8,6 @@
 {% block content %}
 
 <div class="container">
-    <section>
-        <br>
-        <br>
-        <button class="btn mb-3" id="addToHomescreen"
-            style="border-radius: 200px; padding: 7px; font-size: 130%; background-color: #EBC12C;"><i
-                class="fas fa-arrow-circle-down" style="color: #4CD137"></i> Install Orgachat</button>
-        <div class="float-right">
-            <!-- Web push start -->
-            {% webpush_header %}
-            <i class="fas fa-bell" style="font-size:34px;"></i>{% webpush_button with_class="btn btn-outline-info" %}
-            <!-- Web push end -->
-        </div>
-    </section>
     {% if rooms.count <= 0 %}
     <br>
     <section>
@@ -46,30 +32,6 @@
     <a href="{% url 'chat:room' room.id %}" class="btn btn-success"><i class="far fa-comments"></i> Chat</a>
     <hr>
     {% endfor %}
-</div>
-<button type="button" class="btn btn-success" onclick="openModal('#addGroup')"
-    style="border-radius: 200px; padding: 7px; position: fixed; bottom: 30px; right: 30px; font-size: 130%">
-    <i class="fas fa-plus"></i> Add Group
-</button>
-<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addGroupLabel">Add Group</h5>
-                <button type="button" class="close" onclick="closeModal('#addGroup')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{% url 'chat:create_group' %}" method="post">
-                    {% csrf_token %}
-                    <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
-                        class="from-control">
-                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 <script src="{% static 'chat/js/home.js'%}"></script>
 {% endblock content %}

@@ -137,6 +137,9 @@ def load_messages(request, room_id):
 
 # --------Group------------
 def create_group(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "Please Login to continue")
+        return redirect("signupuser")
     room = Room.objects.create(name=request.POST.get('name'), type='group')
     room.save()
     room.chatters.add(request.user)
