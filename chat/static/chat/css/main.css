@@ -64,6 +64,8 @@ body {
 #mainDropdown {
     width: 270px;
     padding: 15px 5px 3px 5px;
+    top: 50px;
+    right: 10px;
 }
 
 

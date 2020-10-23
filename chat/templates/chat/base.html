@@ -72,12 +72,14 @@
                             class="nav-label">Users</span></a>
                 </li>
             </ul>
-            <div class="dropdown">
+            <!-- -----------Dropdown------------ -->
+            <div class="dropleft">
                 <button class="btn" onclick="toggleDropdown('#mainDropdown')"><i class="fas fa-ellipsis-h"
                         style="font-size: 40px; color: #ff0000;"></i></button>
                 <div class="dropdown-menu" id="mainDropdown">
-                    <button class="dropdown-item btn {% if not user or not user.is_installed%} btn-install {% endif %}" onclick="openModal('#installOrgachat')"><i
-                            class="fas fa-download"></i> Install Orgachat</button>
+                    <button class="dropdown-item btn {% if not user or not user.is_installed%} btn-install {% endif %}"
+                        onclick="openModal('#installOrgachat')"><i class="fas fa-download"></i> Install
+                        Orgachat</button>
                     <br>
 
                     <button class="btn dropdown-item" style="position: relative;">
@@ -98,6 +100,7 @@
                     </form>
                 </div>
             </div>
+            <!-- -----------End Dropdown------------ -->
         </nav>
 
         {% if messages %}
@@ -145,7 +148,7 @@
                             <div class="right center">
                                 <img src="{% static 'chat/img/logo.png' %}" alt="" width="100" height="100"
                                     loading="lazy">
-                                    {% if user.is_authenticated %}
+                                {% if user.is_authenticated %}
                                 <div class="btn" id="addToHomescreen">
                                     <div class="btn-install">
                                         <div class="btn-text flex text-white">
