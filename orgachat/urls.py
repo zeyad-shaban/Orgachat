@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 from chat import views as chat_views
 from users import views as users_views
@@ -25,6 +26,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('webpush/', include('webpush.urls')),
     path('', chat_views.home, name="home"),
+    # Service Worker PWA
+    path('sw.js', TemplateView.as_view(template_name='chat/sw.js',
+                                       content_type='application/javascript'), name='sw.js',),
+    path('random-response', chat_views.random_response),
 
     # Include
     path('users/', include('users.urls')),

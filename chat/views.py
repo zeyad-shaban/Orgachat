@@ -9,7 +9,23 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from webpush import send_user_notification
 User = get_user_model()
+import logging
+import random
+import time
+logger = logging.getLogger('djpwa.pwa.views')
 
+
+# Service worker
+def random_response(request):
+    response_time_ms = random.choice((0, 10, 50, 100, 1_000, 10_000))
+    response_time = response_time_ms / 1_000
+    print(f'Selected response time {response_time}')
+    time.sleep(response_time)
+    return render(request, 'chat/random_response.html', context={'response_time': response_time})
+
+
+
+# End service worker
 
 def home(request):
     if request.method == 'GET':

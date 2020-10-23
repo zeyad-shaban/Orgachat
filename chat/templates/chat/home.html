@@ -10,13 +10,17 @@
 
 <div class="container">
     <section>
-        <!-- Web push start -->
-        {% webpush_header %}
-        <i class="fas fa-bell" style="font-size:34px;"></i>{% webpush_button with_class="btn btn-outline-info" %}
-        <!-- Web push end -->
-        <a href="" class="btn btn-danger" onclick="return alert('Under developing, we will bring it soon')">Add To
-            homepage</a>
-        <small class="form-text text-muted">Make sure your that browser allows notification permission</small>
+        <br>
+        <br>
+        <button class="btn mb-3" id="addToHomescreen"
+            style="border-radius: 200px; padding: 7px; font-size: 130%; background-color: #EBC12C;"><i
+                class="fas fa-arrow-circle-down" style="color: #4CD137"></i> Install Orgachat</button>
+        <div class="float-right">
+            <!-- Web push start -->
+            {% webpush_header %}
+            <i class="fas fa-bell" style="font-size:34px;"></i>{% webpush_button with_class="btn btn-outline-info" %}
+            <!-- Web push end -->
+        </div>
     </section>
     {% if rooms.count <= 0 %}
     <br>
@@ -46,11 +50,6 @@
 <button type="button" class="btn btn-success" onclick="openModal('#addGroup')"
     style="border-radius: 200px; padding: 7px; position: fixed; bottom: 30px; right: 30px; font-size: 130%">
     <i class="fas fa-plus"></i> Add Group
-</button>
-<button type="button" class="btn btn-warning text-white"
-    style="border-radius: 200px; padding: 7px; position: absolute; top: 70px; right: 30px; font-size: 130%"
-    id="addToHomescreen">Add
-    to Homescreen
 </button>
 <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">

@@ -18,7 +18,7 @@
     <!-- END Global site tag (gtag.js) - Google Analytics -->
 
     <!-- Google Tag Manager -->
-    <script>
+    <!-- <script>
         (function (w, d, s, l, i) {
             w[l] = w[l] || [];
             w[l].push({
@@ -33,7 +33,7 @@
                 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-TF2LM2J');
-    </script>
+    </script> -->
     <!-- End Google Tag Manager -->
 
     <!-- Favicon Start -->
@@ -152,6 +152,21 @@
 
     <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
     <script src="{% static 'chat/js/main.js' %}"></script>
+    
+    <!-- Service Worker.js -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('{% url "sw.js" %}', {
+                scope: '/'
+            }).then(function (reg) {
+                // registration worked
+                console.log('Registration succeeded. Scope is ' + reg.scope);
+            }).catch(function (error) {
+                // registration failed
+                console.log('Registration failed with ' + error);
+            });
+        }
+    </script>
 </body>
 
 </html>
