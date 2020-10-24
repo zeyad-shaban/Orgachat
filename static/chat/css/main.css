@@ -206,7 +206,7 @@ h2:after {
 /* -------------------------------- */
 /* Media queries */
 /* -------------------------------- */
-@media screen and (max-width: 488px) {
+@media screen and (max-width: 590px) {
     .nav-label {
         display: none;
     }
