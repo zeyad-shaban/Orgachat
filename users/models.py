@@ -283,5 +283,13 @@ class HomepageArea(models.Model):
     is_muted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
+    def unread_count(self):
+        unread_count = 0
+        for room in self.room_set.all():
+            unread_count += room.unread_count()
+        if unread_count <= 0:
+            return ''
+        return unread_count
+
     def __str__(self):
         return self.title

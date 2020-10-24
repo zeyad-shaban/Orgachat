@@ -1,3 +1,6 @@
+import time
+import random
+import logging
 import json
 from users.models import HomepageArea
 from django.core.exceptions import PermissionDenied
@@ -10,9 +13,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from webpush import send_user_notification
 User = get_user_model()
-import logging
-import random
-import time
 logger = logging.getLogger('djpwa.pwa.views')
 
 
@@ -25,14 +25,24 @@ def random_response(request):
     return render(request, 'chat/random_response.html', context={'response_time': response_time})
 
 
-
 # End service worker
 
 def home(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            unorganized_rooms = Room.objects.filter(chatters=request.user, homepage_area=None)
-            return render(request, 'chat/home.html', {'unorganized_rooms': unorganized_rooms})
+            user_rooms = Room.objects.filter(chatters=request.user)
+            unorganized_rooms = []
+            for room in user_rooms:
+                if room.homepage_area.count() <= 0 or not room.get_homepage_area():
+                    unorganized_rooms.append(room)
+
+            unorganized_count = 0
+            for room in unorganized_rooms:
+                unorganized_count += room.unread_count()
+            if unorganized_count <= 0:
+                unorganized_count = ''
+            return render(request, 'chat/home.html', {'unorganized_rooms': unorganized_rooms, "unorganized_count": unorganized_count})
+
         else:
             messages.error(request, 'Please create an account or login first')
             return redirect('signupuser')
@@ -70,9 +80,10 @@ def room(request, room_id, area_id=None):
         content = message.filename()
         if message.text:
             content = message.text
-        payload = {"head": f"A new message from {room.title()}", "body": content, "icon": "/static/chat/img/favicon.png", "url": f"https://orgachat.pythonanywhere.com/chat/room/{room.id}/"}
+        payload = {"head": f"A new message from {room.title()}", "body": content, "icon": "/static/chat/img/favicon.png",
+                   "url": f"https://orgachat.pythonanywhere.com/chat/room/{room.id}/"}
         for chatter in room.chatters.all():
-            if not chatter in message.area.muted_users.all() and chatter != request.user and (True): #todo check for chatter url
+            if not chatter in message.area.muted_users.all() and chatter != request.user and (True):  # todo check for chatter url
                 send_user_notification(user=chatter, payload=payload, ttl=1000)
 
         return redirect('chat:room', room_id=room_id)
@@ -82,7 +93,7 @@ def room(request, room_id, area_id=None):
 def save_file_message(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     area = get_object_or_404(Area, pk=int(request.POST.get('area')))
-    
+
     if request.FILES.get("video"):
         message = Message.objects.create(user=request.user, video=request.FILES.get(
             'video'), room=room, area=area)
@@ -106,10 +117,10 @@ def save_file_message(request, room_id):
 def record_audio_message(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     area = get_object_or_404(Area, pk=int(request.POST.get("area")))
-    message = Message.objects.create(user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
+    message = Message.objects.create(
+        user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
     message.save()
     return redirect("chat:room", room_id=room.id)
-
 
 
 @login_required
@@ -131,7 +142,7 @@ def load_messages(request, room_id):
             'area': message.area.title,
             'id': message.id,
             'content': message.content(),
-            "isText" : isText,
+            "isText": isText,
         })
     return JsonResponse({'new_messages': json_new_messages})
 
@@ -168,6 +179,7 @@ def remove_user(request, user_id, room_id):
 
 # ----------Area------------
 
+
 @login_required
 def create_area(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
@@ -189,10 +201,13 @@ def mute_area(request, area_id):
 
 # ---------Homepage Areas-------------
 
+
 def create_homepage_area(request):
-    homepage_area = HomepageArea.objects.create(title=request.POST.get('title'), user=request.user)
+    homepage_area = HomepageArea.objects.create(
+        title=request.POST.get('title'), user=request.user)
     homepage_area.save()
     return redirect('home')
+
 
 def move_room(request, homepage_area_id):
     try:
@@ -201,8 +216,9 @@ def move_room(request, homepage_area_id):
         homepage_area = None
     room_id = int(json.loads(request.body).get("room_id"))
     room = get_object_or_404(Room, pk=room_id)
-    room.homepage_area = homepage_area
-    print(room.homepage_area)
+    curr_area = room.get_homepage_area()
+    room.homepage_area.remove(curr_area)
+    room.homepage_area.add(homepage_area)
     room.save()
     return redirect('home')
 

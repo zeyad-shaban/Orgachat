@@ -16,8 +16,7 @@ class Room(models.Model):
         max_length=9, choices=type_choices, default='friend')
     name = models.CharField(max_length=50)
     chatters = models.ManyToManyField(User)
-    homepage_area = models.ForeignKey(
-        HomepageArea, models.SET_NULL, null=True, blank=True)
+    homepage_area = models.ManyToManyField(HomepageArea)
 
     def title(self):
         if self.type == 'friend':
@@ -71,6 +70,14 @@ class Room(models.Model):
         elif self.type == 'group':
             print('NEVER MIND, IT IS A GOUP!')
             return "/media/users/img/avatar/DefUser.png"
+
+    def get_homepage_area(self):
+        curr_user = current_request().user
+        for area in self.homepage_area.all():
+            if area in curr_user.homepagearea_set.all():
+                return area
+
+        return False
 
 
 class Area(models.Model):
