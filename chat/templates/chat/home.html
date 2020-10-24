@@ -41,14 +41,14 @@
                 {% for room in area.room_set.all %}
                 <a href="{% url 'chat:room' room.id %}" id="openRoom{{room.id}}">
                     <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
-                        data-id="{{room.id}}">
-                        <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
-                        <a href="#" type="button" style="font-size: 120%"
-                            class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
-                        <p>
-                            <strong>{{room.title}}</strong>
-                            <span>{{room.last_message}}</span>
-                        </p>
+                    data-id="{{room.id}}">
+                    <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
+                    <a href="#" type="button" style="font-size: 120%"
+                    class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
+                    <p>
+                        <strong>{{room.title}}</strong>
+                        <span>{{room.last_message}}</span>
+                    </p>
                     </div>
                 </a>
                 <br>
@@ -167,7 +167,6 @@
 <link rel="stylesheet" href="{% static 'chat/css/home.css' %}">
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var node = document.querySelectorAll(".friend")[0];
         var longpress = false;
         var presstimer = null;
         var longtarget = null;
@@ -204,7 +203,6 @@
             this.classList.add("longpress");
 
             if (presstimer === null) {
-                e.preventDefault()
                 roomId = this.getAttribute("data-id")
                 presstimer = setTimeout(function () {
                     openModal("#editRoom")
