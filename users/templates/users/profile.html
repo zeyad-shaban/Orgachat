@@ -19,7 +19,7 @@
                 <p>First: {{user.first_name}} &mdash; Last: {{user.last_name}}</p>
                 <p><i class="fas fa-envelope"></i> Email: {{user.email}}</p>
                 <p><i class="fas fa-globe-asia"></i> Country: {{user.country}}</p>
-                <p>Bio: {{user.bio}}</p>
+                <p>About: {{user.about}}</p>
             </div>
         </div>
         <button class="btn btn-outline-info" onclick="openModal('#updateProfile')"><i class="fas fa-edit"></i> Update
@@ -79,9 +79,9 @@
                         </div>
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <label for="validationServer033">Bio</label>
-                                <input type="text" class="form-control" id="validationServer033" placeholder="Bio"
-                                    value="{{user.bio}}" name="bio">
+                                <label for="validationServer033">About</label>
+                                <input type="text" class="form-control" id="validationServer033" placeholder="About"
+                                    value="{{user.about}}" name="about">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="validationServer053"><i class="fas fa-envelope"></i> Email</label>

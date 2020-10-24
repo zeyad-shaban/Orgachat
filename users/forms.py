@@ -6,4 +6,4 @@ User = get_user_model()
 class UserProfileForm(ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'avatar', 'first_name', 'country')
+        fields = ('first_name', 'last_name', 'username', 'email', 'avatar', 'about', 'country')
