@@ -4,7 +4,17 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 User = get_user_model()
 
-admin.site.register(User, UserAdmin)
+
+class MyUserAdmin(UserAdmin):
+    ordering = ('date_joined', )
+    list_display = ('username', 'email', 'date_joined', 'is_installed')
+
+
+MyUserAdmin.list_filter += ('date_joined',)
+MyUserAdmin.fieldsets += (('Custom Fields', {'fields': (
+    'is_installed', 'friends', 'avatar', 'about', 'country')}),)
+
+admin.site.register(User, MyUserAdmin)
 
 
 @admin.register(HomepageArea)
