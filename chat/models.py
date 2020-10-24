@@ -1,4 +1,5 @@
 import os
+from users.models import HomepageArea
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
@@ -15,6 +16,8 @@ class Room(models.Model):
         max_length=9, choices=type_choices, default='friend')
     name = models.CharField(max_length=50)
     chatters = models.ManyToManyField(User)
+    homepage_area = models.ForeignKey(
+        HomepageArea, models.SET_NULL, null=True, blank=True)
 
     def title(self):
         if self.type == 'friend':
@@ -55,6 +58,19 @@ class Room(models.Model):
                 return ''
         else:
             return ''
+
+    def imageURL(self):
+        if self.type == 'friend':
+            curr_user = current_request().user
+            for chatter in self.chatters.all():
+                if chatter == curr_user:
+                    pass
+                else:
+                    print(chatter.avatar.url)
+                    return chatter.avatar.url
+        elif self.type == 'group':
+            print('NEVER MIND, IT IS A GOUP!')
+            return "/media/users/img/avatar/DefUser.png"
 
 
 class Area(models.Model):

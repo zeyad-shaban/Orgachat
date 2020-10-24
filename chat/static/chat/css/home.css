@@ -1,0 +1,65 @@
+#chatbox {
+    width: 100%;
+    background: #fff;
+    border-radius: 6px;
+}
+
+.friend {
+    height: 70px;
+    border-bottom: 1px solid #e7ebee;
+}
+
+.friend:hover {
+    background: #f1f4f6;
+    cursor: pointer;
+}
+
+.friend img {
+    width: 40px;
+    border-radius: 50%;
+    margin: 15px;
+    float: left;
+}
+
+
+.friend p {
+    padding: 15px 0 0 0;
+    float: left;
+    width: 220px;
+}
+
+.friend p strong {
+    font-weight: 600;
+    font-size: 15px;
+    color: #597a96;
+
+}
+
+.longpress {
+    -webkit-animation: 1s longpress;
+    animation: 1s longpress;
+}
+
+@-webkit-keyframes longpress {
+
+    0%,
+    20% {
+        background: #f1f4f6;
+    }
+
+    100% {
+        background: yellow;
+    }
+}
+
+@keyframes longpress {
+
+    0%,
+    20% {
+        background: #f1f4f6;
+    }
+
+    100% {
+        background: yellow;
+    }
+}

@@ -265,7 +265,7 @@ class User(AbstractUser):
         Don't forget to place it between <ul class="list-unstyled"></ul> Or it won't look any good!"""
         return f"""<li class="media">
     <a href="/users/view/{self.id}">
-        <img src="{self.avatar.url}" class="mr-3" alt="" width="64" height="64" style="border-radius: 50%">
+        <img src="{self.avatar.url}" class="mr-3" alt="" width="64" height="64" style="border-radius: 50%" loading="lazy">
         <div class="media-body">
         <h5 class="mt-0 mb-1">{self.username}</h5>
     </a>
@@ -275,3 +275,13 @@ class User(AbstractUser):
     <p>About: {self.about[:50]}</p>
     </div>
   </li>"""
+
+
+class HomepageArea(models.Model):
+    title = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_muted = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

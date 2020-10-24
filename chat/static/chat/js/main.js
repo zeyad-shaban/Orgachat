@@ -101,3 +101,12 @@ function toggleDropdown(dataTarget) {
         dropdown.style.display = 'block'
     }
 };
+
+function collapseToggle(areaId) {
+    let collapseItem = document.querySelector('#area' + areaId)
+    if (collapseItem.classList.contains('show')) {
+        collapseItem.classList.remove('show')
+    } else {
+        collapseItem.classList.add('show')
+    }
+}

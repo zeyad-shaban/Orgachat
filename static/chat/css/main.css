@@ -71,7 +71,7 @@ body {
 
 
 /* ----------Modal------------- */
-.card {
+.install-card {
     background-color: #ba2e5f;
     color: white;
     display: flex;
@@ -91,11 +91,11 @@ body {
     align-items: center;
 }
 
-.card .right {
+.install-card .right {
     padding-left: 20px;
 }
 
-.card .title {
+.install-card .title {
     text-transform: uppercase;
     font-size: 30px;
     line-height: 29px;
@@ -221,7 +221,7 @@ h2:after {
 }
 
 @media screen and (max-width: 990px) {
-    .card .left.flex {
+    .install-card .left.flex {
         margin-left: 20px;
     }
 
@@ -231,7 +231,7 @@ h2:after {
 }
 
 @media screen and (max-width: 530px) {
-    .card {
+    .install-card {
         display: block;
         display: block;
     }

@@ -1,4 +1,5 @@
 import json
+from users.models import HomepageArea
 from django.core.exceptions import PermissionDenied
 from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
@@ -30,8 +31,8 @@ def random_response(request):
 def home(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            rooms = Room.objects.filter(chatters=request.user)
-            return render(request, 'chat/home.html', {'rooms': rooms})
+            unorganized_rooms = Room.objects.filter(chatters=request.user, homepage_area=None)
+            return render(request, 'chat/home.html', {'unorganized_rooms': unorganized_rooms})
         else:
             messages.error(request, 'Please create an account or login first')
             return redirect('signupuser')
@@ -167,7 +168,6 @@ def remove_user(request, user_id, room_id):
 
 # ----------Area------------
 
-
 @login_required
 def create_area(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
@@ -186,6 +186,25 @@ def mute_area(request, area_id):
     else:
         area.muted_users.add(request.user)
     return redirect('chat:room', area.room.id)
+
+# ---------Homepage Areas-------------
+
+def create_homepage_area(request):
+    homepage_area = HomepageArea.objects.create(title=request.POST.get('title'), user=request.user)
+    homepage_area.save()
+    return redirect('home')
+
+def move_room(request, homepage_area_id):
+    try:
+        homepage_area = get_object_or_404(HomepageArea, pk=homepage_area_id)
+    except:
+        homepage_area = None
+    room_id = int(json.loads(request.body).get("room_id"))
+    room = get_object_or_404(Room, pk=room_id)
+    room.homepage_area = homepage_area
+    print(room.homepage_area)
+    room.save()
+    return redirect('home')
 
 # --------------Star-----------------
 

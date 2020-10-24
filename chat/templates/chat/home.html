@@ -7,30 +7,159 @@
 
 {% block content %}
 
-<div class="container">
-    {% if rooms.count <= 0 %}
-    <br>
-    <section>
-        <h2>Instructions</h2>
-        <p>Find and add your friends <a href="{% url 'users:all_users' %}" target="_blank">Here</a></p>
-        <p>Ask others to search for you by giving them your username</p>
-        <p>The only information anyone can access (including us) is your username</p>
-        <div class="alert alert-info">If you entered your email developers can see it but no one else. We will use it to
-            contact you and make sure that you are happy with our app. Unsubscribing is very easy and we won't spam you
-        </div>
-    </section>
+<!-- -------------------New users with no chats------------------- -->
+{% if unorganized_rooms.count <= 0 and user.homepagearea_set.count <= 0%}
+<section>
+    <p>Find and add your friends <a href="{% url 'users:all_users' %}" target="_blank"> Here</a></p>
+    <p>Click on the three dots in the navbar to: Install the app, Add Groups, Divide homepage using Homepage Areas,
+        and much others</p>
+    <p>Check your profile <a href="{% url 'users:profile' %}">Here</a> and update your profile and privacy</p>
+    <p>We will send you messages through email to keep you updated, if you want to disable this feature reply with
+        "No" or "Unsubscribe"</p>
     <small class="form-text text-muted">You are seeing this because you don't have chat rooms</small>
-    <br>
-    <br>
-    {% endif %}
-    {% for room in rooms %}
-    <p>{{ room.title }}
-        {% if room.unread_count > 0 %}
-        <span class="badge badge-danger ml-3 p-2" style="border-radius: 50%;">{{ room.unread_count }} </span></p>
-    {% endif %}
-    <p>{{ room.last_message }}</p>
-    <a href="{% url 'chat:room' room.id %}" class="btn btn-success"><i class="far fa-comments"></i> Chat</a>
-    <hr>
-    {% endfor %}
+</section>
+{% endif %}
+<!-- -------------------End new users with no chats------------------- -->
+
+<!-- -------------------Homepage Areas------------------- -->
+{% for area in user.homepagearea_set.all %}
+<div class="accordion">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block" onclick="collapseToggle('{{area.id}}')">
+                    {{area.title}} <a href="#" type="button" class="badge badge-danger ml-3">2</a>
+                </button>
+            </h2>
+        </div>
+
+        <div id="area{{area.id}}" class="collapse">
+            {% if area.room_set.count <= 0 %}
+            <p>Hold the chat room you want to add here. This area is currently Empty</p>
+            {% endif %}
+            <div id="chatbox">
+                {% for room in area.room_set.all %}
+                <a href="{% url 'chat:room' room.id %}" id="openRoom{{room.id}}">
+                    <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
+                        data-id="{{room.id}}">
+                        <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
+                        <a href="#" type="button" style="font-size: 120%"
+                            class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
+                        <p>
+                            <strong>{{room.title}}</strong>
+                            <span>{{room.last_message}}</span>
+                        </p>
+                    </div>
+                </a>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
+{% endfor %}
+<!-- -------------End Homepage Areas------------- -->
+
+<!-- -------------UnOrganized Areas------------- -->
+
+<!-- -------------End UnOrganized Areas------------- -->
+<div class="accordion">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block" onclick="collapseToggle('others')">
+                    Others (Unorganized) <a href="#" type="button" class="badge badge-danger ml-3">Err500</a>
+                </button>
+            </h2>
+        </div>
+
+        <div id="areaothers" class="collapse">
+            <div id="chatbox">
+                {% for room in unorganized_rooms %}
+                <a href="{% url 'chat:room' room.id %}" id="openRoom{{room.id}}">
+                    <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
+                        data-id="{{room.id}}">
+                        <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
+                        <a href="#" type="button" style="font-size: 120%"
+                            class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
+                        <p>
+                            <strong>{{room.title}}</strong>
+                            <span>{{room.last_message}}</span>
+                        </p>
+                    </div>
+                </a>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<button class="btn btn-warning" style="position: fixed; bottom: 60px; right: 60px; border-radius: 200px;"
+    onclick="openModal('#addArea')"><i class="fas fa-plus"></i> Add Homepage area</button>
+
+<!-- ------------------------------------ -->
+<!-- Modals -->
+<!-- ------------------------------------ -->
+<div class="modal fade" id="addArea" tabindex="-1" role="dialog" aria-labelledby="addAreaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="center">
+                    <h2 class="modal-title" id="addAreaLabel">Add Homepage Area</h2>
+                </div>
+                <button type="button" class="close" onclick="closeModal('#addArea')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'chat:create_homepage_area' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="title" id="id_title" placeholder="Homepage Area Title" required
+                        maxlength="50" class="from-control">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                </form>
+                <br>
+                <small>Homepage Areas are used to divide your homepage friends and groups</small>
+                <small class="form-text text-muted">We will move the "Add Homepage Area" button to the three
+                    dots</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -------------Modals-------------- -->
+<div class="modal fade" id="editRoom" tabindex="-1" role="dialog" aria-labelledby="editRoomLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="center">
+                    <h2 class="modal-title" id="editRoomLabel">Edit Chat Room</h2>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#editRoom')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="center">
+                    <h2>Homepage Area</h2>
+                </div>
+
+                {% for area in user.homepagearea_set.all %}
+                <p class="float-left">{{area.title}}</p>
+                <a href="{% url 'chat:move_room' area.id %}" class="btn btn-outline-success ml-3 btn-sm moveRoomBtn"><i
+                        class="fas fa-plane"></i> Move</a>
+                <br>
+                <br>
+                {% endfor %}
+                <p class="float-left">Others (Unorganized)</p>
+                <a href="{% url 'chat:move_room' 0 %}" class="btn btn-outline-success ml-3 btn-sm moveRoomBtn"><i
+                        class="fas fa-plane"></i> Move</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'chat/css/home.css' %}">
+<script src="{% static 'chat/js/home.js' %}"></script>
 {% endblock content %}
