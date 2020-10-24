@@ -251,7 +251,7 @@ class User(AbstractUser):
     is_installed = models.BooleanField(default=False)
     # Advanced Identefiers
     bio = models.CharField(
-        max_length=250, default="Hi! I'm an Orgachat user :)")
+        max_length=250, default="Hi! I'm an Orgachat user :)", blank=True, null=True)
     avatar = models.ImageField(
         upload_to='users/img/avatar/', default="users/img/avatar/DefUser.png/")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
