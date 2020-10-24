@@ -172,10 +172,16 @@ def remove_user(request, user_id, room_id):
     user = get_object_or_404(User, pk=user_id)
     room = get_object_or_404(Room, pk=room_id)
     room.chatters.remove(user)
+    room.homepage_area.remove(room.get_homepage_area())
     message = Message.objects.create(
         room=room, text=f"{request.user.username} removed {user.username}", user=request.user)
     message.save()
-    return redirect('chat:room', room_id=room_id)
+    if room.chatters.count() <= 0:
+        room.delete()
+    if user == request.user:
+        return redirect('home')
+    else:
+        return redirect('chat:room', room_id=room_id)
 
 # ----------Area------------
 

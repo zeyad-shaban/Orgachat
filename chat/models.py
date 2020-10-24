@@ -16,7 +16,7 @@ class Room(models.Model):
         max_length=9, choices=type_choices, default='friend')
     name = models.CharField(max_length=50)
     chatters = models.ManyToManyField(User)
-    homepage_area = models.ManyToManyField(HomepageArea)
+    homepage_area = models.ManyToManyField(HomepageArea, blank=True)
 
     def title(self):
         if self.type == 'friend':
@@ -34,7 +34,7 @@ class Room(models.Model):
         unread_messages = self.message_set.filter(is_read=False)
         output = []
         for message in unread_messages:
-            if not current_request().user in message.area.muted_users.all() and message.user != current_request().user:
+            if message.area and not current_request().user in message.area.muted_users.all() and message.user != current_request().user:
                 output.append(message)
         if len(output) <= 0:
             output = 0
