@@ -250,8 +250,8 @@ class User(AbstractUser):
     friends = models.ManyToManyField('User', blank=True)
     is_installed = models.BooleanField(default=False)
     # Advanced Identefiers
-    bio = models.CharField(
-        max_length=250, default="Hi! I'm an Orgachat user :)", blank=True, null=True)
+    # bio = models.CharField(
+    #     max_length=250, default="Hi! I'm an Orgachat user :)", blank=True, null=True)
     avatar = models.ImageField(
         upload_to='users/img/avatar/', default="users/img/avatar/DefUser.png/")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
@@ -272,6 +272,6 @@ class User(AbstractUser):
     <p>First: {self.first_name} &mdash; Last: {self.last_name}</p>
     <p><i class="fas fa-envelope"></i> {self.email}</p>
     <p><i class="fas fa-globe-asia"></i> {self.country}</p>
-    <p>Bio: {self.bio[:50]}</p>
+    <p>Bio: {self.first_name[:50]}</p>
     </div>
   </li>"""
