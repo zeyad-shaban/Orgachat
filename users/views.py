@@ -1,3 +1,4 @@
+from users.forms import UserProfileForm
 from django.http import request
 from chat.models import Area, Room
 from django.contrib import messages
@@ -11,7 +12,19 @@ User = get_user_model()
 
 
 def profile(request):
-    return render(request, "users/profile.html")
+    if request.method == 'GET':
+        return render(request, "users/profile.html", {"user_profile_form": UserProfileForm(instance=request.user)})
+    else:
+        form = UserProfileForm(instance=request.user,
+                               data=request.POST, files=request.FILES)
+        form.save()
+        return redirect("users:profile")
+
+
+def view_user(request, user_id):
+    print(user_id)
+    viewed_user = get_object_or_404(User, pk=user_id)
+    return render(request, 'users/view_user.html', {'viewed_user': viewed_user})
 
 
 def all_users(request):
@@ -72,8 +85,9 @@ def signupuser(request):
 
                 user.save()
                 login(request, user)
-                messages.success(request, 'Created successfully')
-                return redirect('home')
+                messages.success(
+                    request, 'Complete your profile so others can find you easily')
+                return redirect('users:profile')
             except IntegrityError:
                 messages.error(
                     request, 'Username already taken, please try again')
@@ -103,5 +117,7 @@ def logoutuser(request):
 # --------------------
 # FAQ and About
 # --------------------
+
+
 def about(request):
     return render(request, "users/about.html")

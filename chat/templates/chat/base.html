@@ -17,6 +17,8 @@
 
         gtag('config', 'UA-179713611-1');
     </script>
+    <script data-ad-client="ca-pub-2852400661142864" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- Favicon Start -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'chat/favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'chat/favicons/favicon-32x32.png' %}">
@@ -63,7 +65,8 @@
                 </li>
                 {% else %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'users:profile' %}"><i class="far fa-user-circle"></i>
+                    <a class="nav-link" href="{% url 'users:profile' %}"><img src="{{user.avatar.url}}" alt=""
+                            width="45" height="45" style="border-radius: 50%;">
                         <span class="nav-label">{{ user.username }}</span></a>
                 </li>
                 {% endif %}
@@ -163,7 +166,8 @@
                                 <p class="btn-rose p-2">Please Login first</p>
                                 {% endif %}
                             </div>
-                            <div class="alert alert-danger" id="errInstallApp" style="display: none;">make sure you are using
+                            <div class="alert alert-danger" id="errInstallApp" style="display: none;">make sure you are
+                                using
                                 <b>Google Chrome</b> and the app isn't already installed
                                 on your device, or you won't be able to download Orgachat.
                             </div>
