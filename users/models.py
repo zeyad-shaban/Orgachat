@@ -247,6 +247,7 @@ COUNTRIES = (
 
 class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
+    last_visit = models.DateTimeField(blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
     is_installed = models.BooleanField(default=False)
     # Advanced Identefiers

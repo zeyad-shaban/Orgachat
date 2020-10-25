@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Imports
     'users.get_request.RequestMiddleware',
+    'users.last_visit.SetLastVisitMiddleware'
 ]
 
 ROOT_URLCONF = 'orgachat.urls'

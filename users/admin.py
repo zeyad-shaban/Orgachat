@@ -6,8 +6,9 @@ User = get_user_model()
 
 
 class MyUserAdmin(UserAdmin):
-    ordering = ('date_joined', )
-    list_display = ('username', 'email', 'date_joined', 'is_installed')
+    ordering = ('-date_joined', )
+    list_display = ('username', 'email', 'last_visit',
+                    'date_joined', 'is_installed')
 
 
 MyUserAdmin.list_filter += ('date_joined',)
