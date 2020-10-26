@@ -15,6 +15,7 @@ from users.forms import UserProfileForm
 User = get_user_model()
 
 
+@login_required
 def profile(request):
     if request.method == 'GET':
         return render(request, "users/profile.html", {"user_profile_form": UserProfileForm(instance=request.user)})
@@ -68,7 +69,7 @@ def add_friend(request, user_id):
     area = Area.objects.create(title='Unorganized', room=room)
     area.save()
     messages.success(
-        request, f'You are friends now, start chatting with {friend.username} <a href="/">Here</a>')
+        request, f'{friend.username} is now a friend, start chatting here <a href="/">Here</a>')
     return redirect('users:all_users')
 
 
@@ -90,16 +91,18 @@ def remove_friend(request, user_id):
 
 
 def signupuser(request):
+    next = request.GET.get("next")
     if request.method == 'GET':
         if request.user.is_authenticated:
             messages.warning(request, 'You are already logged in')
             return redirect('home')
         else:
-            return render(request, 'users/signupuser.html')
+            return render(request, 'users/signupuser.html', {"next": next})
     else:
-        if not request.POST.get('password1') == request.POST.get('password1'):
-            messages.error(request, 'Passowrd didn\'t match, please try again')
-            return redirect('signupuser')
+        if not request.POST.get('password1') == request.POST.get('password2'):
+            messages.error(request, 'Confirm password didn\'t match, please try again')
+            print(next)
+            return redirect(f'/signup/?next={next}')
         else:
             try:
                 user = User.objects.create_user(username=request.POST.get(
@@ -110,26 +113,33 @@ def signupuser(request):
                 user.save()
                 login(request, user)
                 messages.success(
-                    request, 'Complete your profile so others can find you easily')
-                return redirect('users:profile')
+                    request, 'Complete your profile so others can know who you are <a href="/users/profile/">here</a>')
+                if next != "None" and next:
+                    return redirect(next)
+                else:
+                    return redirect("home")
             except IntegrityError:
                 messages.error(
                     request, 'Username already taken, please try again')
-                return redirect('home')
+                return redirect(f'/signup/?next={next}')
 
 
 def loginuser(request):
+    next = request.GET.get("next")
     if request.method == 'POST':
         user = authenticate(username=request.POST.get(
             'username'), password=request.POST.get('password'), backends='django.contrib.auth.backends.ModelBackend')
         if user:
             login(request, user)
-            messages.success(request, f'Welcome back {user.username}')
-            return redirect('home')
+            if next != "None" and next:
+                print("THERE IS A NEXT", next)
+                return redirect(next)
+            else:
+                print("TO THE HOME!", next)
+                return redirect("home")
         else:
-            messages.error(
-                request, 'Password not correct or user doesn\'t exist, please try again')
-            return redirect('signupuser')
+            messages.error(request, 'Password didn\'t match or user doesn\'t exist, please try again')
+            return redirect(f'/signup/?next={next}')
 
 
 def logoutuser(request):

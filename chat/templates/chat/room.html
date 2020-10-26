@@ -251,7 +251,9 @@
 <script>
     // Scroll to bottom
     document.addEventListener('DOMContentLoaded', function () {
-        window.scrollTo(0, document.body.scrollHeight);
+        window.addEventListener('load', function () {
+            window.scrollTo(0, document.body.scrollHeight);
+        });
         // ---------------------------
         // INTERFACE
         // ---------------------------

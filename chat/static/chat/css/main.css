@@ -116,6 +116,50 @@ body {
     position: relative;
 }
 
+.btn-looping {
+    color: white;
+    background: red;
+    animation: myfirst 1.5s;
+    -moz-animation: myfirst 1.5s infinite;
+    /* Firefox */
+    -webkit-animation: myfirst 1.5s infinite;
+    /* Safari and Chrome */
+}
+
+@-moz-keyframes myfirst
+
+/* Firefox */
+    {
+    0% {
+        background: #4CD137;
+    }
+
+    50% {
+        background: #ff9f43;
+    }
+
+    100% {
+        background: #4CD137;
+    }
+}
+
+@-webkit-keyframes myfirst
+
+/* Safari and Chrome */
+    {
+    0% {
+        background: #4CD137;
+    }
+
+    50% {
+        background: #ff9f43;
+    }
+
+    100% {
+        background: #4CD137;
+    }
+}
+
 .btn-install {
     flex: 1;
     width: 100%;

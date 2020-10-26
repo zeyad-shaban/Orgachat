@@ -99,7 +99,25 @@
 
                     <!-- <a class="dropdown-item" href="https://www.surveymonkey.com/r/5WMYSSX" target="_blank">Feedback</a> -->
                     <hr>
+                    {% if user.is_authenticated %}
+                    <!-- AddToAny BEGIN -->
+                    <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
+                        data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
+                        data-a2a-title="Orgachat Friend Invitation link">
+                        <button href="" class="btn">
+                            <a class="a2a_dd" id="profile-page" href="https://www.addtoany.com/share"></a> &nbsp; Invite
+                            a Friend
+                        </button>
+                    </div>
+                    <script>
+                        var a2a_config = a2a_config || {};
+                        a2a_config.onclick = 1;
+                    </script>
+                    <script async src="https://static.addtoany.com/menu/page.js"></script>
+                    <!-- AddToAny END -->
+                    {% endif %}
                     <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
+                    <a class="dropdown-item" href="{% url 'users:about' %}"><i class="fas fa-question-circle"></i> Frequently Asked Questions</a>
                     <form action="{% url 'logoutuser' %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="dropdown-item"

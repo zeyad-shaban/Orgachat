@@ -263,4 +263,108 @@
         }
     });
 </script>
+
+<!-- ----------------------Show Latest updates to user------------------ -->
+<div class="modal fade" id="latestUpdate" tabindex="-1" role="dialog" aria-labelledby="latestUpdateLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #fa8231;">
+                <div class="center">
+                    <h3 class="modal-title" id="latestUpdateLabel"><img src="{% static 'chat/img/favicon.png' %}"
+                            width="50" height="50" alt=""> New Updates! Orgachat 1.2</h3>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#latestUpdate')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="center">
+                        <div class="center">
+                            <h2>What is new?</h2>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="center">
+                        <h2>Big updates</h2>
+                    </div>
+
+                    <p><b>Invite A Friend</b>: Clicking the button will redirect you to another social
+                        media app where you can send the invitation link to your friends. When they click on it
+                        he/she will get added to your friends list directly. you can find the button in your <a
+                            href="{% url 'users:profile' %}">profile</a> and by clicking the three dots in the navbar
+                    </p>
+                    <br>
+                    <ul>
+                        <li>Added areas to divide your homepage, known as 'Homepage Area' &mdash; you can add them
+                            from
+                            the bottom right button in your homepage</li>
+                        <li>Removing offline support &mdash; as it was causing the app to crash, we have plans to
+                            add in a later update</li>
+                        <li>Fixed app crashing</li>
+                        <li>Added a page for each user &mdash; You can get it by clicking on the person username
+                        </li>
+                        <li>Added profile page &mdash; Click on your username in the navbar to open it</li>
+                        <li>Added search bar for all users &mdash; It will search by username, email, country, first
+                            name, last name</li>
+                        <li>Added ultimate paginator for messages &mdash; Will make it load much faster</li>
+                    </ul>
+                    <br>
+                    <div class="center">
+                        <h2>Minor updates</h2>
+                    </div>
+                    <ul>
+                        <li>Added first, last name, profile picture, bio, country to help others know who you are
+                            &mdash; You will find in your profile</li>
+                        <li>Bug fixes for groups</li>
+                        <li>Changed the ordering of users &mdash; recently opened users will be on top</li>
+                        <li>Added ultimate paginator for users page &mdash; Which will make it load much faster</li>
+                        <li>You can now send multiple files at once</li>
+                        <li>You now don't have to scroll down when you open the chat</li>
+                        <li>Better homepage chat and more useful information about the last message</li>
+                        <li>Better image displaying for chats</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                    onclick="closeModal('#latestUpdate')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function createCookie(name, value, days) {
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+            } else var expires = "";
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        function readCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {
+            createCookie(name, "", -1);
+        }
+        if (!readCookie('alreadyShown')) {
+            openModal('#latestUpdate')
+            createCookie('alreadyShown', true)
+        }
+
+    });
+</script>
 {% endblock content %}

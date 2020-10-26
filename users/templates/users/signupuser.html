@@ -24,7 +24,7 @@ organizing your chat{% endblock description %}
     <!-- SIGNUP -->
     <div class="tabs-content">
         <div id="signup-tab-content" class="active">
-            <form class="signup-form" action="{% url 'signupuser' %}" method="POST">
+            <form class="signup-form" action="{% url 'signupuser' %}?next={{next}}" method="POST">
                 {% csrf_token %}
                 <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username"
                     name="username" required maxlength="30">
@@ -48,7 +48,7 @@ organizing your chat{% endblock description %}
 
         <!--LOGIN-->
         <div id="login-tab-content">
-            <form class="login-form" action="{% url 'loginuser' %}" method="post">
+            <form class="login-form" action="{% url 'loginuser' %}?next={{next}}" method="post">
                 {% csrf_token %}
                 <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username"
                     name="username" required>
