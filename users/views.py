@@ -28,7 +28,7 @@ def view_user(request, user_id):
 
 
 def all_users(request):
-    users = User.objects.filter(~Q(id=request.user.id))
+    users = User.objects.filter(~Q(id=request.user.id)).order_by("-last_visit")
     return render(request, 'users/all_users.html', {'users': users})
 
 
@@ -121,3 +121,11 @@ def logoutuser(request):
 
 def about(request):
     return render(request, "users/about.html")
+
+
+def search_users(request):
+    q = request.GET.get('q')
+    users = User.objects.filter(Q(username__icontains=q) | Q(
+        email__icontains=q) | Q(country__icontains=q))
+    print(users)
+    return render(request, "users/all_users.html", {'users': users, 'q': q,})

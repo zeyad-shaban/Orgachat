@@ -7,6 +7,20 @@ now!{% endblock description %}
 
 {% block content %}
 <div class="container">
+    <br>
+    <br>
+    <br>
+    <div class="center">
+        <div id="custom-search-input">
+            <form action="{% url 'users:search_users' %}" method="GET">
+                <div class="input-group col-md-12">
+                    <input type="text" name="q" class="search-query fo m-control" placeholder="Search for your friend" value="{{q}}"/>
+                    <button class="btn btn-danger" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br>
     <ul class="list-unstyled">
         {% for auser in users %}
         <div>
@@ -21,4 +35,45 @@ now!{% endblock description %}
         {% endfor %}
     </ul>
 </div>
+
+<style>
+    #custom-search-input {
+        margin: 0;
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .search-query {
+        padding-right: 3px;
+        padding-right: 4px \9;
+        padding-left: 3px;
+        padding-left: 4px \9;
+        /* IE7-8 doesn't have border-radius, so don't indent the padding */
+
+        margin-bottom: 0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    .search-query button {
+        border: 0;
+        background: none;
+        /** belows styles are working good */
+        padding: 2px 5px;
+        margin-top: 2px;
+        position: relative;
+        left: -28px;
+        /* IE7-8 doesn't have border-radius, so don't indent the padding */
+        margin-bottom: 0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        color: #D9230F;
+    }
+
+    .search-query:focus+button {
+        z-index: 3;
+    }
+</style>
 {% endblock content %}
