@@ -52,7 +52,7 @@ class Room(models.Model):
             if sender == current_request().user:
                 sender = 'You'
             try:
-                return f'{sender} - {last_message.area.title}: {last_message}'
+                return f'({last_message.area.title}) — {sender}: {last_message}'
             except:
                 return ''
         else:
@@ -65,10 +65,8 @@ class Room(models.Model):
                 if chatter == curr_user:
                     pass
                 else:
-                    print(chatter.avatar.url)
                     return chatter.avatar.url
         elif self.type == 'group':
-            print('NEVER MIND, IT IS A GOUP!')
             return "/media/users/img/avatar/DefUser.png"
 
     def get_homepage_area(self):
@@ -163,6 +161,15 @@ class Message(models.Model):
 
     def __str__(self):
         if self.text:
-            return self.text[:50]
-        else:
-            return ""
+            if len(self.text) > 50:
+                return "..." + self.text[:50] + "..."
+            else:
+                return self.text
+        elif self.video:
+            return "🎥 Video"
+        elif self.image:
+            return "📷 Image"
+        elif self.file:
+            return "🗂 File"
+        elif self.audio:
+            return "🔊 Audio"
