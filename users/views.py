@@ -39,7 +39,7 @@ def all_users(request):
     else:
         users_list = User.objects.filter(
             ~Q(id=request.user.id)).order_by("-last_visit")
-    paginator = Paginator(users_list, 6)
+    paginator = Paginator(users_list, 12)
     try:
         page = json.loads(request.body)["page"]
     except:

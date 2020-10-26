@@ -95,21 +95,25 @@ def save_file_message(request, room_id):
     area = get_object_or_404(Area, pk=int(request.POST.get('area')))
 
     if request.FILES.get("video"):
-        message = Message.objects.create(user=request.user, video=request.FILES.get(
-            'video'), room=room, area=area)
-        message.save()
+        for video in request.FILES.getlist("video"):
+            message = Message.objects.create(
+                user=request.user, video=video, room=room, area=area)
+            message.save()
     elif request.FILES.get("image"):
-        message = Message.objects.create(user=request.user, image=request.FILES.get(
-            'image'), room=room, area=area)
-        message.save()
+        for image in request.FILES.getlist("image"):
+            message = Message.objects.create(
+                user=request.user, image=image, room=room, area=area)
+            message.save()
     elif request.FILES.get("file"):
-        message = Message.objects.create(user=request.user, file=request.FILES.get(
-            'file'), room=room, area=area)
-        message.save()
+        for file in request.FILES.getlist("file"):
+            message = Message.objects.create(
+                user=request.user, file=file, room=room, area=area)
+            message.save()
     elif request.FILES.get("audio"):
-        message = Message.objects.create(user=request.user, audio=request.FILES.get(
-            'audio'), room=room, area=area)
-        message.save()
+        for audio in request.FILES.getlist("audio"):
+            message = Message.objects.create(
+                user=request.user, audio=audio, room=room, area=area)
+            message.save()
     return redirect("chat:room", room_id=room.id)
 
 

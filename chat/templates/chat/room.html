@@ -205,16 +205,16 @@
                     <div style="display: none;">
                         {% csrf_token %}
                         <label for="uploadVideo">Video</label>
-                        <input type="file" name="video" class="upload" id="uploadVideo" accept="video/*">
+                        <input type="file" name="video" class="upload" id="uploadVideo" accept="video/*" multiple>
 
                         <label for="uploadImage">Image</label>
-                        <input type="file" name="image" class="upload" id="uploadImage" accept="image/*">
+                        <input type="file" name="image" class="upload" id="uploadImage" accept="image/*" multiple>
 
                         <label for="uploadFile">File</label>
-                        <input type="file" name="file" class="upload" id="uploadFile">
+                        <input type="file" name="file" class="upload" id="uploadFile" multiple>
 
                         <label for="uploadAudio">Audio</label>
-                        <input type="file" name="audio" class="upload" id="uploadAudio" accept="audio/*">
+                        <input type="file" name="audio" class="upload" id="uploadAudio" accept="audio/*" multiple>
 
                         <button type="submit" id="saveAttachedFile">Send</button>
                     </div>
