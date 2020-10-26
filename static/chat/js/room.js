@@ -63,4 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => {
         notifyMe()
     }, 6000);
+
+    // ---------------Open img---------------
+    
 });
