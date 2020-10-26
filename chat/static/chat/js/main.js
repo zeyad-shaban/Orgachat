@@ -4,45 +4,48 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------
     // -------Add to homepage--------
     // --------Add to homepage----------
+    try {
 
-    let deferredPrompt;
-    const addBtn = document.querySelector('#addToHomescreen');
-    addBtn.style.display = 'none';
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        deferredPrompt = e;
-        // Update UI to notify the user they can add to home screen
-        addBtn.style.display = 'block';
+        let deferredPrompt;
+        const addBtn = document.querySelector('#addToHomescreen');
+        addBtn.style.display = 'none';
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI to notify the user they can add to home screen
+            addBtn.style.display = 'block';
 
-        addBtn.addEventListener('click', (e) => {
-            // hide our user interface that shows our A2HS button
-            addBtn.style.display = 'none';
-            // Show the prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                    var xhr = new XMLHttpRequest()
-                    xhr.open("GET", "/metrics/user_installed/", true)
-                    xhr.send()
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                }
-                deferredPrompt = null;
+            addBtn.addEventListener('click', (e) => {
+                // hide our user interface that shows our A2HS button
+                addBtn.style.display = 'none';
+                // Show the prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the A2HS prompt');
+                        var xhr = new XMLHttpRequest()
+                        xhr.open("GET", "/metrics/user_installed/", true)
+                        xhr.send()
+                    } else {
+                        console.log('User dismissed the A2HS prompt');
+                    }
+                    deferredPrompt = null;
+                });
             });
         });
-    });
 
-    // Displaying err
-    if (document.querySelector("#addToHomescreen").style.display == "none") {
-        // Showo err message
-        document.querySelector("#errInstallApp").style.display = "block"
-    } else {
-        // Hide err message
-        document.querySelector("#errInstallApp").style.display = "none"
+        // Displaying err
+        if (document.querySelector("#addToHomescreen").style.display == "none") {
+            // Showo err message
+            document.querySelector("#errInstallApp").style.display = "block"
+        } else {
+            // Hide err message
+            document.querySelector("#errInstallApp").style.display = "none"
+        }
+    } catch (error) {
     }
 
 
@@ -102,11 +105,24 @@ function toggleDropdown(dataTarget) {
     }
 };
 
-function collapseToggle(areaId) {
-    let collapseItem = document.querySelector('#area' + areaId)
+function toggleCollapse(dataTarget) {
+    let collapseItem = document.querySelector(dataTarget)
     if (collapseItem.classList.contains('show')) {
         collapseItem.classList.remove('show')
     } else {
         collapseItem.classList.add('show')
+    }
+}
+
+function toggleAllCollapse(dataTarget) {
+    let collapseItem = document.querySelector(dataTarget)
+    if (collapseItem.classList.contains('show')) {
+        collapseItem.classList.remove('show')
+    } else {
+        collapseItem.classList.add('show')
+    }
+    let allCollapseItems = document.querySelectorAll(".collapse:not(" + dataTarget + ")")
+    for (collapse of allCollapseItems) {
+        collapse.classList.remove("show")
     }
 }

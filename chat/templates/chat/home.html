@@ -27,7 +27,7 @@
     <div class="card">
         <div class="card-header">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block" onclick="collapseToggle('{{area.id}}')">
+                <button class="btn btn-link btn-block" onclick="toggleCollapse('#area{{area.id}}')">
                     {{area.title}} <a href="#" type="button" class="badge badge-danger ml-3">{{area.unread_count}}</a>
                 </button>
             </h2>
@@ -67,7 +67,7 @@
     <div class="card">
         <div class="card-header">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block" onclick="collapseToggle('others')">
+                <button class="btn btn-link btn-block" onclick="toggleCollapse('#areaothers')">
                     Others (Unorganized) <a href="#" type="button"
                         class="badge badge-danger ml-3">{{unorganized_count}}</a>
                 </button>

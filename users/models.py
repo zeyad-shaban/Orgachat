@@ -270,10 +270,13 @@ class User(AbstractUser):
         <div class="media-body">
         <h5 class="mt-0 mb-1">{self.username}</h5>
     </a>
-    <p>First: {self.first_name} &mdash; Last: {self.last_name}</p>
-    <p><i class="fas fa-envelope"></i> {self.email}</p>
-    <p><i class="fas fa-globe-asia"></i> {self.country}</p>
-    <p>About: {self.about[:50]}</p>
+    <button onclick="toggleAllCollapse('#userInfo{self.id}')" class="btn"><i class="fas fa-caret-down"></i> More info</button>
+    <div class="collapse" id="userInfo{self.id}">
+        <p>First: {self.first_name} &mdash; Last: {self.last_name}</p>
+        <p><i class="fas fa-envelope"></i> {self.email}</p>
+        <p><i class="fas fa-globe-asia"></i> {self.country}</p>
+        <p>About: {self.about[:50]}</p>
+    </div>
     </div>
   </li>"""
 

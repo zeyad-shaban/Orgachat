@@ -1,13 +1,17 @@
-from users.forms import UserProfileForm
-from django.http import request
 from chat.models import Area, Room
 from django.contrib import messages
-from django.contrib.auth import backends, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.serializers import serialize
 from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
+from django.http import request
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model, login, authenticate
+import json
+from users.forms import UserProfileForm
+
 User = get_user_model()
 
 
@@ -28,8 +32,28 @@ def view_user(request, user_id):
 
 
 def all_users(request):
-    users = User.objects.filter(~Q(id=request.user.id)).order_by("-last_visit")
-    return render(request, 'users/all_users.html', {'users': users})
+    q = request.GET.get("q")
+    if q:
+        users_list = User.objects.filter(Q(username__icontains=q) | Q(
+            email__icontains=q) | Q(country__icontains=q)).order_by("-last_visit")
+    else:
+        users_list = User.objects.filter(
+            ~Q(id=request.user.id)).order_by("-last_visit")
+    paginator = Paginator(users_list, 6)
+    try:
+        page = json.loads(request.body)["page"]
+    except:
+        page = 1
+    try:
+        users = paginator.page(page)
+    except EmptyPage:
+        users = []
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    if request.method == 'GET':
+        return render(request, 'users/all_users.html', {'users': users})
+    else:
+        return JsonResponse({"users": serialize("json", users)})
 
 
 @login_required
@@ -121,11 +145,3 @@ def logoutuser(request):
 
 def about(request):
     return render(request, "users/about.html")
-
-
-def search_users(request):
-    q = request.GET.get('q')
-    users = User.objects.filter(Q(username__icontains=q) | Q(
-        email__icontains=q) | Q(country__icontains=q))
-    print(users)
-    return render(request, "users/all_users.html", {'users': users, 'q': q,})
