@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'info',
     'metrics',
     # Packages
+    'webpush',
     'django_cleanup',
 ]
 
@@ -109,6 +110,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BIQ_a_SUkvuMM3hzddLU7cqQWcBN7uk6QANR2sQci68sZ2CBAMf9uc5aMAJJErNngxx9Ey7WTyx4KtxZvJoUHRQ",
+    "VAPID_PRIVATE_KEY":"oyBPA9thK40jey0CvXCB-bGFlH0AdTg2iR3SSRD6oY",
+    "VAPID_ADMIN_EMAIL": "zeyadshapan2004@gmail.com"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

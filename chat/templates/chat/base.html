@@ -1,4 +1,5 @@
 {% load static %}
+{% load webpush_notifications %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +42,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
     <script async src="https://kit.fontawesome.com/78f2495e06.js" crossorigin="anonymous"></script>
-
+    {% webpush_header %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% block description %}{% endblock description %}">
@@ -87,7 +88,7 @@
                             class="fas fa-download"></i> Install
                         Orgachat</button>
                     <br>
-                    <button class="btn btn-outline-warning" id="pushButton" disabled>Enable Notifications</button>
+                    {% webpush_button with_class="btn btn-outline-info" %}
                     <br>
                     <button class="btn" onclick="openModal('#addGroup')"><i class="fas fa-plus"></i> Add Group</button>
 

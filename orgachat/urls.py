@@ -28,6 +28,7 @@ urlpatterns = [
     # Service Worker PWA
     path('sw.js', TemplateView.as_view(template_name='chat/sw.js',
                                        content_type='application/javascript'), name='sw.js',),
+    path('webpush/', include('webpush.urls')),
     path('random-response', chat_views.random_response),
 
     # Include
