@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'info',
     'metrics',
     # Packages
-    'webpush',
     'django_cleanup',
 ]
 
@@ -135,13 +134,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/signup/'
-
-WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": "BBaMoXb1TiKU0ZWt5iUAXHYdxqrbUgOJu_NXMAQEGwwMNqLtZfeYyHkkjm8Twk_IeIIkYwKzjTfkOV_b-90wN5E",
-    "VAPID_PRIVATE_KEY": "vTNQGjU0B2HOgf7z_oqJaCVOrfG_cqVjrdr90ytrtDE",
-    "VAPID_ADMIN_EMAIL": "zeyadshapan@gmail.com"
-}
-
 
 try:
     from .local_settings import *

@@ -24,7 +24,6 @@ from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('webpush/', include('webpush.urls')),
     path('', chat_views.home, name="home"),
     # Service Worker PWA
     path('sw.js', TemplateView.as_view(template_name='chat/sw.js',

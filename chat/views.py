@@ -11,7 +11,6 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from webpush import send_user_notification
 User = get_user_model()
 logger = logging.getLogger('djpwa.pwa.views')
 
@@ -84,7 +83,9 @@ def room(request, room_id, area_id=None):
                    "url": f"https://orgachat.pythonanywhere.com/chat/room/{room.id}/"}
         for chatter in room.chatters.all():
             if not chatter in message.area.muted_users.all() and chatter != request.user and (True):  # todo check for chatter url
-                send_user_notification(user=chatter, payload=payload, ttl=1000)
+                # todo send notification send_user_notification(user=chatter, payload=payload, ttl=1000)
+                pass
+
 
         return redirect('chat:room', room_id=room_id)
 
