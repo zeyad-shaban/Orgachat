@@ -83,6 +83,10 @@
                 <button class="btn" onclick="toggleDropdown('#mainDropdown')"><i class="fas fa-ellipsis-h"
                         style="font-size: 40px; color: #ff0000;"></i></button>
                 <div class="dropdown-menu" id="mainDropdown">
+                    <button class="dropdown-item btn btn-install" onclick="openModal('#installOrgachat')"><i
+                            class="fas fa-download"></i> Install
+                        Orgachat</button>
+                    <br>
                     <button class="btn btn-outline-warning" id="pushButton" disabled>Enable Notifications</button>
                     <br>
                     <button class="btn" onclick="openModal('#addGroup')"><i class="fas fa-plus"></i> Add Group</button>
@@ -106,9 +110,6 @@
                     <script async src="https://static.addtoany.com/menu/page.js"></script>
                     <!-- AddToAny END -->
                     {% endif %}
-                    <button class="dropdown-item btn" onclick="openModal('#installOrgachat')"><i
-                            class="fas fa-download"></i> Install
-                        Orgachat</button>
                     <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
                     <!-- <a class="dropdown-item" href="{% url 'users:about' %}"><i class="fas fa-question-circle"></i>
                         Frequently Asked Questions</a> -->
@@ -362,14 +363,6 @@
 
             pushButton.disabled = false;
         }
-
-        // Clear cache if any 
-        caches.keys().then(cacheNames => {
-            cacheNames.forEach(value => {
-                caches.delete(value);
-                console.log('Deleted cache')
-            });
-        })
     </script>
 </body>
 
