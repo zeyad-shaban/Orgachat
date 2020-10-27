@@ -68,7 +68,7 @@
                     <a class="nav-link" href="{% url 'signupuser' %}"><span class="nav-label">Sign Up / In</span></a>
                 </li>
                 {% else %}
-                <li class="nav-item active" id="userProfileLi" data-badge_count="{{user.get_badge_count}}">
+                <li class="nav-item active" id="userProfileLi" data-badge_count="{{user.badge_count}}">
                     <a class="nav-link" href="{% url 'users:profile' %}"><img src="{{user.avatar.url}}" alt=""
                             width="45" height="45" style="border-radius: 50%;" loading="lazy">
                         <span class="nav-label">{{ user.username }}</span></a>
@@ -154,6 +154,10 @@
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
+                    <div style="margin-left: 70%">
+                        <button class="btn btn-rose float-right" onclick="closeModal('#installOrgachat')"><i
+                                class="fas fa-times"></i></button>
+                    </div>
                     <div class="modal-body">
                         <div class="install-card">
                             <div class="left flex">
@@ -193,10 +197,6 @@
                                     href="https://www.orgachat.com/users/view/2/">Orgachat Official Account</a></p>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                        onclick="closeModal('#installOrgachat')">No thanks</button>
-                </div>
             </div>
         </div>
         </div>
@@ -232,29 +232,29 @@
     <!-- ------------------------------------ -->
     <!-- SERVICE WORKER.JS -->
     <script>
-        const applicationServerPublicKey =
-            'BIQ_a_SUkvuMM3hzddLU7cqQWcBN7uk6QANR2sQci68sZ2CBAMf9uc5aMAJJErNngxx9Ey7WTyx4KtxZvJoUHRQ';
-        const pushButton = document.querySelector("#pushButton")
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-            console.log('Service Worker and Push is supported');
-
+        // -------------------------END PWA-------------------------
+        if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('{% url "sw.js" %}', {
                     scope: '/'
                 })
                 .then(function (swReg) {
                     console.log('Service Worker is registered', swReg);
-
                     swRegistration = swReg;
-                    initializeUI();
+                    // initializeUI();
                 })
                 .catch(function (error) {
                     console.error('Service Worker Error', error);
                 });
         } else {
-            console.warn('Push messaging is not supported');
+            console.warn('Service Worker is not supported');
             pushButton.textContent = 'Push Not Supported';
         }
+        // -------------------------END PWA-------------------------
 
+        // -------------------------PUSH NOTIFICATIONS-------------------------
+        /* const applicationServerPublicKey =
+            'BIQ_a_SUkvuMM3hzddLU7cqQWcBN7uk6QANR2sQci68sZ2CBAMf9uc5aMAJJErNngxx9Ey7WTyx4KtxZvJoUHRQ';
+        const pushButton = document.querySelector("#pushButton")
         function unsubscribeUser() {
             swRegistration.pushManager.getSubscription()
                 .then(function (subscription) {
@@ -379,7 +379,8 @@
             }
 
             pushButton.disabled = false;
-        }
+        } */
+        // -------------------------END PUSH NOTIFICATIONS-------------------------
     </script>
 </body>
 

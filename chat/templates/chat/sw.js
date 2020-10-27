@@ -3,12 +3,11 @@ self.addEventListener("install", function (event) {
     event.waitUntil(preLoad());
 });
 
-var preLoad = function () {
+var preLoad = async function () {
     console.log("Installing web app");
-    return caches.open("offline").then(function (cache) {
-        console.log("caching index and important routes");
-        return cache.addAll(["/users/", "/users/all", "/", "/users/about/",]);
-    });
+    const cache = await caches.open("offline");
+    console.log("caching index and important routes");
+    return cache.addAll(["/users/", "/users/all", "/", "/users/about/",]);
 };
 
 self.addEventListener("fetch", function (event) {
@@ -30,30 +29,26 @@ var checkResponse = function (request) {
     });
 };
 
-var addToCache = function (request) {
-    return caches.open("offline").then(function (cache) {
-        return fetch(request).then(function (response) {
-            console.log(response.url + " was cached");
-            return cache.put(request, response);
-        });
-    });
+var addToCache = async function (request) {
+    const cache = await caches.open("offline");
+    const response = await fetch(request);
+    console.log(response.url + " was cached");
+    return cache.put(request, response);
 };
 
-var returnFromCache = function (request) {
-    return caches.open("offline").then(function (cache) {
-        return cache.match(request).then(function (matching) {
-            if (!matching || matching.status == 404) {
-                return cache.match("offline.html");
-            } else {
-                return matching;
-            }
-        });
-    });
+var returnFromCache = async function (request) {
+    const cache = await caches.open("offline");
+    const matching = await cache.match(request);
+    if (!matching || matching.status == 404) {
+        return cache.match("offline.html");
+    } else {
+        return matching;
+    }
 };
 // --------------------END PWA--------------------
 
 // --------------------PUSH NOTIFICATIONS--------------------
-self.addEventListener('push', function (event) {
+/* self.addEventListener('push', function (event) {
     console.log('[Service Worker] Push Received.');
     console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
 
@@ -76,12 +71,9 @@ self.addEventListener('notificationclick', function (event) {
     event.waitUntil(
         clients.openWindow('https://www.orgachat.com')
     );
-});
+}); */
 // --------------------END PUSH NOTIFICATIONS--------------------
 
-// -------------------NOTIFICATIONS BADGE----------------------
-const unreadCount = 24
-navigator.setAppBadge(unreadCount).catch((error) => {
-    console.log("Error: ", error)
-});
-// -------------------END NOTIFICATIONS BADGE----------------------
+// -------------------BADGE----------------------
+
+// -------------------END BADGE----------------------

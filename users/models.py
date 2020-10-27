@@ -266,14 +266,12 @@ class User(AbstractUser):
     # Privacy
     # todo show friends, phone number, email, who to see profile
 
-    def get_badge_count(self):
+    def badge_count(self):
         total = 0
         from chat.models import Room
         rooms = Room.objects.filter(chatters=self)
         for room in rooms:
             total += room.unread_count()
-        print("====================================================")
-        print(total)
         return total
     
     def display(self):

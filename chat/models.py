@@ -26,7 +26,7 @@ class Room(models.Model):
                 if chatter == curr_user:
                     pass
                 else:
-                    return chatter
+                    return chatter.username
         else:
             return self.name
 

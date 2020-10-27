@@ -77,13 +77,15 @@ def room(request, room_id, area_id=None):
             user=request.user, text=data.get('text'), room=room, area=area)
         message.save()
         # Web push
-        payload = {"head": room.title(), "body": message, "icon": "/static/chat/img/favicon.png",
+        payload = {"head": room.title(), "body": message.__str__(), "icon": "/static/chat/img/favicon.png",
                    "url": f"https://www.orgachat.com/chat/room/{room.id}/"}
         for chatter in room.chatters.all():
             if not chatter in message.area.muted_users.all() and chatter != request.user and (True):  # todo check for chatter url
-                print('------------------')
-                print(chatter)
-                send_user_notification(user=chatter, payload=payload, ttl=1000)
+                try:
+                    send_user_notification(user=chatter, payload=payload, ttl=1000)
+                    print("SUCCESS TO SEND NOTIFICATIONS")
+                except Exception as err:
+                    print("Error: ", err)
         return redirect('chat:room', room_id=room_id)
 
 
