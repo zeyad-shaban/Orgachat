@@ -6,7 +6,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers import serialize
 from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
-from django.http import request
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 import json
@@ -52,7 +51,7 @@ def all_users(request):
     except PageNotAnInteger:
         users = paginator.page(1)
     if request.method == 'GET':
-        return render(request, 'users/all_users.html', {'users': users})
+        return render(request, 'users/all_users.html', {'users': users, "users_count": users_list.count()})
     else:
         return JsonResponse({"users": serialize("json", users)})
 
@@ -100,7 +99,8 @@ def signupuser(request):
             return render(request, 'users/signupuser.html', {"next": next})
     else:
         if not request.POST.get('password1') == request.POST.get('password2'):
-            messages.error(request, 'Confirm password didn\'t match, please try again')
+            messages.error(
+                request, 'Confirm password didn\'t match, please try again')
             print(next)
             return redirect(f'/signup/?next={next}')
         else:
@@ -138,7 +138,8 @@ def loginuser(request):
                 print("TO THE HOME!", next)
                 return redirect("home")
         else:
-            messages.error(request, 'Password didn\'t match or user doesn\'t exist, please try again')
+            messages.error(
+                request, 'Password didn\'t match or user doesn\'t exist, please try again')
             return redirect(f'/signup/?next={next}')
 
 
