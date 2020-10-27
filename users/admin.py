@@ -13,7 +13,7 @@ class MyUserAdmin(UserAdmin):
 
 MyUserAdmin.list_filter += ('date_joined',)
 MyUserAdmin.fieldsets += (('Custom Fields', {'fields': (
-    'is_installed', 'friends', 'avatar', 'about', 'country')}),)
+    'is_installed', 'friends', 'avatar', 'about', 'country', 'sub_endpoint', 'sub_auth', 'sub_p256dh')}),)
 
 admin.site.register(User, MyUserAdmin)
 

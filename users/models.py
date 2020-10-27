@@ -250,7 +250,12 @@ class User(AbstractUser):
     last_visit = models.DateTimeField(blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
     is_installed = models.BooleanField(default=False)
-    # Advanced Identefiers
+
+    # Notifications subscriptions
+    sub_endpoint = models.CharField(max_length=240, blank=True, null=True)
+    sub_auth = models.CharField(max_length=240, blank=True, null=True)
+    sub_p256dh = models.CharField(max_length=240, blank=True, null=True)
+    # Identefiers
     about = models.CharField(
         max_length=190, default="Hi! I'm an Orgachat user", blank=True, null=True)
     avatar = models.ImageField(

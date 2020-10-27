@@ -168,7 +168,6 @@
                             <div class="right center">
                                 <img src="{% static 'chat/img/logo.png' %}" alt="" width="100" height="100"
                                     loading="lazy">
-                                {% if user.is_authenticated %}
                                 <div class="btn" id="addToHomescreen">
                                     <div class="btn-install">
                                         <div class="btn-text flex text-white">
@@ -179,23 +178,26 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% else %}
-                                <p class="btn-rose p-2">Please Login first</p>
-                                {% endif %}
-                            </div>
-                            <div class="alert alert-danger" id="errInstallApp" style="display: none;">make sure you are
-                                using
-                                <b>Google Chrome</b> and the app isn't already installed
-                                on your device, or you won't be able to download Orgachat.
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                            onclick="closeModal('#installOrgachat')">No thanks</button>
+                        <br>
+                        <p>Don't see the button? possible reasons:
+                            <ul>
+                                <li>Not using Google Chrome</li>
+                                <li>App is already installed</li>
+                                <li>Using Iphone mobile, due to security options from them. You can disable it manually
+                                </li>
+                            </ul>
+                            <p>If you didn't do anything wrong and still can't install the app please contact us <a
+                                    href="https://www.orgachat.com/users/view/2/">Orgachat Official Account</a></p>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        onclick="closeModal('#installOrgachat')">No thanks</button>
+                </div>
             </div>
+        </div>
         </div>
         <!-- ---------Add Group---------- -->
         <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel"
@@ -225,7 +227,9 @@
     <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
     <script src="{% static 'chat/js/main.js' %}"></script>
 
-    <!-- Service Worker.js -->
+    <!-- ------------------------------------ -->
+    <!-- ------------------------------------ -->
+    <!-- SERVICE WORKER.JS -->
     <script>
         const applicationServerPublicKey =
             'BIQ_a_SUkvuMM3hzddLU7cqQWcBN7uk6QANR2sQci68sZ2CBAMf9uc5aMAJJErNngxx9Ey7WTyx4KtxZvJoUHRQ';
@@ -293,7 +297,17 @@
 
         function updateSubscriptionOnServer(subscription) {
             // TODO: Send subscription to application server
+            var subXhr = new XMLHttpRequest();
+            subXhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {}
+            }
+            subXhr.open("POST", "{% url 'users:notif_sub' %}", true)
+            subXhr.setRequestHeader("Content-type", "application/x-wwww-form-urlencoded")
+            subXhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
 
+            subXhr.send(JSON.stringify({
+                "notif_sub": subscription,
+            }))
             const subscriptionJson = document.querySelector('.js-subscription-json');
             const subscriptionDetails =
                 document.querySelector('.js-subscription-details');
@@ -326,7 +340,6 @@
             pushButton.addEventListener('click', function () {
                 pushButton.disabled = true;
                 if (isSubscribed) {
-                    // TODO: Unsubscribe user
                     unsubscribeUser();
                 } else {
                     subscribeUser();
@@ -339,6 +352,9 @@
 
                     if (isSubscribed) {
                         console.log('User IS subscribed.');
+                        // todo -----------Update DataBase-----------
+                        updateSubscriptionOnServer(subscription)
+                        // -----------End Update DataBase-----------
                     } else {
                         console.log('User is NOT subscribed.');
                     }

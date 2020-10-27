@@ -59,9 +59,10 @@ self.addEventListener('push', function (event) {
 
     const title = 'Orgachat';
     const options = {
-        body: 'You got a message.',
+        body: 'You received a message.',
         icon: 'static/chat/img/favicon.png',
-        badge: 'static/chat/img/favicon.png'
+        badge: 'static/chat/img/favicon.png',
+        vibrate: [100, 50, 100],
     };
     const notificationPromise = self.registration.showNotification(title, options);
     event.waitUntil(notificationPromise);

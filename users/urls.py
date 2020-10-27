@@ -11,4 +11,5 @@ urlpatterns = [
     path('remove-friend/<int:user_id>/',
          views.remove_friend, name='remove_friend'),
     path("about/", views.about, name="about"),
+    path("notif_sub/", views.notif_sub, name="notif_sub")
 ]
