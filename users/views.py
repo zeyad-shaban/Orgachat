@@ -156,14 +156,3 @@ def logoutuser(request):
 
 def about(request):
     return render(request, "users/about.html")
-
-def notif_sub(request):
-    notif_sub = json.loads(request.body).get("notif_sub")
-    sub_endpoint = notif_sub.get('endpoint')
-    sub_auth = notif_sub.get('keys').get('auth')
-    sub_p256dh = notif_sub.get('keys').get('p256dh')
-    request.user.sub_endpoint = sub_endpoint
-    request.user.sub_auth = sub_auth
-    request.user.sub_p256dh = sub_p256dh
-    request.user.save()
-    return redirect("home")

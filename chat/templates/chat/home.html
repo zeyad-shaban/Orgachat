@@ -269,10 +269,10 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #fa8231;">
+            <div class="modal-header" style="background-color: #ff0000;">
                 <div class="center">
                     <h3 class="modal-title" id="latestUpdateLabel"><img src="{% static 'chat/img/favicon.png' %}"
-                            width="50" height="50" alt=""> New Updates! Orgachat 1.2</h3>
+                            width="50" height="50" alt=""> IMPORTANT BIG UPDATE!</h3>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                     onclick="closeModal('#latestUpdate')">
@@ -283,49 +283,41 @@
                 <div class="container">
                     <div class="center">
                         <div class="center">
-                            <h2>What is new?</h2>
+                            <h2>Notifications</h2>
                         </div>
                     </div>
-                    <br>
-                    <div class="center">
-                        <h2>Big updates</h2>
+                    <p>Notifications are finally working, no longer beta!</p>
+                    <p>How to activate?</p>
+                    <p>1- Click on the three dots</p>
+                    <p>2- Install the app from the "Install Orgachat" button (If you faced errors read the intructions
+                        in it)</p>
+                    <div class="alert alert-danger">If you previously installed it considered reinstalling it as there
+                        were some issues with the previous one, thanks for understanding
+                        <br>
+                        إذا قمت بتثبيته مسبقًا ، فقم بإعادة تثبيته نظرًا لوجود بعض المشكلات في الإصدار السابق ، شكرًا
+                        لتفهمك
                     </div>
-
-                    <p><b>Invite A Friend</b>: Clicking the button will redirect you to another social
-                        media app where you can send the invitation link to your friends. When they click on it
-                        he/she will get added to your friends list directly. you can find the button in your <a
-                            href="{% url 'users:profile' %}">profile</a> and by clicking the three dots in the navbar
+                    <p>3- Open Orgachat after installed it, click on the three dots again, then click on "Subscribe to
+                        push message",
+                        wait a little and it should change to "Unsubscribe to..." If so happened you are good to go (If
+                        it didn't refresh the page and see if the text changed)</p>
+                    <p>Note that the subscription is based on device not account</p>
+                    <h4>Facing Trouble:</h4>
+                    <p>If the button is disabled but the content didn't change from "Subscribe" to "Unsubscribe" this
+                        means that your browser blocked the website notifications.</p>
+                    <p> To fix open the app from your browser => click on the lock icon beside the url => you should see
+                        that the notifications permession is blocked, change that to "allow" or "ask (default)"</p>
+                    <p>Didn't solve the problem? <a href="https://www.orgachat.com/users/view/2/"
+                            target="_blank">Contact us here</a>
                     </p>
-                    <br>
-                    <ul>
-                        <li>Added areas to divide your homepage, known as 'Homepage Area' &mdash; you can add them
-                            from
-                            the bottom right button in your homepage</li>
-                        <li>Removing offline support &mdash; as it was causing the app to crash, we have plans to
-                            add in a later update</li>
-                        <li>Fixed app crashing</li>
-                        <li>Added a page for each user &mdash; You can get it by clicking on the person username
-                        </li>
-                        <li>Added profile page &mdash; Click on your username in the navbar to open it</li>
-                        <li>Added search bar for all users &mdash; It will search by username, email, country, first
-                            name, last name</li>
-                        <li>Added ultimate paginator for messages &mdash; Will make it load much faster</li>
-                    </ul>
+                    <!-- <a href="#" target="_blank">Our explainer video</a> -->
                     <br>
                     <div class="center">
-                        <h2>Minor updates</h2>
+                        <h2>Offline support</h2>
                     </div>
-                    <ul>
-                        <li>Added first, last name, profile picture, bio, country to help others know who you are
-                            &mdash; You will find in your profile</li>
-                        <li>Bug fixes for groups</li>
-                        <li>Changed the ordering of users &mdash; recently opened users will be on top</li>
-                        <li>Added ultimate paginator for users page &mdash; Which will make it load much faster</li>
-                        <li>You can now send multiple files at once</li>
-                        <li>You now don't have to scroll down when you open the chat</li>
-                        <li>Better homepage chat and more useful information about the last message</li>
-                        <li>Better image displaying for chats</li>
-                    </ul>
+                    <p>Don't worry, it won't cause the app to crash as in the last time 😂</p>
+                    <p>Note that there are only four pages with offline support for now: Home page, Profile page, all
+                        users page, and about page. Any page else will crash if you are not connected to internet</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -360,11 +352,10 @@
         function eraseCookie(name) {
             createCookie(name, "", -1);
         }
-        if (!readCookie('alreadyShown')) {
+        if (!readCookie('alreadyShown2')) {
             openModal('#latestUpdate')
-            createCookie('alreadyShown', true)
+            createCookie('alreadyShown2', true)
         }
-
     });
 </script>
 {% endblock content %}

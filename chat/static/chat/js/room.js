@@ -41,29 +41,4 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("scroll", function (e) {
         toggleScrollDown()
     })
-    // -------------Push notifications-------------
-    function notifyMe() {
-        // Let's check if the browser supports notifications
-        if (!("Notification" in window)) {
-            alert("This browser does not support desktop notification");
-        }
-        else if (Notification.permission === "granted") {
-            // If user already granted permission
-        }
-        else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then(function (permission) {
-                // If the user accepts, let's create a notification
-                if (permission === "granted") {
-                    alert("Don't forget to click on 'subsribe to push messaging' in the homepage")
-                    var notification = new Notification("Don't forget to click on 'Subsribe to Push Messaging' in the homepage");
-                }
-            });
-        }
-    }
-    setTimeout(() => {
-        notifyMe()
-    }, 6000);
-
-    // ---------------Open img---------------
-    
 });
