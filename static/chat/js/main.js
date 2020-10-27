@@ -48,6 +48,19 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
     }
 
+    // -----------APP BADGE--------------
+    // Set the badge
+    const unreadCount = document.querySelector("#userProfileLi").getAttribute("data-badge_count");
+    alert(unreadCount)
+    navigator.setAppBadge(unreadCount).catch((error) => {
+        //Do something with the error.
+    });
+
+    // Clear the badge
+    navigator.clearAppBadge().catch((error) => {
+        // Do something with the error.
+    });
+    // -----------END APP BADGE--------------
 
     // ------------------
     // HEADER

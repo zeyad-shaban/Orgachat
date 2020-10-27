@@ -68,7 +68,7 @@
                     <a class="nav-link" href="{% url 'signupuser' %}"><span class="nav-label">Sign Up / In</span></a>
                 </li>
                 {% else %}
-                <li class="nav-item active">
+                <li class="nav-item active" id="userProfileLi" data-badge_count="{{user.get_badge_count}}">
                     <a class="nav-link" href="{% url 'users:profile' %}"><img src="{{user.avatar.url}}" alt=""
                             width="45" height="45" style="border-radius: 50%;" loading="lazy">
                         <span class="nav-label">{{ user.username }}</span></a>

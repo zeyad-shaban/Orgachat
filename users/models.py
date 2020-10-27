@@ -266,6 +266,16 @@ class User(AbstractUser):
     # Privacy
     # todo show friends, phone number, email, who to see profile
 
+    def get_badge_count(self):
+        total = 0
+        from chat.models import Room
+        rooms = Room.objects.filter(chatters=self)
+        for room in rooms:
+            total += room.unread_count()
+        print("====================================================")
+        print(total)
+        return total
+    
     def display(self):
         """Display the user info for other users to see, instead of copying and pasting it I have it in one place
         Don't forget to place it between <ul class="list-unstyled"></ul> Or it won't look any good!"""
