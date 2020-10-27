@@ -78,3 +78,10 @@ self.addEventListener('notificationclick', function (event) {
     );
 });
 // --------------------END PUSH NOTIFICATIONS--------------------
+
+// -------------------NOTIFICATIONS BADGE----------------------
+const unreadCount = 24
+navigator.setAppBadge(unreadCount).catch((error) => {
+    console.log("Error: ", error)
+});
+// -------------------END NOTIFICATIONS BADGE----------------------

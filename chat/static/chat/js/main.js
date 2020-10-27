@@ -48,16 +48,10 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
     }
 
-    // -----------APP BADGE--------------
-    // Set the badge
-    const unreadCount = 24
-    navigator.setAppBadge(unreadCount).catch((error) => {
-        //Do something with the error.
-    });
-
     // ------------------
     // HEADER
     // ------------------
+    
     // ---------Navbar----------
     document.querySelector('body').style.paddingTop = document.querySelector('.navbar').clientHeight + 'px'
     // detect scroll top or down
