@@ -27,9 +27,9 @@ now!{% endblock description %}
         {{auser.display|safe}}
         <br>
         {% if auser in user.friends.all %}
-        <a href="{% url 'users:remove_friend' auser.id %}" class="btn btn-danger mb-5">Remove friend</a>
+        <a href="{% url 'users:remove_friend' auser.id %}" class="btn btn-danger mb-5 removeFriend">Remove friend</a>
         {% else %}
-        <a href="{% url 'users:add_friend' auser.id %}" class="btn btn-success mb-5">Add friend</a>
+        <a href="{% url 'users:add_friend' auser.id %}" class="btn btn-success mb-5 addFriend">Add friend</a>
         {% endif %}
         <br>
         {% endfor %}
@@ -37,6 +37,7 @@ now!{% endblock description %}
 </div>
 
 <script>
+    // -------------PAGINATOR-----------------
     var page = 1;
     window.addEventListener("scroll", function (e) {
         if (window.scrollY >= window.scrollMaxY) {
@@ -79,5 +80,41 @@ now!{% endblock description %}
             }
         }
     })
+    // -----------------END PAGINATOR-----------------
+    // --------------------Add Friend--------------------
+    var addFriendBtns = document.querySelectorAll(".addFriend")
+    for (btn of addFriendBtns) {
+        btn.onclick = function (e) {
+            e.preventDefault();
+            this.style.display = "none"
+            var fXhr = new XMLHttpRequest();
+            fXhr.onreadystatechange = function (e) {
+                if (this.readyState == 4 && this.status == 200) {
+                    toast("Added to your friend list")
+                }
+            }
+            fXhr.open("GET", this.getAttribute("href"), false)
+            fXhr.send()
+        }
+    }
+    // --------------------END Add Friend--------------------
+
+    // --------------------Remove Friend--------------------
+    var addFriendBtns = document.querySelectorAll(".removeFriend")
+    for (btn of addFriendBtns) {
+        btn.onclick = function (e) {
+            e.preventDefault();
+            this.style.display = "none"
+            var fXhr = new XMLHttpRequest();
+            fXhr.onreadystatechange = function (e) {
+                if (this.readyState == 4 && this.status == 200) {
+                    toast("Removed from your friend list")
+                }
+            }
+            fXhr.open("GET", this.getAttribute("href"), false)
+            fXhr.send()
+        }
+    }
+    // --------------------END Remove Friend--------------------
 </script>
 {% endblock content %}

@@ -25,27 +25,14 @@
 
     <section>
         <div class="center">
-            <h2>Settings <button class="btn" onclick="toggleAllCollapse('#settings')"><i
-                        class="fas fa-caret-down i-md"></i></button></h2>
+            <h2>Settings</h2>
         </div>
-        <div id="settings" class="collapse">
-            <button class="btn btn-outline-info" onclick="openModal('#updateProfile')"><i
-                    class="fas fa-edit"></i>Profile</button>
-            <button class="btn btn-outline-warning" onclick="openModal('#updatePrivacy')"><i
-                    class="fas fa-unlock-alt"></i>Privacy</button>
-        </div>
-    </section>
-
-    <section>
-        <div class="center">
-            <h2>Friends <button class="btn" onclick="toggleAllCollapse('#friends')"><i
-                        class="fas fa-caret-down i-md"></i></button></h2>
-        </div>
-        <ul class="list-unstyled collapse" id="friends">
-            {% for friend in user.friends.all %}
-            {{friend.display|safe}}
-            {% endfor %}
-        </ul>
+        <br>
+        <button class="btn" onclick="openModal('#updateProfile')"><i
+                class="fas fa-edit btn btn-warning btn-circle p-2 i-md"></i>&nbsp; Update Profile</button>
+        <br>
+        <button class="btn" onclick="toast('Sorry, this is still under development')"><i
+                class="fas fa-unlock-alt btn btn-warning btn-circle p-2 i-md"></i>&nbsp; Update Privacy</button>
     </section>
 
     <!-- ------------------------------------ -->
@@ -102,8 +89,8 @@
                                     placeholder="Avatar">
                             </div>
                             <div class="col-md-7 mb-7">
-                                <a href="{% url 'users:send_validation' %}"><i
-                                        class="fas fa-share-square"></i> &nbsp; Email and Phone Number</a>
+                                <a href="{% url 'users:send_validation' %}"><i class="fas fa-share-square"></i> &nbsp;
+                                    Email and Phone Number</a>
                             </div>
                         </div>
 
@@ -111,8 +98,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close-update-profile"
-                        data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('#updateProfile'); return toast('You discarded the changes')">Cancel</button>
                     <button type="button" class="btn btn-success"
                         onclick="document.querySelector('#saveProfile').click()">Save changes</button>
                 </div>
@@ -120,14 +107,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.querySelector('.close-update-profile').onclick = function (e) {
-        var con = confirm("Your edits won't get saved, click confirm to continue")
-        if (con) {
-            closeModal('#updateProfile')
-        }
-    }
-</script>
-
 {% endblock content %}

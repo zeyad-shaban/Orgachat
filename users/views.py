@@ -228,6 +228,7 @@ def all_users(request):
 # -------------------------
 @login_required
 def add_friend(request, user_id):
+    print("-------------CALLED-------------")
     friend = get_object_or_404(User, pk=user_id)
     request.user.friends.add(friend)
     friend.friends.add(request.user)

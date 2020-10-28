@@ -225,7 +225,7 @@ body {
 }
 
 .msg-txt {
-    white-space: pre;
+    white-space: pre-line;
 }
 
 .msg .user {

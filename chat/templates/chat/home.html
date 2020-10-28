@@ -126,14 +126,15 @@
                     class="fas fa-question-circle"></i>
                 <hr>
 
-                <button class="btn" onclick="openModal('#addUser')"><i
-                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md" onclick="return toast('Sorry this is still under development')"></i>&nbsp; Add user</button>
+                <a type="button" href="{% url 'users:all_users' %}" class="btn"><i
+                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md"></i>&nbsp; Add user</a>
                 <!-- AddToAny BEGIN -->
                 <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
                     data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
                     data-a2a-title="Orgachat Friend Invitation link">
                     <button class="btn">
-                        <a class="a2a_dd btn btn-success btn-circle p-2" id="profile-page" href="https://www.addtoany.com/share"></a> &nbsp; Invite
+                        <a class="a2a_dd btn btn-success btn-circle p-2" id="profile-page"
+                            href="https://www.addtoany.com/share"></a> &nbsp; Invite
                         friends
                     </button>
                 </div>
