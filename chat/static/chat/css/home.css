@@ -62,3 +62,16 @@
         background: yellow;
     }
 }
+
+#extrasBtn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #4CD137;
+    padding: 15px;
+}
+
+#extrasBtn i {
+    color: white;
+    font-size: 250%;
+}

@@ -89,28 +89,7 @@
                         Orgachat</button>
                     <br>
                     {% webpush_button with_class="btn btn-outline-info" %}
-                    <br>
-                    <button class="btn" onclick="openModal('#addGroup')"><i class="fas fa-plus"></i> Add Group</button>
-
-                    <!-- <a class="dropdown-item" href="https://www.surveymonkey.com/r/5WMYSSX" target="_blank">Feedback</a> -->
                     <hr>
-                    {% if user.is_authenticated %}
-                    <!-- AddToAny BEGIN -->
-                    <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
-                        data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
-                        data-a2a-title="Orgachat Friend Invitation link">
-                        <button href="" class="btn">
-                            <a class="a2a_dd" id="profile-page" href="https://www.addtoany.com/share"></a> &nbsp; Invite
-                            a Friend
-                        </button>
-                    </div>
-                    <script>
-                        var a2a_config = a2a_config || {};
-                        a2a_config.onclick = 1;
-                    </script>
-                    <script async src="https://static.addtoany.com/menu/page.js"></script>
-                    <!-- AddToAny END -->
-                    {% endif %}
                     <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
                     <!-- <a class="dropdown-item" href="{% url 'users:about' %}"><i class="fas fa-question-circle"></i>
                         Frequently Asked Questions</a> -->
@@ -188,8 +167,8 @@
                         <br>
                         <p>Don't see the button? possible reasons:
                             <ul>
-                                <li>Not using Google Chrome</li>
                                 <li>App is already installed</li>
+                                <li>Not using Google Chrome</li>
                                 <li>Using Iphone mobile, due to security options from them. You can disable it manually
                                 </li>
                             </ul>
@@ -199,30 +178,6 @@
                 </div>
             </div>
         </div>
-        </div>
-        <!-- ---------Add Group---------- -->
-        <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addGroupLabel">Add Group</h5>
-                        <button type="button" class="close" onclick="closeModal('#addGroup')">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{% url 'chat:create_group' %}" method="post">
-                            {% csrf_token %}
-                            <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
-                                class="from-control">
-                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">

@@ -6,55 +6,49 @@
 {% block content %}
 <div class="container">
     <section>
-
         <div class="center">
-            <h2>{{user.username}}</h2>
+            <h2>{{user.username}} <button class="btn" onclick="toggleAllCollapse('#about')"><i
+                        class="fas fa-caret-down i-lg"></i></button></h2>
+        </div>
+        <div class="collapse" id="about">
             <div class="col-lg-4">
                 <img src="{{user.avatar.url}}" class="float-left mr-3" alt="" style="border-radius: 50%;" width="200"
                     height="200" loading="lazy">
             </div>
-        </div>
-        <div class="media col-lg-5">
-            <div class="media-body">
-                <p>First: {{user.first_name}} &mdash; Last: {{user.last_name}}</p>
-                <p><i class="fas fa-envelope"></i> Email: {{user.email}}</p>
-                <p><i class="fas fa-globe-asia"></i> Country: {{user.country}}</p>
-                <p>About: {{user.about}}</p>
+            <div class="media col-lg-5">
+                <div class="media-body">
+                    <p>First: {{user.first_name}} &mdash; Last: {{user.last_name}}</p>
+                    <p><i class="fas fa-envelope"></i> Email: {{user.email}}</p>
+                    <p><i class="fas fa-globe-asia"></i> Country: {{user.country}}</p>
+                    <p>About: {{user.about}}</p>
+                </div>
             </div>
         </div>
-        <button class="btn btn-outline-info" onclick="openModal('#updateProfile')"><i class="fas fa-edit"></i> Update
-            Profile</button>
-        <br>
-        <br>
-        <br>
-        <!-- AddToAny BEGIN -->
-        <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
-            data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
-            data-a2a-title="Orgachat Friend Invitation link">
-            <button href="" class="btn btn-success">
-                <a class="a2a_dd" id="profile-page" href="https://www.addtoany.com/share"></a> &nbsp; Invite a Friend
-            </button>
-        </div>
-        <script>
-            var a2a_config = a2a_config || {};
-            a2a_config.onclick = 1;
-        </script>
-        <script async src="https://static.addtoany.com/menu/page.js"></script>
-        <!-- AddToAny END -->
     </section>
-    <br>
-    <br>
-    <br>
+
     <section>
         <div class="center">
-            <h2>Friends</h2>
+            <h2>Settings <button class="btn" onclick="toggleAllCollapse('#settings')"><i
+                        class="fas fa-caret-down i-lg"></i></button></h2>
         </div>
-        <ul class="list-unstyled">
+        <div id="settings" class="collapse">
+            <button class="btn btn-outline-info" onclick="openModal('#updateProfile')"><i
+                    class="fas fa-edit"></i>Profile</button>
+            <button class="btn btn-outline-warning" onclick="openModal('#updatePrivacy')"><i
+                    class="fas fa-unlock-alt"></i>Privacy</button>
+        </div>
+    </section>
+
+    <section>
+        <div class="center">
+            <h2>Friends <button class="btn" onclick="toggleAllCollapse('#friends')"><i
+                        class="fas fa-caret-down i-lg"></i></button></h2>
+        </div>
+        <ul class="list-unstyled collapse" id="friends">
             {% for friend in user.friends.all %}
             {{friend.display|safe}}
             {% endfor %}
         </ul>
-
     </section>
 
     <!-- ------------------------------------ -->

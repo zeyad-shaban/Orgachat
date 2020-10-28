@@ -102,18 +102,58 @@
         </div>
     </div>
 </div>
-<button class="btn btn-warning" style="position: fixed; bottom: 60px; right: 60px; border-radius: 200px;"
-    onclick="openModal('#addArea')"><i class="fas fa-plus"></i> Add Homepage area</button>
+<button class="btn btn-circle" id="extrasBtn" onclick="openModal('#extras')"><i
+        class="fas fa-comment-medical"></i></button>
 
 <!-- ------------------------------------ -->
 <!-- Modals -->
 <!-- ------------------------------------ -->
+
+<!-- --------------------------Extras-------------------------- -->
+<div class="modal fade" id="extras" tabindex="-1" role="dialog" aria-labelledby="extrasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #4CD137">
+                <button class="btn btn-outline-secondary text-white btn-circle" onclick="closeModal('#extras')"><i
+                        class="fas fa-arrow-left"></i></button>
+            </div>
+            <div class="modal-body">
+                <button class="btn" onclick="openModal('#addGroup')"><i
+                        class="fas fa-user-friends btn btn-success btn-circle p-2 i-md"></i>&nbsp; New group</button>
+                <br>
+                <button class="btn" onclick="openModal('#addArea')"><i
+                        class="fas fa-chart-pie btn btn-success btn-circle p-2 i-md"></i>&nbsp; New area</button> <i
+                    class="fas fa-question-circle"></i>
+                <hr>
+
+                <button class="btn" onclick="openModal('#addUser')"><i
+                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md" onclick="return alert('sorry this is still under development')"></i>&nbsp; Add user</button>
+                <!-- AddToAny BEGIN -->
+                <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
+                    data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
+                    data-a2a-title="Orgachat Friend Invitation link">
+                    <button class="btn">
+                        <a class="a2a_dd btn btn-success btn-circle p-2" id="profile-page" href="https://www.addtoany.com/share"></a> &nbsp; Invite
+                        friends
+                    </button>
+                </div>
+                <script>
+                    var a2a_config = a2a_config || {};
+                    a2a_config.onclick = 1;
+                </script>
+                <script async src="https://static.addtoany.com/menu/page.js"></script>
+                <!-- AddToAny END -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- --------------------------Add Area-------------------------- -->
 <div class="modal fade" id="addArea" tabindex="-1" role="dialog" aria-labelledby="addAreaLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="center">
-                    <h2 class="modal-title" id="addAreaLabel">Add Homepage Area</h2>
+                    <h2 class="modal-title" id="addAreaLabel">New Homepage Area</h2>
                 </div>
                 <button type="button" class="close" onclick="closeModal('#addArea')">
                     <span aria-hidden="true">&times;</span>
@@ -126,16 +166,34 @@
                         maxlength="50" class="from-control">
                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                 </form>
-                <br>
-                <small>Homepage Areas are used to divide your homepage friends and groups</small>
-                <small class="form-text text-muted">We will move the "Add Homepage Area" button to the three
-                    dots</small>
             </div>
         </div>
     </div>
 </div>
 
-<!-- -------------Modals-------------- -->
+<!-- ---------Add Group---------- -->
+<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addGroupLabel">New Group</h5>
+                <button type="button" class="close" onclick="closeModal('#addGroup')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'chat:create_group' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
+                        class="from-control">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -------------Edit on a chat room-------------- -->
 <div class="modal fade" id="editRoom" tabindex="-1" role="dialog" aria-labelledby="editRoomLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
@@ -169,15 +227,6 @@
 </div>
 
 <link rel="stylesheet" href="{% static 'chat/css/home.css' %}">
-<script>
-    (function (t, e, s, o) {
-        var n, c, l;
-        t.SMCX = t.SMCX || [], e.getElementById(o) || (n = e.getElementsByTagName(s), c = n[n.length - 1], l = e
-            .createElement(s), l.type = "text/javascript", l.async = !0, l.id = o, l.src =
-            "https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd0n20gVIxFU5pdnj7q5ydpIoQu0XNaYyt5ksYgBbb8pT.js",
-            c.parentNode.insertBefore(l, c))
-    })(window, document, "script", "smcx-sdk");
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var longpress = false;
