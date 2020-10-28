@@ -7,61 +7,59 @@
 organizing your chat{% endblock description %}
 
 {% block content %}
-<script src="{% static 'users/js/signupuser.js' %}"></script>
 <link rel="stylesheet" href="{% static 'users/css/signupuser.css' %}">
-<br><br>
-<div class="center">
-    <h1 style="color: #EBC12C">Start chatting in Orgachat</h1>
-    <h2>Organize your chat for a better life</h2>
-</div>
+<style>
+    #wrapper .form-layout .form-left {
+        background-image: url("{% static 'chat/img/logo.png' %}");
+    }
+</style>
 
-<div class="form-wrap">
-    <div class="tabs">
-        <h3 class="signup-tab"><a href="#" class="active" style="text-decoration: none;">Sign Up</a></h3>
-        <h3 class="login-tab"><a href="#" class="" style="text-decoration: none;">Login</a></h3>
-    </div>
-
-    <!-- SIGNUP -->
-    <div class="tabs-content">
-        <div id="signup-tab-content" class="active">
-            <form class="signup-form" action="{% url 'signupuser' %}?next={{next}}" method="POST">
-                {% csrf_token %}
-                <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username"
-                    name="username" required maxlength="30">
-                <input type="email" class="input" id="id_email" autocomplete="off" placeholder="Email (Optional)"
-                    name="email">
-                <input type="password" class="input" id="id_password1" autocomplete="off" name="password1"
-                    placeholder="Password" required>
-                <input type="password" class="input" id="id_password2" autocomplete="off" name="password2"
-                    placeholder="Confirm password" required>
-                <input type="submit" class="button" value="Sign Up">
-            </form>
-            <div class="help-text">
+<div id="wrapper">
+    <div class="form-layout">
+        <div class="form-left">
+            <div class="logo">Orgachat, perfect for</div>
+            <div class="info">
+                <li>Organizing chat</li>
+                    <li>Managing teams</li>
+            </div>
+            <div class="footer">
+                <p>A very effective chat app</p>
+            </div>
+        </div>
+        <form action="{% url 'signupuser' %}?next={{next}}" class="form-right" method="POST">
+            {% csrf_token %}
+            <div>
+                <input type="text" name="username" id="username" placeholder="Username" autocomplete="off"
+                    maxlength="30" required />
+            </div>
+            <div>
+                <input type="email" name="email" id="email" placeholder="Email (Optional)" autocomplete="off" />
+            </div>
+            <div>
+                <input type="password" name="password1" id="password1" placeholder="Password" autocomplete="off"
+                    required />
+            </div>
+            <div>
+                <input type="password" name="password2" id="password2" placeholder="Confirm password"
+                    autocomplete="off" />
+            </div>
+            <div>
                 <small class="form-text text-muted">By signing up, you agree to our
                     <a href="{% url 'info:termsandconditions' %}" target="_blank"
                         onclick="openModal('#termsAndConditions'); return false">Terms and conditions</a>
                     <a href="{% url 'info:privacypolicy' %}" target="_blank"
                         onclick="openModal('#privacyPolicy'); return false"> Privacy Policy</a>
-                    <a href="{% url 'info:cookiepolicy' %}" onclick="openModal('#cookiePolicy'); return false" target="_blank"> Cookie Policy</a></small>
+                    <a href="{% url 'info:cookiepolicy' %}" onclick="openModal('#cookiePolicy'); return false"
+                        target="_blank"> Cookie Policy</a></small>
             </div>
-        </div>
-
-        <!--LOGIN-->
-        <div id="login-tab-content">
-            <form class="login-form" action="{% url 'loginuser' %}?next={{next}}" method="post">
-                {% csrf_token %}
-                <input type="text" class="input" id="id_username" autocomplete="off" placeholder="Username"
-                    name="username" required>
-                <input type="password" class="input" id="id_password" autocomplete="off" placeholder="Password"
-                    name="password">
-                <input type="submit" class="button" value="Login">
-            </form>
-            <!-- <div class="help-text">
-                <p><a href="#">Forget your password?</a></p>
-            </div> -->
-        </div>
+            <div class="buttons">
+                <button type="submit" class="btn btn-success btn-lg create-account">Create account</button>
+                <a class="forgot-login" href="{% url 'loginuser' %}">Have an account? login</a>
+            </div>
+        </form>
     </div>
 </div>
+
 <!-- -------------------------- -->
 <!-- MODELS -->
 <!-- -------------------------- -->
@@ -385,7 +383,8 @@ organizing your chat{% endblock description %}
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="cookiePolicyLabel">Cookie Policy</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal('#cookiePolicy')">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="closeModal('#cookiePolicy')">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -400,10 +399,12 @@ organizing your chat{% endblock description %}
                     <h2>CSRF TOKEN</h2>
                 </div>
                 <p>Used to protect your data from hackers when submitting any form</p>
-                <small class="form-text text-muted">See in a stand alone page <a href="{% url 'info:cookiepolicy' %}" target="_blank">Here</a></small>
+                <small class="form-text text-muted">See in a stand alone page <a href="{% url 'info:cookiepolicy' %}"
+                        target="_blank">Here</a></small>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal('#cookiePolicy')">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="closeModal('#cookiePolicy')">Close</button>
             </div>
         </div>
     </div>

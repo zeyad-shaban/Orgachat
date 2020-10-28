@@ -126,7 +126,14 @@ def signupuser(request):
 
 def loginuser(request):
     next = request.GET.get("next")
-    if request.method == 'POST':
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            messages.warning(request, 'You are already logged in')
+            return redirect('home')
+        else:
+            return render(request, 'users/loginuser.html', {"next": next})
+
+    else:
         user = authenticate(username=request.POST.get(
             'username'), password=request.POST.get('password'), backends='django.contrib.auth.backends.ModelBackend')
         if user:
