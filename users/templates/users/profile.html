@@ -7,21 +7,18 @@
 <div class="container">
     <section>
         <div class="center">
-            <h2>{{user.username}} <button class="btn" onclick="toggleAllCollapse('#about')"><i
-                        class="fas fa-caret-down i-lg"></i></button></h2>
+            <h2>{{user.username}}</h2>
         </div>
-        <div class="collapse" id="about">
-            <div class="col-lg-4">
-                <img src="{{user.avatar.url}}" class="float-left mr-3" alt="" style="border-radius: 50%;" width="200"
-                    height="200" loading="lazy">
-            </div>
-            <div class="media col-lg-5">
-                <div class="media-body">
-                    <p>First: {{user.first_name}} &mdash; Last: {{user.last_name}}</p>
-                    <p><i class="fas fa-envelope"></i> Email: {{user.email}}</p>
-                    <p><i class="fas fa-globe-asia"></i> Country: {{user.country}}</p>
-                    <p>About: {{user.about}}</p>
-                </div>
+        <div class="col-lg-4">
+            <img src="{{user.avatar.url}}" class="float-left mr-3" alt="" style="border-radius: 50%;" width="200"
+                height="200" loading="lazy">
+        </div>
+        <div class="media col-lg-5">
+            <div class="media-body">
+                <p>First: {{user.first_name}} &mdash; Last: {{user.last_name}}</p>
+                <p><i class="fas fa-envelope"></i> Email: {{user.email}}</p>
+                <p><i class="fas fa-globe-asia"></i> Country: {{user.country}}</p>
+                <p>About: {{user.about}}</p>
             </div>
         </div>
     </section>
@@ -29,7 +26,7 @@
     <section>
         <div class="center">
             <h2>Settings <button class="btn" onclick="toggleAllCollapse('#settings')"><i
-                        class="fas fa-caret-down i-lg"></i></button></h2>
+                        class="fas fa-caret-down i-md"></i></button></h2>
         </div>
         <div id="settings" class="collapse">
             <button class="btn btn-outline-info" onclick="openModal('#updateProfile')"><i
@@ -42,7 +39,7 @@
     <section>
         <div class="center">
             <h2>Friends <button class="btn" onclick="toggleAllCollapse('#friends')"><i
-                        class="fas fa-caret-down i-lg"></i></button></h2>
+                        class="fas fa-caret-down i-md"></i></button></h2>
         </div>
         <ul class="list-unstyled collapse" id="friends">
             {% for friend in user.friends.all %}
@@ -92,11 +89,6 @@
                                 <input type="text" class="form-control" id="validationServer033" placeholder="About"
                                     value="{{user.about}}" name="about">
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="validationServer053"><i class="fas fa-envelope"></i> Email</label>
-                                <input type="email" class="form-control" id="validationServer053"
-                                    placeholder="Email@gmail.com" name="email">
-                            </div>
                             <br>
                             <div class="col-md-7 mb-7">
                                 <label for="id_country"><i class="fas fa-globe-asia"></i> Country</label>
@@ -109,7 +101,12 @@
                                 <input type="file" class="form-file" name="avatar" id="validationServer063"
                                     placeholder="Avatar">
                             </div>
+                            <div class="col-md-7 mb-7">
+                                <a href="{% url 'users:send_validation' %}"><i
+                                        class="fas fa-share-square"></i> &nbsp; Email and Phone Number</a>
+                            </div>
                         </div>
+
                         <button id="saveProfile" style="display: none;"></button>
                     </form>
                 </div>

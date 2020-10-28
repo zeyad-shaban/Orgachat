@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'info',
     'metrics',
     # Packages
+    'phonenumber_field',
     'webpush',
     'django_cleanup',
 ]
@@ -140,6 +141,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/signup/'
+
+# Email configrations
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'officialorgachat@gmail.com'
+EMAIL_HOST_PASSWORD = '<Orga44200444Chat>'
 
 try:
     from .local_settings import *

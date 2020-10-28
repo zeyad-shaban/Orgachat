@@ -1,0 +1,96 @@
+{% extends 'chat/base.html' %}
+
+{% block title %}Validate your Email and Phone number{% endblock title %}
+
+{% block description %}Set up a phone number and email in Orgachat which will help you to login if you forgot your
+password as well as helping others to know who you are{% endblock description %}
+
+{% block content %}
+<div class="container">
+    <div class="center">
+        <h1>Set up email and phone number</h1>
+    </div>
+    <br>
+    <section>
+        <div class="center">
+            <h2>Phone number</h2>
+        </div>
+        <br>
+        <div>
+            <label for="phone-number">Phone number</label>
+            <input type="tel" name="phone_number" id="phone_number" placeholder="+20 1234567890" autocomplete="off">
+            <a href="{% url 'users:send_validation' %}" class="btn btn-success" id="phone_number_get_code">Get code</a>
+            <br>
+            <br>
+            <label for="phone-number">Enter code here</label>
+            <input type="number" name="validation_code" id="phone_number_validation_code"
+                placeholder="The Validation Code" autocomplete="off">
+            <a href="{% url 'users:send_validation' %}" class="btn btn-primary" id="phone_number_get_code">Check</a>
+        </div>
+    </section>
+
+    <section>
+        <div class="center">
+            <h2>Email</h2>
+        </div>
+        <br>
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" name="email" id="email" placeholder="example@gmail.com" autocomplete="off">
+            <a href="{% url 'users:send_validation' %}" class="btn btn-success" id="email_get_code">Get code</a>
+            <br>
+            <br>
+            <form action="{% url 'users:check_validation' %}" method="POST">
+                {% csrf_token %}
+                <label for="email_validation_code">Enter code here</label>
+                <input type="number" name="email_validation_code" id="email_validation_code" placeholder="The Validation Code"
+                    autocomplete="off">
+                <button type="submit" class="btn btn-primary">Check</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>
+    // ------------PHONE NUMBER-----------------
+    document.querySelector("#phone_number_get_code").addEventListener("click", function (e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                toast("Success")
+            } else if (this.readyState == 4 && this.status == 401) {
+                toast("Failed to get the code")
+            }
+        }
+        xhr.open("POST", "{% url 'users:send_validation' %}", true)
+        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        xhr.send(JSON.stringify({
+            phone_number: document.querySelector("#phone_number").value,
+            type: "phone",
+        }))
+    })
+
+    // ------------EMAIL NUMBER-----------------
+    document.querySelector("#email_get_code").addEventListener("click", function (e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                toast("Check your mail inbox")
+            } else if (this.readyState == 4 && this.status == 401) {
+                toast("Internal Server Error occured")
+            }
+        }
+        xhr.open("POST", "{% url 'users:send_validation' %}", true)
+        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        xhr.send(JSON.stringify({
+            email: document.querySelector("#email").value,
+            type: "email",
+        }))
+    })
+</script>
+
+{% endblock content %}

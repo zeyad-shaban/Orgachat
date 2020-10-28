@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 COUNTRIES = (
@@ -252,13 +253,16 @@ class User(AbstractUser):
     is_installed = models.BooleanField(default=False)
 
     # Identefiers
+    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
     about = models.CharField(
         max_length=190, default="Hi! I'm an Orgachat user", blank=True, null=True)
     avatar = models.ImageField(
         upload_to='users/img/avatar/', default="users/img/avatar/DefUser.png/")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
-
-    # todo phone
+    # Validations
+    email_code = models.IntegerField(blank=True, null=True)
+    phone_code = models.IntegerField(blank=True, null=True)
+    temp_email = models.EmailField(blank=True, null=True)
     # Privacy
     # todo show friends, phone number, email, who to see profile
 
@@ -269,7 +273,7 @@ class User(AbstractUser):
         for room in rooms:
             total += room.unread_count()
         return total
-    
+
     def display(self):
         """Display the user info for other users to see, instead of copying and pasting it I have it in one place
         Don't forget to place it between <ul class="list-unstyled"></ul> Or it won't look any good!"""
