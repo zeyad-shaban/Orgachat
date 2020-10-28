@@ -65,7 +65,10 @@
             <ul class="navbar-nav">
                 {% if not request.user.is_authenticated %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'signupuser' %}"><span class="nav-label">Sign Up / In</span></a>
+                    <a class="nav-link btn-primary" href="{% url 'signupuser' %}">Sign Up</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link btn-primary" href="{% url 'loginuser' %}">Login</a>
                 </li>
                 {% else %}
                 <li class="nav-item active" id="userProfileLi" data-badge_count="{{user.badge_count}}">

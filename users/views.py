@@ -1,17 +1,20 @@
-from chat.models import Area, Room
+import json
 from random import randint
+
+from chat.models import Area, Room
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.mail import send_mail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers import serialize
 from django.db.models.query_utils import Q
 from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-import json
+
 from users.forms import UserProfileForm
-from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -62,27 +65,65 @@ def loginuser(request):
             return render(request, 'users/loginuser.html', {"next": next})
 
     else:
-        user = authenticate(username=request.POST.get(
-            'username'), password=request.POST.get('password'), backends='django.contrib.auth.backends.ModelBackend')
-        if user:
-            login(request, user)
-            if next != "None" and next:
-                print("THERE IS A NEXT", next)
-                return redirect(next)
-            else:
-                print("TO THE HOME!", next)
-                return redirect("home")
+        try:
+            data = json.loads(request.body)
+        except:
+            data = None
+        if data and data.get("email"):
+            try:
+                user = User.objects.get(email=data.get("email"))
+                if user:
+                    user.login_email_code = randint(99999, 999999)
+                    user.save()
+                    send_mail("Orgachat Login with validation code",
+                              f"Your validation code: {user.login_email_code}. Copy and paste it to login to your Orgachat account", "officialorgachat@gmail.com", [data.get("email")])
+            except User.DoesNotExist:
+                return None
+        elif request.method == 'POST' and request.POST.get("validation_code"):
+            try:
+                user = User.objects.get(email=request.POST.get("email"))
+                if int(request.POST.get("validation_code")) == user.login_email_code:
+                    user.login_email_code = None
+                    user.save()
+                    login(request, user)
+                    if next != "None" and next:
+                        return redirect(next)
+                    else:
+                        return redirect("home")
+                else:
+                    messages.error(request, 'Wrong validation code')
+                    return redirect(f'/login/?next={next}')
+            except User.DoesNotExist:
+                messages.error(
+                    request, 'The email you entered doesn\'t belong to any user')
+                return redirect(f'/login/?next={next}')
+            except Exception as err:
+                print('Error: ', err)
+            except MultipleObjectsReturned:
+                messages.error(
+                    request, 'There are multiple users with the same email address, make sure you typed it correctly')
+                return redirect(f'/login/?next={next}')
+
         else:
-            messages.error(
-                request, 'Password didn\'t match or user doesn\'t exist, please try again')
-            return redirect(f'/signup/?next={next}')
+            # Login with username/email
+            user = authenticate(username=request.POST.get(
+                'username'), password=request.POST.get('password'), backends='django.contrib.auth.backends.ModelBackend')
+            if user:
+                login(request, user)
+                if next != "None" and next:
+                    return redirect(next)
+                else:
+                    return redirect("home")
+            else:
+                messages.error(
+                    request, 'Password didn\'t match or user doesn\'t exist, please try again')
+        return redirect(f'/login/?next={next}')
 
 
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
-        messages.success(request, 'Logout out successfullly')
-        return redirect('signupuser')
+        return redirect('loginuser')
 
 # ----------Validate-------------
 
@@ -109,12 +150,21 @@ def check_validation(request):
         pass
     elif request.POST.get("email_validation_code"):
         if int(request.POST.get("email_validation_code")) == request.user.email_code:
+            # Cancel every other user email
+            try:
+                same_email_users = User.objects.filter(
+                    email=request.user.temp_email)
+                for user in same_email_users:
+                    user.email = None
+                    user.save()
+            except:
+                pass
             request.user.email = request.user.temp_email
             request.user.temp_email = None
             request.user.email_code = None
             request.user.save()
             messages.success(
-                request, f"Validated, your account is now linked to {request.user.email}")
+                request, f"Validated Successfully, your account is now linked to {request.user.email}")
         else:
             messages.error(request, "Code isn't valid")
 

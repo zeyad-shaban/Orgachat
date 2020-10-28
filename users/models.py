@@ -251,7 +251,7 @@ class User(AbstractUser):
     last_visit = models.DateTimeField(blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
     is_installed = models.BooleanField(default=False)
-
+    email = models.EmailField(blank=True, null=True)
     # Identefiers
     phone_number = PhoneNumberField(blank=True, null=True, unique=True)
     about = models.CharField(
@@ -263,6 +263,8 @@ class User(AbstractUser):
     email_code = models.IntegerField(blank=True, null=True)
     phone_code = models.IntegerField(blank=True, null=True)
     temp_email = models.EmailField(blank=True, null=True)
+    # validation login
+    login_email_code = models.IntegerField(blank=True, null=True)
     # Privacy
     # todo show friends, phone number, email, who to see profile
 

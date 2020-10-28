@@ -10,8 +10,10 @@ password as well as helping others to know who you are{% endblock description %}
     <div class="center">
         <h1>Set up email and phone number</h1>
     </div>
+    <small class="form-text text-muted">Why? You will be able to login with either username/password or a validation code as in any other chat app</small>
+    <small class="form-text text-muted">Email or phone number will be your only way to get back your account if you forgot the password</small>
     <br>
-    <section>
+    <!-- <section>
         <div class="center">
             <h2>Phone number</h2>
         </div>
@@ -27,7 +29,7 @@ password as well as helping others to know who you are{% endblock description %}
                 placeholder="The Validation Code" autocomplete="off">
             <a href="{% url 'users:send_validation' %}" class="btn btn-primary" id="phone_number_get_code">Check</a>
         </div>
-    </section>
+    </section> -->
 
     <section>
         <div class="center">
@@ -52,27 +54,27 @@ password as well as helping others to know who you are{% endblock description %}
 </div>
 
 <script>
-    // ------------PHONE NUMBER-----------------
-    document.querySelector("#phone_number_get_code").addEventListener("click", function (e) {
-        e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                toast("Success")
-            } else if (this.readyState == 4 && this.status == 401) {
-                toast("Failed to get the code")
-            }
-        }
-        xhr.open("POST", "{% url 'users:send_validation' %}", true)
-        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-        xhr.send(JSON.stringify({
-            phone_number: document.querySelector("#phone_number").value,
-            type: "phone",
-        }))
-    })
+    // // ------------PHONE NUMBER-----------------
+    // document.querySelector("#phone_number_get_code").addEventListener("click", function (e) {
+    //     e.preventDefault();
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.onreadystatechange = function () {
+    //         if (this.readyState == 4 && this.status == 200) {
+    //             toast("Success")
+    //         } else if (this.readyState == 4 && this.status == 401) {
+    //             toast("Failed to get the code")
+    //         }
+    //     }
+    //     xhr.open("POST", "{% url 'users:send_validation' %}", true)
+    //     xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+    //     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    //     xhr.send(JSON.stringify({
+    //         phone_number: document.querySelector("#phone_number").value,
+    //         type: "phone",
+    //     }))
+    // })
 
-    // ------------EMAIL NUMBER-----------------
+    // ------------EMAIL-----------------
     document.querySelector("#email_get_code").addEventListener("click", function (e) {
         e.preventDefault();
         var xhr = new XMLHttpRequest();

@@ -1,7 +1,7 @@
 {% extends 'chat/base.html' %}
 {% load static %}
 
-{% block title %}Signup/Login | Orgachat{% endblock title %}
+{% block title %}Signup | Orgachat{% endblock title %}
 
 {% block description %}Orgachat helps you organize your messages and life. Create and account or login and start
 organizing your chat{% endblock description %}
@@ -19,8 +19,8 @@ organizing your chat{% endblock description %}
         <div class="form-left">
             <div class="logo">Orgachat, perfect for</div>
             <div class="info">
-                <li>Organizing chat</li>
-                <li>Managing teams</li>
+                <p>Organizing chat</p>
+                <p>Managing teams</p>
             </div>
             <div class="footer">
                 <p>A very effective chat app</p>
@@ -51,7 +51,6 @@ organizing your chat{% endblock description %}
             </div>
             <div class="buttons">
                 <button type="submit" class="btn btn-success btn-lg create-account">Create account</button>
-                <a class="forgot-login" href="{% url 'loginuser' %}">Have an account? login</a>
             </div>
         </form>
     </div>

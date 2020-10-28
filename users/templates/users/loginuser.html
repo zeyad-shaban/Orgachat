@@ -1,0 +1,116 @@
+{% extends 'chat/base.html' %}
+
+{% block title %}Login | Orgachat{% endblock title %}
+
+{% block description %}Orgachat helps you organize your messages and life. Create and account or login and start
+organizing your chat{% endblock description %}
+
+{% block content %}
+<div class="center">
+    <h2>Login for Orgachat</h2>
+</div>
+<br>
+<br>
+<section>
+    <div class="center">
+        <div class="row justify-content-center">
+            <div class="col-md-offset-5 col-md-5">
+                <form action="{% url 'loginuser' %}" method="POST" class="form-login">
+                    {% csrf_token %}
+                    <h4>Username/Password.</h4>
+                    <input type="text" id="username" name="username" class="form-control input-sm chat-input"
+                        placeholder="Username" />
+                    </br>
+                    <input type="password" id="password" name="password" class="form-control input-sm chat-input"
+                        placeholder="Password" />
+                    </br>
+                    <div class="wrapper">
+                        <span class="group-btn">
+                            <button type="submit" class="btn btn-primary btn-md">login <i
+                                    class="fa fa-sign-in"></i></button>
+                        </span>
+                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+<section>
+    <div class="center">
+        <div class="row justify-content-center">
+            <div class="col-md-offset-5 col-md-5">
+                <div class="form-login">
+                    <h4>Send a code instead.</h4>
+                    <form action="{% url 'loginuser' %}" method="POST">
+                    <input type="email" id="email" name="email" class="form-control input-sm chat-input"
+                        placeholder="Account's email" />
+                    </br>
+                    <a href="{% url 'loginuser' %}" id="send_code" class="btn btn-success btn-md">Send the code <i
+                            class="fas fa-paper-plane"></i></a>
+                    <br>
+                    <br>
+                        <input type="number" name="validation_code" class="form-control input-sm chat-input"
+                            placeholder="Type the code here">
+                        </br>
+                        <div class="wrapper">
+                            <span class="group-btn">
+                                <button type="submit" class="btn btn-primary btn-md">Check <i
+                                        class="fas fa-check"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // ------------EMAIL-----------------
+    document.querySelector("#send_code").addEventListener("click", function (e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                toast("Check your inbox")
+            } else if (this.readyState == 4 && this.status == 500) {
+                toast("Email doesn't belong to any user")
+            } else {
+                console.log(this.readyState, this.status)
+            }
+        }
+        xhr.open("POST", "{% url 'loginuser' %}", true)
+        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+        xhr.send(JSON.stringify({
+            email: document.querySelector("#email").value,
+        }))
+    })
+</script>
+
+<style>
+    .form-login {
+        background-color: #EDEDED;
+        padding: 10px 20px 20px 20px;
+        border-radius: 15px;
+        border-color: #d2d2d2;
+        border-width: 5px;
+        box-shadow: 0 1px 0 #cfcfcf;
+    }
+
+    h4 {
+        border: 0 solid #fff;
+        border-bottom-width: 1px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    .wrapper {
+        text-align: center;
+    }
+</style>
+{% endblock content %}
