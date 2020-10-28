@@ -127,7 +127,7 @@
                 <hr>
 
                 <button class="btn" onclick="openModal('#addUser')"><i
-                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md" onclick="return alert('sorry this is still under development')"></i>&nbsp; Add user</button>
+                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md" onclick="return toast('Sorry this is still under development')"></i>&nbsp; Add user</button>
                 <!-- AddToAny BEGIN -->
                 <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
                     data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
@@ -298,7 +298,7 @@
                 var xhr = new XMLHttpRequest()
                 xhr.onreadystatechange = function (e) {
                     if (this.readyState == 4 && this.status == 200) {
-                        alert("Please refresh or restart the app to see changes")
+                        toast("Please refresh to see changes")
                     }
                 }
                 xhr.open("POST", this.getAttribute("href"), true)

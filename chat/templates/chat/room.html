@@ -76,7 +76,7 @@
 <!-- SIDEBAR -->
 <!-- ---------------------- -->
 <div class="page-wrapper chiller-theme">
-    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <a id="show-sidebar" class="btn btn-sm btn-warning" href="#">
         <i class="fas fa-bars"></i>
     </a>
     <nav id="sidebar" class="sidebar-wrapper">
@@ -183,7 +183,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeModal('#options'); alert('Please refresh the page to see changes')">Done</button>
+                <button class="btn btn-primary" onclick="closeModal('#options'); toast('Please refresh the page to see changes')">Done</button>
             </div>
         </div>
     </div>
@@ -406,7 +406,7 @@
                                 document.querySelector('#notification_sound').play()
                             },
                             error: function () {
-                                alert('Internal Server Error')
+                                toast('Internal Server Error 500')
                             }
                         })
                         // End sending to django
@@ -414,12 +414,12 @@
                     // End getting the blob
                 }
             }).catch(function (err) {
-                alert(
+                toast(
                     'Please allow the microphone permission to record voice messages'
                 )
             })
         } else {
-            alert('Your browser doesn\'t support user recording audio')
+            toast('Your browser doesn\'t support recording audio')
         }
 
 

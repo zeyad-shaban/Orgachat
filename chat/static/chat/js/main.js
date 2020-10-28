@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ------------------
     // HEADER
     // ------------------
-    
+
     // ---------Navbar----------
     document.querySelector('body').style.paddingTop = document.querySelector('.navbar').clientHeight + 'px'
     // detect scroll top or down
@@ -70,16 +70,18 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     } catch (error) { }
 
-    // -------------------------
-    // REUSABLE
-    // -------------------------
-    // var modalBtns = document.querySelectorAll('.modal-link');
-    // for (modalBtn of modalBtns) {
-    //     modalBtn.onclick = function (e) {
-
-    //     }
-    // }
 })
+
+var x = document.getElementById("toast")
+var d = document.getElementById("toastDesc")
+var tn = document.getElementById("toastNotif")
+function toast(txt) {
+    tn.play()
+    d.textContent = txt
+    x.className = "show";
+    setTimeout(function () { x.className = x.className.replace("show", ""); }, 5000);
+}
+
 var backdrop = document.getElementById('backdrop')
 
 function openModal(dataTarget) {

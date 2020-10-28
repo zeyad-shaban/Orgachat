@@ -122,6 +122,9 @@
 
     <main>
         {% block content %}{% endblock content %}
+        <audio id="toastNotif" style="display: none;">
+            <source src="{% static 'chat/data/toastNotif.wav' %}" type="audio/wav">
+        </audio>
         <div class="modal-backdrop show fade" id="backdrop" style="display: none;"></div>
 
         <!-- ------------------------------- -->
@@ -178,8 +181,11 @@
                 </div>
             </div>
         </div>
+        <div id="toast">
+            <img src="{% static 'chat/img/favicon.png' %}" id="toastImg">
+            <div id="toastDesc">A notification message..</div>
+        </div>
     </main>
-
     <link rel="stylesheet" href="{% static 'chat/css/main.css' %}">
     <script src="{% static 'chat/js/main.js' %}"></script>
 
