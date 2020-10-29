@@ -216,7 +216,8 @@
                     <label for="area">Divider </label>
                     <select name="area" style="width: 155px" autocomplete="off">
                         {% for anarea in room.area_set.all %}
-                        <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected"{% endif %}>{{ anarea.title }}</option>
+                        <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected" {% endif %}>
+                            {{ anarea.title }}</option>
                         {% endfor %}
                     </select>
                 </form>
@@ -453,10 +454,73 @@
             let messages = document.querySelectorAll('.message')
             let dataLoad = {
                 'last_id': parseInt((messages)[messages.length - 1].getAttribute('data-id')),
+                'area_id': "{{area.id}}"
             };
 
             xhrLoad.send(JSON.stringify(dataLoad))
         }, 3000)
+
+        // --------------------PAGINATOR---------------------
+        var pagPage = 2;
+
+        function paginate() {
+            var xhrPag = new XMLHttpRequest();
+            xhrPag.onreadystatechange = function (e) {
+                if (this.readyState == 4 && this.status == 200) {
+                    let response = JSON.parse(this.responseText);
+                    let messages = response.messages
+                    if (!messages || messages.length <= 0) {
+                        return false
+                    } else {
+                        for (message of messages) {
+                            var content
+                            if (message.isText == "True" || message.isText) {
+                                content = `<p class="msg-txt">${message.content}</p>`
+                            } else {
+                                content = `${message.content}
+                            <br>`
+                            }
+                            sender = message.user
+                            senderClass = "other"
+                            if (sender == "{{user.username}}") {
+                                sender = "You";
+                                senderClass = "self"
+                            }
+
+                            var messagesContainer = document.querySelector(".messages")
+                            var newMessages = document.createElement("div")
+                            newMessages.innerHTML = `
+                        <li class="message ${senderClass}" data-id="${message.id}">
+            <div class="msg">
+                <p>${sender} &mdash; ${message.area}</p>
+                ${content}
+                <time>${message.date}</time>
+            </div>
+        </li>`
+                            messagesContainer.insertBefore(newMessages, messagesContainer.firstChild)
+                            document.querySelector('#notification_sound').play()
+                        }
+                    }
+                    pagPage++
+                };
+            };
+            xhrPag.open('POST', "{% url 'chat:room' room.id %}", true)
+            xhrPag.setRequestHeader('Content-type', "application/x-www-form-urlencode");
+            xhrPag.setRequestHeader('X-CSRFToken', '{{ csrf_token }}')
+            let messages = document.querySelectorAll('.message')
+            let dataLoad = {
+                'page': pagPage,
+                'area_id': "{{ area.id }}"
+            };
+
+            xhrPag.send(JSON.stringify(dataLoad))
+        }
+        window.addEventListener("scroll", function () {
+            if (window.scrollY <= 0) {
+                paginate()
+            }
+        })
+        // --------------------END PAGINATOR---------------------
     });
 </script>
 {% endblock content %}

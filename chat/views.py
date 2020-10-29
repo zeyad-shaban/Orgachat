@@ -1,4 +1,5 @@
 import time
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import random
 import logging
 import json
@@ -15,17 +16,6 @@ from django.contrib.auth.decorators import login_required
 User = get_user_model()
 logger = logging.getLogger('djpwa.pwa.views')
 
-
-# Service worker
-def random_response(request):
-    response_time_ms = random.choice((0, 10, 50, 100, 1_000, 10_000))
-    response_time = response_time_ms / 1_000
-    print(f'Selected response time {response_time}')
-    time.sleep(response_time)
-    return render(request, 'chat/random_response.html', context={'response_time': response_time})
-
-
-# End service worker
 
 def home(request):
     if request.method == 'GET':
@@ -51,29 +41,46 @@ def home(request):
 @login_required
 def room(request, room_id, area_id=None):
     room = get_object_or_404(Room, pk=room_id)
-    if request.method == 'GET':
-        all_users = User.objects.filter(~Q(id=request.user.id))
+    area_id = request.GET.get('area_id')
+    if not area_id:
+        area_id = json.loads(request.body).get('area_id')
+    try:
+        requestedPage = json.loads(request.body).get("page")
+    except:
+        requestedPage = None
+    if request.method == 'GET' or requestedPage:
+        users = room.chatters.all()
         users = []
-        for user in all_users:
-            if not user in room.chatters.all():
-                users.append(user)
-
         if not request.user in room.chatters.all():
             raise PermissionDenied
-        for message in room.message_set.all():
-            if message.user != request.user:
-                message.is_read = True
-                message.save()
+        for message in room.message_set.filter(Q(is_read=False), ~Q(user=request.user)):
+            message.is_read = True
+            message.save()
 
-        room_messages = room.message_set.all()
-        data = {'room': room, 'room_messages': room_messages, 'users': users}
-        if request.GET.get('area_id'):
-            area = get_object_or_404(Area, pk=request.GET.get('area_id'))
-            room_messages = room.message_set.filter(area=area)
+        room_messages_list = room.message_set.all()
+        data = {'room': room, 'users': users}
+        if area_id:
+            area = get_object_or_404(Area, pk=area_id)
+            room_messages_list = room.message_set.filter(area=area)
             data["area"] = area
-            data["room_messages"] = room_messages
-        
-        return render(request, 'chat/room.html', data)
+
+        paginator = Paginator(room_messages_list, 20)
+        page = requestedPage
+        if not page:
+            page = 1
+        try:
+            room_messages = paginator.page(paginator.num_pages - (page-1))
+        except PageNotAnInteger:
+            room_messages = paginator.page(paginator.num_pages)
+        except EmptyPage:
+            room_messages = []
+
+        data["room_messages"] = room_messages
+        if not requestedPage:
+            return render(request, 'chat/room.html', data)
+        else:
+            json_messages = [message.json() for message in room_messages]
+            return JsonResponse({"messages": json_messages})
     else:
         data = json.loads(request.body)
         area = get_object_or_404(Area, pk=data.get('area'))
@@ -86,7 +93,8 @@ def room(request, room_id, area_id=None):
         for chatter in room.chatters.all():
             if not chatter in message.area.muted_users.all() and chatter != request.user and (True):  # todo check for chatter url
                 try:
-                    send_user_notification(user=chatter, payload=payload, ttl=1000)
+                    send_user_notification(
+                        user=chatter, payload=payload, ttl=1000)
                     print("SUCCESS TO SEND NOTIFICATIONS")
                 except Exception as err:
                     print("Error: ", err)
@@ -137,21 +145,14 @@ def load_messages(request, room_id):
     if not request.user in room.chatters.all():
         raise PermissionDenied
     data = json.loads(request.body)
-    new_messages = room.message_set.filter(
-        ~Q(user=request.user), Q(id__gt=data.get('last_id')))
-    json_new_messages = []
-
-    for message in new_messages:
-        isText = False
-        if message.text:
-            isText = True
-        json_new_messages.append({
-            'user': message.user.username,
-            'area': message.area.title,
-            'id': message.id,
-            'content': message.content(),
-            "isText": isText,
-        })
+    if not data.get('area_id'):
+        new_messages = room.message_set.filter(
+            ~Q(user=request.user), Q(id__gt=data.get('last_id')))
+    else:
+        area = get_object_or_404(Area, pk=data.get('area_id'))
+        new_messages = room.message_set.filter(
+            ~Q(user=request.user), Q(id__gt=data.get('last_id')), Q(area=area))
+    json_new_messages = [message.json() for message in new_messages]
     return JsonResponse({'new_messages': json_new_messages})
 
 

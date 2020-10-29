@@ -159,6 +159,21 @@ class Message(models.Model):
         else:
             return self.text
 
+    def json(self):
+        isText = False
+        if self.text:
+            isText = True
+        message = {
+            'user': self.user.username,
+            'area': self.area.title,
+            'id': self.id,
+            'content': self.content(),
+            "isText": isText,
+            "date": self.date,
+            # todo "time_since": 
+        }
+        return message
+    
     def __str__(self):
         if self.text:
             if len(self.text) > 50:

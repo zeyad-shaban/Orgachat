@@ -11,7 +11,7 @@ admin.site.register(Area)
 class MessageAdmin(admin.ModelAdmin):
     '''Admin View for Message'''
 
-    list_display = ('user', 'user', 'is_read', 'get_content',)
+    list_display = ('user', 'is_read', 'get_content', 'date')
     def get_content(self, obj):
         if obj.text:
             return obj.text
