@@ -157,8 +157,8 @@
             <div class="modal-body">
                 <form action="{% url 'chat:create_homepage_area' %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="title" required
-                        maxlength="50" class="from-control">
+                    <input type="text" name="title" id="id_title" placeholder="title" required maxlength="50"
+                        class="from-control">
                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                 </form>
             </div>
@@ -304,101 +304,6 @@
                 xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
                 xhr.send(JSON.stringify(data))
             }
-        }
-    });
-</script>
-
-<!-- ----------------------Show Latest updates to user------------------ -->
-<div class="modal fade" id="latestUpdate" tabindex="-1" role="dialog" aria-labelledby="latestUpdateLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #ff0000;">
-                <div class="center">
-                    <h3 class="modal-title" id="latestUpdateLabel"><img src="{% static 'chat/img/favicon.png' %}"
-                            width="50" height="50" alt=""> IMPORTANT BIG UPDATE!</h3>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    onclick="closeModal('#latestUpdate')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="center">
-                        <div class="center">
-                            <h2>Notifications</h2>
-                        </div>
-                    </div>
-                    <p>Notifications are finally working, no longer beta!</p>
-                    <p>How to activate?</p>
-                    <p>1- Click on the three dots</p>
-                    <p>2- Install the app from the "Install Orgachat" button (If you faced errors read the intructions
-                        in it)</p>
-                    <div class="alert alert-danger">If you previously installed it considered reinstalling it as there
-                        were some issues with the previous one, thanks for understanding
-                        <br>
-                        إذا قمت بتثبيته مسبقًا ، فقم بإعادة تثبيته نظرًا لوجود بعض المشكلات في الإصدار السابق ، شكرًا
-                        لتفهمك
-                    </div>
-                    <p>3- Open Orgachat after installed it, click on the three dots again, then click on "Subscribe to
-                        push message",
-                        wait a little and it should change to "Unsubscribe to..." If so happened you are good to go (If
-                        it didn't refresh the page and see if the text changed)</p>
-                    <p>Note that the subscription is based on device not account</p>
-                    <h4>Facing Trouble:</h4>
-                    <p>If the button is disabled but the content didn't change from "Subscribe" to "Unsubscribe" this
-                        means that your browser blocked the website notifications.</p>
-                    <p> To fix open the app from your browser => click on the lock icon beside the url => you should see
-                        that the notifications permession is blocked, change that to "allow" or "ask (default)"</p>
-                    <p>Didn't solve the problem? <a href="https://www.orgachat.com/users/view/2/"
-                            target="_blank">Contact us here</a>
-                    </p>
-                    <!-- <a href="#" target="_blank">Our explainer video</a> -->
-                    <br>
-                    <div class="center">
-                        <h2>Offline support</h2>
-                    </div>
-                    <p>Don't worry, it won't cause the app to crash as in the last time 😂</p>
-                    <p>Note that there are only four pages with offline support for now: Home page, Profile page, all
-                        users page, and about page. Any page else will crash if you are not connected to internet</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
-                    onclick="closeModal('#latestUpdate')">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function createCookie(name, value, days) {
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                var expires = "; expires=" + date.toGMTString();
-            } else var expires = "";
-            document.cookie = name + "=" + value + expires + "; path=/";
-        }
-
-        function readCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        function eraseCookie(name) {
-            createCookie(name, "", -1);
-        }
-        if (!readCookie('alreadyShown2')) {
-            openModal('#latestUpdate')
-            createCookie('alreadyShown2', true)
         }
     });
 </script>

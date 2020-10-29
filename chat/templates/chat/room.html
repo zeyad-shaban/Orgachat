@@ -470,8 +470,11 @@
                     let response = JSON.parse(this.responseText);
                     let messages = response.messages
                     if (!messages || messages.length <= 0) {
+                        toast("No more messages")
                         return false
                     } else {
+                        var messagesContainer = document.querySelector(".messages")
+                        var newMessages = document.createElement("div")
                         for (message of messages) {
                             var content
                             if (message.isText == "True" || message.isText) {
@@ -487,9 +490,7 @@
                                 senderClass = "self"
                             }
 
-                            var messagesContainer = document.querySelector(".messages")
-                            var newMessages = document.createElement("div")
-                            newMessages.innerHTML = `
+                            newMessages.innerHTML += `
                         <li class="message ${senderClass}" data-id="${message.id}">
             <div class="msg">
                 <p>${sender} &mdash; ${message.area}</p>
@@ -497,9 +498,8 @@
                 <time>${message.date}</time>
             </div>
         </li>`
-                            messagesContainer.insertBefore(newMessages, messagesContainer.firstChild)
-                            document.querySelector('#notification_sound').play()
                         }
+                        messagesContainer.insertBefore(newMessages, messagesContainer.firstChild)
                     }
                     pagPage++
                 };

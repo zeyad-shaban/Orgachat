@@ -12,6 +12,3 @@ class SetLastVisitMiddleware(object):
         if request.user.is_authenticated:
             User.objects.filter(id=request.user.id).update(last_visit=now())
         return self.get_response(request)
-
-    def process_exception(self, request, exception):
-        return HttpResponse("in exception")
