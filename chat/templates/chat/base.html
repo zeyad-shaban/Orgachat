@@ -63,7 +63,10 @@
                         <span class="nav-label">{{ user.username }}</span></a>
                 </li>
                 {% endif %}
-                <li class="nav-item active pr-4"></li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{%  url 'users:all_users' %}"><i class="fas fa-users i-lg"></i> <span
+                            class="nav-label">Users</span></a>
+                </li>
             </ul>
             <!-- -----------Dropdown------------ -->
             <div class="dropleft">
@@ -203,4 +206,5 @@
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- End google Adsense -->
 </body>
+
 </html>
