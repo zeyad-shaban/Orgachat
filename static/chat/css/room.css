@@ -286,7 +286,7 @@ body {
 #scrollBottom {
     display: none;
     background-color: #4CD137;
-    color: #EBC12C;
+    color: #fff;
     border-radius: 200px;
     cursor: pointer;
     border: #4CD137 solid 3px;
@@ -339,7 +339,7 @@ textarea:hover {
 }
 
 textarea:focus {
-    height: 300px;
+    height: 13vh;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -415,7 +415,7 @@ textarea:focus {
     }
 
     textarea:focus {
-        height: 30vh;
+        height: 13vh;
         margin-top: 30vh;
         box-shadow: 0px -20px 20px rgba(0, 0, 0, 0.1);
     }
