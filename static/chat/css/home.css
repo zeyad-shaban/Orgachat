@@ -5,7 +5,7 @@
 }
 
 .friend {
-    height: 100px;
+    height: calc(max-content + 20px);
     border-bottom: 1px solid #e7ebee;
 }
 
@@ -24,7 +24,6 @@
 
 .friend p {
     padding: 15px 0 0 0;
-    float: left;
 }
 
 .friend p strong {

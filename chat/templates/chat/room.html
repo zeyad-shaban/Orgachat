@@ -76,44 +76,18 @@
 <!-- SIDEBAR -->
 <!-- ---------------------- -->
 <div class="page-wrapper chiller-theme">
-    <a id="show-sidebar" class="btn btn-sm btn-warning" href="#">
+    <button id="show-sidebar" class="btn btn-sm btn-warning">
         <i class="fas fa-bars"></i>
-    </a>
+    </button>
     <nav id="sidebar" class="sidebar-wrapper">
         <div class="sidebar-content">
             <div class="sidebar-brand">
-                <a href="#" class="btn text-white"> Chat Dividers</a>
+                <button class="btn text-white mr-3 ml-3">{% if area %} {{ area.title }}{% else %}All{% endif %}</button>
                 <div id="close-sidebar">
                     <i class="fas fa-times text-white"></i>
                 </div>
             </div>
-            <!-- sidebar-header  -->
-            <div class="areas-all">
-                <ul class="messages">
-                    <li><a href="{% url 'chat:room' room.id %}">All</a></li>
-                    {% if not room.area_set.count <= 1 %}
-                    {% for area in room.area_set.all %}
-                    <li>
-                        <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
-                        {% if user in area.star_users.all %}
-                        <a href="{% url 'chat:star_area' area.id %}" class="float-right mr-4" style="color: #EBC12C"><i
-                                class="fas fa-star"></i></a>
-                        {% else %}
-                        <a href="{% url 'chat:star_area' area.id %}" class="float-right mr-4 text-muted"><i
-                                class="far fa-star"></i></a>
-                        {% endif %}
-                        {% if user in area.muted_users.all %}
-                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
-                                class="fas fa-volume-mute"></i> Unmute</a>
-                        {% else %}
-                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4"><i
-                                class="fas fa-volume-up"></i> Mute</a>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                    {% endif %}
-                </ul>
-            </div>
+            <br>
             <div class="area-add">
                 <div class="">
                     {% if room.type == 'group' %}
@@ -124,11 +98,31 @@
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="Add chat divider" required
-                        maxlength="30">
+                    <input type="text" name="title" id="id_title" placeholder="add divider" required
+                        maxlength="30" style="width: 60%; margin-left: 15px">
                     <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
-                            class="fas fa-plus-circle" style="font-size: 200%; color: #4CD137;"></i></button>
+                            class="fas fa-plus text-white" style="font-size: 200%;"></i></button>
                 </form>
+            </div>
+            <!-- sidebar-header  -->
+            <div class="areas-all">
+                <ul class="messages">
+                    <li><a href="{% url 'chat:room' room.id %}">All</a></li>
+                    {% if not room.area_set.count <= 1 %}
+                    {% for area in room.area_set.all %}
+                    <li>
+                        <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
+                        {% if user in area.muted_users.all %}
+                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
+                                class="fas fa-volume-mute"></i></a>
+                        {% else %}
+                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4"><i
+                                class="fas fa-volume-up"></i></a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                    {% endif %}
+                </ul>
             </div>
     </nav>
     <!-- sidebar-wrapper  -->
@@ -183,7 +177,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeModal('#options'); toast('Please refresh the page to see changes')">Done</button>
+                <button class="btn btn-primary"
+                    onclick="closeModal('#options'); toast('Please refresh the page to see changes')">Done</button>
             </div>
         </div>
     </div>

@@ -71,6 +71,11 @@ body {
 
 
 /* ----------Modal------------- */
+.modal-header {
+    background-color: #4CD137;
+    color: white;
+}
+
 .install-card {
     background-color: #ba2e5f;
     color: white;

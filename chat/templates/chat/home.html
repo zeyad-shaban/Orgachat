@@ -8,7 +8,7 @@
 {% block content %}
 
 <!-- -------------------New users with no chats------------------- -->
-{% if unorganized_rooms.count <= 0 and user.homepagearea_set.count <= 0%}
+{% if general_rooms.count <= 0 and user.homepagearea_set.count <= 0%}
 <section>
     <p>Find and add your friends <a href="{% url 'users:all_users' %}" target="_blank"> Here</a></p>
     <p>Click on the three dots in the navbar to: Install the app, Add Groups, Divide homepage using Homepage Areas,
@@ -26,11 +26,9 @@
 <div class="accordion">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block" onclick="toggleCollapse('#area{{area.id}}')">
-                    {{area.title}} <a href="#" type="button" class="badge badge-danger ml-3">{{area.unread_count}}</a>
-                </button>
-            </h2>
+            <button class="btn btn-link btn-block" onclick="toggleCollapse('#area{{area.id}}')">
+                {{area.title}} <a href="#" type="button" class="badge badge-danger ml-3">{{area.unread_count}}</a>
+            </button>
         </div>
 
         <div id="area{{area.id}}" class="collapse">
@@ -62,26 +60,23 @@
 {% endfor %}
 <!-- -------------End Homepage Areas------------- -->
 
-<!-- -------------UnOrganized Areas------------- -->
+<!-- -------------general Areas------------- -->
 
-<!-- -------------End UnOrganized Areas------------- -->
+<!-- -------------End general Areas------------- -->
 <div class="accordion">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block" onclick="toggleCollapse('#areaothers')">
-                    Others (Unorganized) <a href="#" type="button"
-                        class="badge badge-danger ml-3">{{unorganized_count}}</a>
-                </button>
-            </h2>
+            <button class="btn btn-link btn-block" onclick="toggleCollapse('#areaothers')">
+                general <a href="#" type="button" class="badge badge-danger ml-3">{{general_count}}</a>
+            </button>
         </div>
 
         <div id="areaothers" class="{% if user.homepagearea_set.count > 0 %}collapse{% endif %}">
             <div id="chatbox">
-                {% if unorganized_rooms.count <= 0 %}
+                {% if general_rooms.count <= 0 %}
                 <p>Hold the chat room you want to add here. This area is currently Empty</p>
                 {% endif %}
-                {% for room in unorganized_rooms %}
+                {% for room in general_rooms %}
                 <a href="{% url 'chat:room' room.id %}" id="openRoom{{room.id}}">
                     <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
                         data-id="{{room.id}}">
@@ -91,7 +86,6 @@
                         <p>
                             <strong>{{room.title}} {% if room.type == "group" %} &mdash; <i class="fas fa-users"></i>
                                 {% endif %}</strong>
-                            <br>
                             <span>{{room.last_message}}</span>
                         </p>
                     </div>
@@ -122,8 +116,8 @@
                         class="fas fa-user-friends btn btn-success btn-circle p-2 i-md"></i>&nbsp; New group</button>
                 <br>
                 <button class="btn" onclick="openModal('#addArea')"><i
-                        class="fas fa-chart-pie btn btn-success btn-circle p-2 i-md"></i>&nbsp; New area</button> <i
-                    class="fas fa-question-circle"></i>
+                        class="fas fa-chart-pie btn btn-success btn-circle p-2 i-md"></i>&nbsp; New divider</button> <i
+                    class="fas fa-question-circle" onclick="toast('divides your homepage')"></i>
                 <hr>
 
                 <a type="button" href="{% url 'users:all_users' %}" class="btn"><i
@@ -154,7 +148,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="center">
-                    <h2 class="modal-title" id="addAreaLabel">New Homepage Area</h2>
+                    <h2 class="modal-title" id="addAreaLabel">New divider</h2>
                 </div>
                 <button type="button" class="close" onclick="closeModal('#addArea')">
                     <span aria-hidden="true">&times;</span>
@@ -163,7 +157,7 @@
             <div class="modal-body">
                 <form action="{% url 'chat:create_homepage_area' %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="Homepage Area Title" required
+                    <input type="text" name="title" id="id_title" placeholder="title" required
                         maxlength="50" class="from-control">
                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                 </form>
@@ -185,7 +179,7 @@
             <div class="modal-body">
                 <form action="{% url 'chat:create_group' %}" method="post">
                     {% csrf_token %}
-                    <input type="text" name="name" id="id_name" placeholder="Group Name" required maxlength="50"
+                    <input type="text" name="name" id="id_name" placeholder="title" required maxlength="50"
                         class="from-control">
                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                 </form>
@@ -219,7 +213,7 @@
                 <br>
                 <br>
                 {% endfor %}
-                <p class="float-left">Others (Unorganized)</p>
+                <p class="float-left">general</p>
                 <a href="{% url 'chat:move_room' 0 %}" class="btn btn-outline-success ml-3 btn-sm moveRoomBtn"><i
                         class="fas fa-plane"></i> Move</a>
             </div>

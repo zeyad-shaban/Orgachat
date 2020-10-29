@@ -109,7 +109,7 @@ class Message(models.Model):
             return self.text
         elif self.video:
             return f"""
-            <video width="320" height="240" controls>
+            <video width="320" height="240" controls preload="none">
                         <source src="{self.video.url}" type="video/mp4">
                         <source src="{self.video.url}" type="video/mov">
                         <source src="{self.video.url}" type="video/wmv">
@@ -119,12 +119,12 @@ class Message(models.Model):
                       </video> 
             """
         elif self.image:
-            return f'<img src="{self.image.url}" alt="">'
+            return f'<img src="{self.image.url}" alt="" loading="lazy">'
         elif self.file:
             return f'<p><a href="{self.file.url}" download><i class="fas fa-download"></i> {self.filename()}</a></p>'
         elif self.audio:
             return f"""
-            <audio controls>
+            <audio controls preload="metadata">
                         <source src="{self.audio.url}" type="audio/pcm">
                         <source src="{self.audio.url}" type="audio/wav">
                         <source src="{self.audio.url}" type="audio/aiff">

@@ -31,17 +31,17 @@ def home(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
             user_rooms = Room.objects.filter(chatters=request.user)
-            unorganized_rooms = []
+            general_rooms = []
             for room in user_rooms:
                 if room.homepage_area.count() <= 0 or not room.get_homepage_area():
-                    unorganized_rooms.append(room)
+                    general_rooms.append(room)
 
-            unorganized_count = 0
-            for room in unorganized_rooms:
-                unorganized_count += room.unread_count()
-            if unorganized_count <= 0:
-                unorganized_count = ''
-            return render(request, 'chat/home.html', {'unorganized_rooms': unorganized_rooms, "unorganized_count": unorganized_count})
+            general_count = 0
+            for room in general_rooms:
+                general_count += room.unread_count()
+            if general_count <= 0:
+                general_count = ''
+            return render(request, 'chat/home.html', {'general_rooms': general_rooms, "general_count": general_count})
 
         else:
             messages.error(request, 'Please create an account or login first')
@@ -66,10 +66,12 @@ def room(request, room_id, area_id=None):
                 message.save()
 
         room_messages = room.message_set.all()
+        data = {'room': room, 'room_messages': room_messages, 'users': users}
         if request.GET.get('area_id'):
             area = get_object_or_404(Area, pk=request.GET.get('area_id'))
             room_messages = room.message_set.filter(area=area)
-        return render(request, 'chat/room.html', {'room': room, 'room_messages': room_messages, 'users': users, })
+            data["area"] = area
+        return render(request, 'chat/room.html', data)
     else:
         data = json.loads(request.body)
         area = get_object_or_404(Area, pk=data.get('area'))
@@ -159,7 +161,7 @@ def create_group(request):
     room = Room.objects.create(name=request.POST.get('name'), type='group')
     room.save()
     room.chatters.add(request.user)
-    area = Area.objects.create(title='Unorganized', room=room)
+    area = Area.objects.create(title='general', room=room)
     area.save()
     messages.success(request, 'Created successfully')
     return redirect('home')
