@@ -72,6 +72,7 @@ def room(request, room_id, area_id=None):
             room_messages = room.message_set.filter(area=area)
             data["area"] = area
             data["room_messages"] = room_messages
+        
         return render(request, 'chat/room.html', data)
     else:
         data = json.loads(request.body)

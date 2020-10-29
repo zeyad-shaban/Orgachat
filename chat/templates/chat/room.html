@@ -213,10 +213,10 @@
 
                         <button type="submit" id="saveAttachedFile">Send</button>
                     </div>
-                    <label for="area">Area </label>
-                    <select name="area" style="width: 155px">
-                        {% for area in room.area_set.all %}
-                        <option value="{{ area.id }}">{{ area.title }}</option>
+                    <label for="area">Divider </label>
+                    <select name="area" style="width: 155px" autocomplete="off">
+                        {% for anarea in room.area_set.all %}
+                        <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected"{% endif %}>{{ anarea.title }}</option>
                         {% endfor %}
                     </select>
                 </form>
@@ -457,7 +457,6 @@
 
             xhrLoad.send(JSON.stringify(dataLoad))
         }, 3000)
-
     });
 </script>
 {% endblock content %}
