@@ -6,10 +6,6 @@
 {% block description %}Chat with your friends at Orgachat, {{ room.title }}{% endblock description %}
 
 {% block content %}
-<!-- !!!!!!!!!!!!!!! -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-
 
 <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
 <script src="{% static 'chat/js/room.js' %}"></script>
@@ -98,8 +94,8 @@
                 </div>
                 <form action="{% url 'chat:create_area' room.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="add divider" required
-                        maxlength="30" style="width: 60%; margin-left: 15px">
+                    <input type="text" name="title" id="id_title" placeholder="add divider" required maxlength="30"
+                        style="width: 60%; margin-left: 15px">
                     <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
                             class="fas fa-plus text-white" style="font-size: 200%;"></i></button>
                 </form>
@@ -368,13 +364,9 @@
                         fd.append('audio', blob);
                         fd.append('area', parseInt(document.querySelector('#area').value));
                         fd.append('csrfmiddlewaretoken', "{{ csrf_token }}")
-                        $.ajax({
-                            url: '{% url "chat:record_audio_message" room.id %}',
-                            type: 'POST',
-                            data: fd,
-                            processData: false,
-                            contentType: false,
-                            success: function (data) {
+                        var recXhr = new XMLHttpRequest()
+                        recXhr.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
                                 let messages = document.querySelectorAll('.message')
                                 let lastId = parseInt((messages)[messages.length -
                                     1].getAttribute('data-id'))
@@ -399,11 +391,14 @@
             </div>
         </li>`
                                 document.querySelector('#notification_sound').play()
-                            },
-                            error: function () {
-                                toast('Internal Server Error 500')
                             }
-                        })
+                        }
+                        recXhr.open("POST", "{% url 'chat:record_audio_message' room.id %}",
+                            true)
+                        // recXhr.setRequestHeader('Content-type',
+                        //     "application/x-www-form-urlencode");
+                        recXhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+                        recXhr.send(fd)
                         // End sending to django
                     }
                     // End getting the blob
