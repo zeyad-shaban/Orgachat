@@ -151,7 +151,7 @@
                 <br>
                 <br>
                 <div id="option-invite" class="option-menu">
-                    {% for auser in users %}
+                    {% for auser in other_users %}
                     <p>{{ auser.username }}
                         <a href="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
                                 class="fas fa-plus"></i> Add</a>

@@ -52,8 +52,10 @@ def room(request, room_id, area_id=None):
     except:
         requestedPage = None
     if request.method == 'GET' or requestedPage:
-        users = room.chatters.all()
-        users = []
+        other_users = []
+        for user in User.objects.all():
+            if not user in room.chatters.all():
+                other_users.append(user)
         if not request.user in room.chatters.all():
             raise PermissionDenied
         for message in room.message_set.filter(Q(is_read=False), ~Q(user=request.user)):
@@ -61,7 +63,7 @@ def room(request, room_id, area_id=None):
             message.save()
 
         room_messages_list = room.message_set.all()
-        data = {'room': room, 'users': users}
+        data = {'room': room, 'other_users': other_users}
         if area_id:
             area = get_object_or_404(Area, pk=area_id)
             room_messages_list = room.message_set.filter(area=area)
