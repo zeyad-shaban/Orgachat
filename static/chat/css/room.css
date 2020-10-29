@@ -367,12 +367,12 @@ textarea:focus {
 
 .areaSelector {
     position: fixed;
-    left: 20%;
-    bottom: 3%;
+    right: 0%;
+    bottom: 30%;
     border-radius: 200px;
     background-color: #EBC12C;
     padding: 20px;
-    font-size: 110%;
+    font-size: 80%;
     transition: all 0.4s cubic-bezier(0.565, -0.260, 0.255, 1.410);
     z-index: 999;
 }

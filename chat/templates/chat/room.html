@@ -55,10 +55,13 @@
         {% csrf_token %}
         <textarea type="text" name="text" id="messageText" placeholder="Say something" rows="1" required></textarea>
         <div class="areaSelector hide">
-            <label for="area">Area: </label>
-            <select name="area" id="area" style="width: 155px">
-                {% for area in room.area_set.all %}
-                <option value="{{ area.id }}">{{ area.title }}</option>
+            <div class="center">
+                <label for="area">Divider: </label>
+            </div>
+            <select name="area" id="area" autocomplete="off">
+                {% for anarea in room.area_set.all %}
+                <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected" {% endif %}>
+                    {{ anarea.title }}</option>
                 {% endfor %}
             </select>
         </div>
