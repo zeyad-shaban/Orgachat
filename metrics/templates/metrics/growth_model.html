@@ -1,0 +1,35 @@
+{% extends 'chat/base.html' %}
+
+{% block title %}Metrics Growth Model, STUFF ONLY ALLOWED | Orgachat{% endblock title %}
+
+{% block description %}Orgachat Growth Model, STUFF ONLY ALLOWED{% endblock description %}
+
+{% block content %}
+<div class="center">
+    <h1>Reports</h1>
+</div>
+<p>Time since last report: {{last_report.date|timesince}}</p>
+<p>You should create one every 3 days at 6:00AM</p>
+<a href="/admin/metrics/growthreport/">View all reports here</a>
+    <div class="col-md-7 mt-5 jumbotron">
+        <form action="{% url 'metrics:growth_model' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="hypo" class="form-control" placeholder="Hyponothisi which we build" required>
+            </div>
+            <div class="form-group">
+                <label for="">Description</label>
+                <textarea name="desc" id="" cols="30" rows="5"
+                    placeholder="Extra explanation about what our team actually build"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="">Team effort</label>
+                <select name="effort" id="">
+                    <option value="easy">easy < 2 day</option> <option value="medium">medium > 2day > 4 days</option>
+                    <option value="hard">hard >4 days</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Create Growth report</button>
+        </form>
+    </div>
+{% endblock content %}
