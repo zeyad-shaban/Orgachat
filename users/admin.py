@@ -10,10 +10,9 @@ class MyUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'last_visit',
                     'date_joined', 'is_installed')
 
-
 MyUserAdmin.list_filter += ('date_joined',)
-MyUserAdmin.fieldsets += (('Custom Fields', {'fields': (
-    'is_installed', 'friends', 'avatar', 'about', 'country', 'sub_endpoint', 'sub_auth', 'sub_p256dh')}),)
+MyUserAdmin.fieldsets += (('Identifiers', {'fields': ('friends', 'phone_number', 'avatar', 'about', 'country',)}),)
+MyUserAdmin.fieldsets += (('Metrics', {'fields': ('is_installed', 'last_visit')}),)
 
 admin.site.register(User, MyUserAdmin)
 
