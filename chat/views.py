@@ -41,9 +41,12 @@ def home(request):
 @login_required
 def room(request, room_id, area_id=None):
     room = get_object_or_404(Room, pk=room_id)
-    area_id = request.GET.get('area_id')
-    if not area_id:
-        area_id = json.loads(request.body).get('area_id')
+    try:
+        area_id = request.GET.get('area_id')
+        if not area_id:
+            area_id = json.loads(request.body).get('area_id')
+    except:
+        pass
     try:
         requestedPage = json.loads(request.body).get("page")
     except:
