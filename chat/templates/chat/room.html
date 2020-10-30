@@ -60,7 +60,8 @@
             </div>
             <select name="area" id="area" autocomplete="off">
                 {% for anarea in room.area_set.all %}
-                <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected" {% endif %}>
+                <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected" {% endif %}
+                    class="areaOption">
                     {{ anarea.title }}</option>
                 {% endfor %}
             </select>
@@ -95,32 +96,31 @@
                     <br>
                     {% endif %}
                 </div>
-                <form action="{% url 'chat:create_area' room.id %}" method="POST">
+                <form action="{% url 'chat:create_area' room.id %}" method="POST" id="add_divider_form">
                     {% csrf_token %}
-                    <input type="text" name="title" id="id_title" placeholder="add divider" required maxlength="30"
+                    <input type="text" name="title" id="divider_title" placeholder="add divider" required maxlength="30"
                         style="width: 60%; margin-left: 15px">
                     <button type="submit" class="btn" style="vertical-align: middle; margin-top: -5px;"><i
-                            class="fas fa-plus text-white" style="font-size: 200%;"></i></button>
+                            class="fas fa-plus text-white" style="font-size: 200%;"
+                            id="add_divider_button"></i></button>
                 </form>
             </div>
             <!-- sidebar-header  -->
             <div class="areas-all">
-                <ul class="messages">
+                <ul id="allAreas">
                     <li><a href="{% url 'chat:room' room.id %}">All</a></li>
-                    {% if not room.area_set.count <= 1 %}
                     {% for area in room.area_set.all %}
                     <li>
                         <a href="{% url 'chat:room' room.id %}?area_id={{ area.id }}">{{ area.title }}</a>
                         {% if user in area.muted_users.all %}
-                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4 text-muted"><i
-                                class="fas fa-volume-mute"></i></a>
+                        <a href="{% url 'chat:mute_area' area.id %}" class="muteArea float-right mr-4 text-muted"><i
+                                class="fas fa-volume-off"></i></a>
                         {% else %}
-                        <a href="{% url 'chat:mute_area' area.id %}" class="float-right mr-4"><i
+                        <a href="{% url 'chat:mute_area' area.id %}" class="muteArea float-right mr-4"><i
                                 class="fas fa-volume-up"></i></a>
                         {% endif %}
                     </li>
                     {% endfor %}
-                    {% endif %}
                 </ul>
             </div>
     </nav>
@@ -153,7 +153,7 @@
                 <div id="option-invite" class="option-menu">
                     {% for auser in other_users %}
                     <p>{{ auser.username }}
-                        <a href="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
+                        <a="{% url 'chat:add_user' auser.id room.id %}" class="btn btn-success invite-btn"><i
                                 class="fas fa-plus"></i> Add</a>
                     </p>
                     <br>
@@ -214,7 +214,7 @@
                         <button type="submit" id="saveAttachedFile">Send</button>
                     </div>
                     <label for="area">Divider </label>
-                    <select name="area" style="width: 155px" autocomplete="off">
+                    <select name="area" style="width: 155px" autocomplete="off" id="chooseDivider">
                         {% for anarea in room.area_set.all %}
                         <option value="{{ anarea.id }}" {% if anarea.id == area.id %} selected="selected" {% endif %}>
                             {{ anarea.title }}</option>
@@ -246,10 +246,66 @@
 <script>
     // Scroll to bottom
     document.addEventListener('DOMContentLoaded', function () {
-        window.scrollTo(0, document.body.scrollHeight);
+        scroll({
+            top: window.scrollMaxY,
+            behavior: "smooth"
+        })
         // ---------------------------
-        // INTERFACE
+        // GROUP
         // ---------------------------
+        // ----------------Add Area-------------------
+        var areas = document.querySelectorAll('.areaOption')
+        var lastArea = document
+        document.querySelector("#add_divider_form").onsubmit = function (e) {
+            e.preventDefault();
+            var areaTitle = c
+            document.querySelector("#divider_title").value = ''
+            try {
+                areaID = JSON.parse(areas[areas.length - 1].value) + 1
+            } catch (err) {
+                var areaID = 11
+            }
+            var aXhr = new XMLHttpRequest()
+            aXhr.open("POST", "{% url 'chat:create_area' room.id %}", true)
+            aXhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            aXhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}")
+            aXhr.send(JSON.stringify({
+                'title': areaTitle,
+            }))
+            toast("You may need to refresh")
+            // D I S P L A Y    I T
+            opt = document.createElement("option")
+            opt.value = areaID
+            opt.text = areaTitle
+            document.querySelector('#chooseDivider').add(opt)
+            document.querySelector('#allAreas').innerHTML +=
+                `<li><a href="{% url 'chat:room' room.id %}?area_id=${areaID}">${areaTitle}</a></li>`
+        }
+        // ---------------Mute Area--------------
+
+        function muteArea(url, btn) {
+            var mXhr = new XMLHttpRequest();
+            mXhr.open("GET", url, true)
+            console.log(btn)
+            mXhr.send()
+            if (btn.classList.contains('text-muted')) {
+                // Unmute it
+                btn.classList.remove('text-muted');
+                btn.childNodes[0].classList.remove('fa-volume-off')
+                btn.childNodes[0].classList.add('fa-volume-up')
+            } else {
+                // Mute it
+                btn.classList.add('text-muted');
+                btn.childNodes[0].classList.remove('fa-volume-up')
+                btn.childNodes[0].classList.add('fa-volume-off')
+            }
+        }
+        for (btn of document.querySelectorAll(".muteArea")) {
+            btn.onclick = function (e) {
+                e.preventDefault()
+                muteArea(this.href, this)
+            }
+        }
         // ----------Toggle Options------------
         var optionBtns = document.querySelectorAll('.option-item')
         var options = document.querySelectorAll('.option-menu')
@@ -321,7 +377,10 @@
         </li>`
                         document.querySelector('#notification_sound').play()
                         if (window.scrollMaxY - window.scrollY <= 420) {
-                            window.scrollTo(0, document.body.scrollHeight);
+                            scroll({
+                                top: window.scrollMaxY,
+                                behavior: "smooth"
+                            })
                         }
                     }
                 }
@@ -446,6 +505,10 @@
                         document.querySelector('#notification_sound').play()
                         if (window.scrollMaxY - window.scrollY <= 420) {
                             window.scrollTo(0, document.body.scrollHeight);
+                            scroll({
+                                top: window.scrollMaxY,
+                                behavior: "smooth"
+                            })
                         }
                     }
                 }

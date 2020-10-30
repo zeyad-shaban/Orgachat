@@ -53,7 +53,7 @@ def room(request, room_id, area_id=None):
         requestedPage = None
     if request.method == 'GET' or requestedPage:
         other_users = []
-        for user in User.objects.all():
+        for user in User.objects.filter(friends=request.user):
             if not user in room.chatters.all():
                 other_users.append(user)
         if not request.user in room.chatters.all():
@@ -100,9 +100,8 @@ def room(request, room_id, area_id=None):
                 try:
                     send_user_notification(
                         user=chatter, payload=payload, ttl=1000)
-                    print("SUCCESS TO SEND NOTIFICATIONS")
                 except Exception as err:
-                    print("Error: ", err)
+                    pass
         return redirect('chat:room', room_id=room_id)
 
 
@@ -205,7 +204,8 @@ def create_area(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
     if not request.user in room.chatters.all():
         raise PermissionDenied
-    area = Area.objects.create(title=request.POST.get('title'), room=room)
+    title = json.loads(request.body).get('title')
+    area = Area.objects.create(title=title, room=room)
     area.save()
     messages.success(request, 'Successfully created area')
     return redirect('chat:room', room_id=room.id)

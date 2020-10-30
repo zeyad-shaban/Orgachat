@@ -163,9 +163,13 @@ class Message(models.Model):
         isText = False
         if self.text:
             isText = True
+        if self.area:
+            area_title = self.area.title
+        else:
+            area_title = None
         message = {
             'user': self.user.username,
-            'area': self.area.title,
+            'area': area_title,
             'id': self.id,
             'content': self.content(),
             "isText": isText,

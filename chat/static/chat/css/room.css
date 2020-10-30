@@ -564,6 +564,11 @@ textarea:focus {
 .sidebar-wrapper .sidebar-brand #close-sidebar {
     cursor: pointer;
     font-size: 20px;
+    float: right;
+    background-color: crimson;
+    border-radius: 200px;
+    padding: 3px 10px;
+    margin-left: 110px;
 }
 
 /*--------------------sidebar-header----------------------*/
