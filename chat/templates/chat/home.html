@@ -41,7 +41,7 @@
                     <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
                         data-id="{{room.id}}">
                         <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
-                        <a href="#" type="button" style="font-size: 120%"
+                        <a href="#" type="button" style="float: right; margin-right: 3%; border-radius: 50%; font-size: 110%;"
                             class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
                         <p>
                             <strong>{{room.title}} {% if room.type == "group" %} &mdash; <i class="fas fa-users"></i>
@@ -81,7 +81,7 @@
                     <div class="friend" onclick="document.querySelector('#openRoom{{room.id}}').click()"
                         data-id="{{room.id}}">
                         <img src="{{room.imageURL}}" loading="lazy" width="50" height="50" />
-                        <a href="#" type="button" style="font-size: 120%"
+                        <a href="#" type="button" style="float: right; margin-right: 3%; border-radius: 50%; font-size: 110%;"
                             class="badge badge-danger mt-4">{% if room.unread_count > 0 %}{{room.unread_count}}{% endif %}</a>
                         <p>
                             <strong>{{room.title}} {% if room.type == "group" %} &mdash; <i class="fas fa-users"></i>
@@ -120,14 +120,14 @@
                     class="fas fa-question-circle" onclick="toast('divides your homepage')"></i>
                 <hr>
 
-                <a type="button" href="{% url 'users:all_users' %}" class="btn"><i
-                        class="fas fa-user-plus btn btn-success btn-circle p-2 i-md"></i>&nbsp; Add user</a>
+                <a type="button" href="{% url 'users:all_users' %}" class="btn" onclick="toast('We are still developing friends list'); return false"><i
+                        class="fas fa-child btn btn-secondary btn-circle p-2 i-md"></i>&nbsp; My friends</a>
                 <!-- AddToAny BEGIN -->
                 <div class="a2a_kit a2a_kit_size_32 a2a_default_style"
                     data-a2a-url="https://orgachat.com/users/add-friend/{{user.id}}/?utm_source=orgachat&amp;utm_medium=referral&amp;utm_campaign=invite_friend"
                     data-a2a-title="Orgachat Friend Invitation link">
                     <button class="btn">
-                        <a class="a2a_dd btn btn-success btn-circle p-2" id="profile-page"
+                        <a class="a2a_dd btn btn-secondary btn-circle p-2" id="profile-page"
                             href="https://www.addtoany.com/share"></a> &nbsp; Invite
                         friends
                     </button>
