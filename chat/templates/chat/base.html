@@ -201,6 +201,78 @@
         }
         // -------------------------END PWA-------------------------
     </script>
+    <!-- ----------------------Show Latest updates to user------------------ -->
+    <div class="modal fade" id="latestUpdate" tabindex="-1" role="dialog" aria-labelledby="latestUpdateLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        onclick="closeModal('#latestUpdate')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="center">
+                            <h1>أين التحديثات؟</h1>
+                        </div>
+                        <p>مرحبا مستخدمين أورجاشات, بعد بضع تحديثات قدمناها وجدنا أنها لا تحرز اعجابكم ولذلك أوقفنا العمل تماما علي هذه التحديثات... ونعمل حاليا علي تحديث ضخم سيعجبكم😉</p>
+                        <div class="center">
+                            <h2>التحديث الضخم</h2>
+                        </div>
+                        <p>نسخه جوال ١٠٠٪. بدعم أوفلاين, أشعارات, تغيير واجهه المستخدم تماما, وأشياء أخري ستعجبك كثيرا!</p>
+                        <p>اذا لم تدخل بريدك ألالكتروني فأرسل لنا رساله علي الجيميل حتي نبلغك بالتحديثات حين تكون جاهزه</p>
+                        <p><a><b>officialorgachat@gmail.com</b></a></p>
+                        <div class="center">
+                            <h2>متي؟</h2>
+                        </div>
+                        <p>ستكون نسخه الجوال متوفره قبل ١٢ نوفمبر ٢٠٢٠.</p>
+                        <div class="center">
+                            <h2>هل يمكنني المساعده؟</h2>
+                            <p>نعم بالطبع! أرسل لنا بريدا الكترونيا وأخبرنا فيه ان كنت متحمسنا لنسخه ألجوال أم لا.</p>
+                            <p><a><b>officialorgachat@gmail.com</b></a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                        onclick="closeModal('#latestUpdate')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function createCookie(name, value, days) {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    var expires = "; expires=" + date.toGMTString();
+                } else var expires = "";
+                document.cookie = name + "=" + value + expires + "; path=/";
+            }
+
+            function readCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+
+            function eraseCookie(name) {
+                createCookie(name, "", -1);
+            }
+            if (!readCookie('alreadyShown2')) {
+                openModal('#latestUpdate')
+                createCookie('alreadyShown2', true)
+            }
+        });
+    </script>
 </body>
 
 </html>
