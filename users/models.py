@@ -274,6 +274,7 @@ class User(AbstractUser):
         Category, on_delete=models.CASCADE, blank=True, null=True)
 
     USERNAME_FIELD = 'phone_number'
+    
 
     def __str__(self):
         return str(self.username)

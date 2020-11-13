@@ -34,8 +34,10 @@ urlpatterns = [
     path("metrics/", include("metrics.urls")),
 
     # AUTHENTICATION
-    path('signup/', users_views.signupuser, name="signupuser"),
-    path('api/token/', users_views.ObtainToken.as_view(), name='token_obtain_pair'),
+    path('register/', users_views.register, name="register"),
+    # path('login/', users_views.loginuser, name="loginuser"),
+    path('api/token/', users_views.MyTokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 

@@ -3,7 +3,6 @@ from random import randint
 
 from chat.models import Area, Chat
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers import serialize
@@ -21,6 +20,7 @@ from users.serializers import UserSerializer
 
 from .serializers import MyTokenObtainPairSerializer, UserSerializer
 
+from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
@@ -30,7 +30,7 @@ User = get_user_model()
 
 
 @api_view(('POST',))
-def signupuser(request):
+def register(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if not serializer.is_valid():
@@ -44,44 +44,38 @@ def signupuser(request):
                 phone_number=phone_number, username=phone_number)
         user.phone_code = randint(99999, 999999)
         user.save()
+        TokenObtainPairView()
         return Response(serializer.data, status.HTTP_200_OK)
         # todo send validation code
 
 
-class ObtainToken(TokenObtainPairView):
+class MyTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
+
+
+# @api_view(['POST',])
+# def loginuser(request):
+#     if request.method == 'POST':
+#         phone_number = request.data.get('phone_number')
+#         try:
+#             user = User.objects.get(phone_number=phone_number)
+#             if int(request.data.get('phone_code')) == user.phone_code and user.phone_code:
+#                 # user.phone_code = None
+#                 # user.save()
+#                 return Response({'phone_number': phone_number}, status.HTTP_200_OK)
+
+#             else:
+#                 return Response({'error': "Invalid code"}, status.HTTP_400_BAD_REQUEST)
+#         except Exception as error:
+#                 return Response({'error': error}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
 
 # ----------Validate-------------
 
 
-def check_validation(request):
-    if request.POST.get("phone_validation_code"):
-        pass
-    elif request.POST.get("email_validation_code"):
-        if int(request.POST.get("email_validation_code")) == request.user.email_code:
-            # Cancel every other user email
-            try:
-                same_email_users = User.objects.filter(
-                    email=request.user.temp_email)
-                for user in same_email_users:
-                    user.email = None
-                    user.save()
-            except:
-                pass
-            request.user.email = request.user.temp_email
-            request.user.temp_email = None
-            request.user.email_code = None
-            request.user.save()
-            messages.success(
-                request, f"Validated Successfully, your account is now linked to {request.user.email}")
-        else:
-            messages.error(request, "Code isn't valid")
-
-    return redirect('users:send_validation')
-# -------------------------
-# END AUTHENTICATION
-# -------------------------
 
 # -------------------------
 # USERS
