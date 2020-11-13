@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 COUNTRIES = (
@@ -246,69 +249,36 @@ COUNTRIES = (
 )
 
 
+class Category(models.Model):
+    title = models.CharField(max_length=50)
+    is_muted = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+
 class User(AbstractUser):
-    username = models.CharField(max_length=30, unique=True)
+    phone_number = PhoneNumberField(unique=True)
+    username = models.CharField(max_length=30, blank=True, null=True)
+    password = models.CharField(null=True, blank=True, max_length=20)
+    about = models.CharField(
+        max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
     last_visit = models.DateTimeField(blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
-    is_installed = models.BooleanField(default=False)
     email = models.EmailField(blank=True, null=True)
-    # Identefiers
-    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
-    about = models.CharField(
-        max_length=190, default="Hi! I'm an Orgachat user", blank=True, null=True)
     avatar = models.ImageField(
         upload_to='users/img/avatar/', default="users/img/avatar/DefUser.png/")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
     # Validations
     email_code = models.IntegerField(blank=True, null=True)
     phone_code = models.IntegerField(blank=True, null=True)
-    temp_email = models.EmailField(blank=True, null=True)
-    # validation login
-    login_email_code = models.IntegerField(blank=True, null=True)
-    # Privacy
-    # todo show friends, phone number, email, who to see profile
+    categories = models.ForeignKey(
+        Category, on_delete=models.CASCADE, blank=True, null=True)
 
-    def badge_count(self):
-        total = 0
-        from chat.models import Room
-        rooms = Room.objects.filter(chatters=self)
-        for room in rooms:
-            total += room.unread_count()
-        return total
+    USERNAME_FIELD = 'phone_number'
 
-    def display(self):
-        """Display the user info for other users to see, instead of copying and pasting it I have it in one place
-        Don't forget to place it between <ul class="list-unstyled"></ul> Or it won't look any good!"""
-        return f"""<li class="media">
-    <a href="/users/view/{self.id}">
-        <img src="{self.avatar.url}" class="mr-3" alt="" width="64" height="64" style="border-radius: 50%" loading="lazy">
-        <div class="media-body">
-        <h5 class="mt-0 mb-1">{self.username}</h5>
-    </a>
-    <button onclick="toggleAllCollapse('#userInfo{self.id}')" class="btn"><i class="fas fa-caret-down"></i> More info</button>
-    <div class="collapse" id="userInfo{self.id}">
-        <p>First: {self.first_name} &mdash; Last: {self.last_name}</p>
-        <p><i class="fas fa-envelope"></i> {self.email}</p>
-        <p><i class="fas fa-globe-asia"></i> {self.country}</p>
-        <p>About: {self.about[:50]}</p>
-    </div>
-    </div>
-  </li>"""
+# Save auth token
 
 
-class HomepageArea(models.Model):
-    title = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_muted = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def unread_count(self):
-        unread_count = 0
-        for room in self.room_set.all():
-            unread_count += room.unread_count()
-        if unread_count <= 0:
-            return ''
-        return unread_count
-
-    def __str__(self):
-        return self.title
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

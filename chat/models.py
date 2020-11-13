@@ -1,5 +1,5 @@
 import os
-from users.models import HomepageArea
+from users.models import Category
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
@@ -7,7 +7,7 @@ from users.get_request import current_request
 User = get_user_model()
 
 
-class Room(models.Model):
+class Chat(models.Model):
     type_choices = [
         ('friend', 'friend'),
         ('group', 'group')
@@ -16,7 +16,8 @@ class Room(models.Model):
         max_length=9, choices=type_choices, default='friend')
     name = models.CharField(max_length=50)
     chatters = models.ManyToManyField(User)
-    homepage_area = models.ManyToManyField(HomepageArea, blank=True)
+    homepage_area = models.ManyToManyField(Category, blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     def title(self):
         if self.type == 'friend':
@@ -80,7 +81,7 @@ class Room(models.Model):
 
 class Area(models.Model):
     title = models.CharField(max_length=30)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Chat, on_delete=models.CASCADE)
     muted_users = models.ManyToManyField(User, blank=True)
     star_users = models.ManyToManyField(
         User, blank=True, related_name='star_users')
@@ -91,7 +92,7 @@ class Area(models.Model):
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Chat, on_delete=models.CASCADE)
     area = models.ForeignKey(
         Area, on_delete=models.SET_NULL, blank=True, null=True)
 

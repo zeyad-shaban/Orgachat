@@ -1,20 +1,26 @@
 import json
 from random import randint
 
-from chat.models import Area, Room
+from chat.models import Area, Chat
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import MultipleObjectsReturned
 from django.core.mail import send_mail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers import serialize
 from django.db.models.query_utils import Q
-from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.forms import UserProfileForm
+from users.serializers import UserSerializer
+
+from .serializers import MyTokenObtainPairSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -23,126 +29,28 @@ User = get_user_model()
 # AUTHENTICATION
 # -------------------------
 
+
+@api_view(('POST',))
 def signupuser(request):
-    next = request.GET.get("next")
-    if request.method == 'GET':
-        if request.user.is_authenticated:
-            messages.warning(request, 'You are already logged in')
-            return redirect('home')
-        else:
-            return render(request, 'users/signupuser.html', {"next": next})
-    else:
-        if not request.POST.get('password1') == request.POST.get('password2'):
-            messages.error(
-                request, 'Confirm password didn\'t match, please try again')
-            print(next)
-            return redirect(f'/signup/?next={next}')
-        else:
-            try:
-                user = User.objects.create_user(username=request.POST.get(
-                    'username'), password=request.POST.get('password1'))
-                user.save()
-                login(request, user)
-                messages.success(
-                    request, 'Validate an email and phone number for your account <a href="/users/send_validation/">here</a>')
-                if next != "None" and next:
-                    return redirect(next)
-                else:
-                    return redirect("users:send_validation")
-            except IntegrityError:
-                messages.error(
-                    request, 'Username already taken, please try again')
-                return redirect(f'/signup/?next={next}')
-
-
-def loginuser(request):
-    next = request.GET.get("next")
-    if request.method == 'GET':
-        if request.user.is_authenticated:
-            messages.warning(request, 'You are already logged in')
-            return redirect('home')
-        else:
-            return render(request, 'users/loginuser.html', {"next": next})
-
-    else:
-        try:
-            data = json.loads(request.body)
-        except:
-            data = None
-        if data and data.get("email"):
-            try:
-                user = User.objects.get(email=data.get("email"))
-                if user:
-                    user.login_email_code = randint(99999, 999999)
-                    user.save()
-                    send_mail("Orgachat Login with validation code",
-                              f"Your validation code: {user.login_email_code}. Copy and paste it to login to your Orgachat account", "officialorgachat@gmail.com", [data.get("email")])
-            except User.DoesNotExist:
-                return None
-        elif request.method == 'POST' and request.POST.get("validation_code"):
-            try:
-                user = User.objects.get(email=request.POST.get("email"))
-                if int(request.POST.get("validation_code")) == user.login_email_code:
-                    user.login_email_code = None
-                    user.save()
-                    login(request, user)
-                    if next != "None" and next:
-                        return redirect(next)
-                    else:
-                        return redirect("home")
-                else:
-                    messages.error(request, 'Wrong validation code')
-                    return redirect(f'/login/?next={next}')
-            except User.DoesNotExist:
-                messages.error(
-                    request, 'The email you entered doesn\'t belong to any user')
-                return redirect(f'/login/?next={next}')
-            except Exception as err:
-                print('Error: ', err)
-            except MultipleObjectsReturned:
-                messages.error(
-                    request, 'There are multiple users with the same email address, make sure you typed it correctly')
-                return redirect(f'/login/?next={next}')
-
-        else:
-            # Login with username/email
-            user = authenticate(username=request.POST.get(
-                'username'), password=request.POST.get('password'), backends='django.contrib.auth.backends.ModelBackend')
-            if user:
-                login(request, user)
-                if next != "None" and next:
-                    return redirect(next)
-                else:
-                    return redirect("home")
-            else:
-                messages.error(
-                    request, 'Password didn\'t match or user doesn\'t exist, please try again')
-        return redirect(f'/login/?next={next}')
-
-
-def logoutuser(request):
     if request.method == 'POST':
-        logout(request)
-        return redirect('loginuser')
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.initial_data['phone_number']
+            user = User.objects.get(phone_number=phone_number)
+            if not user:
+                User.objects.create_user(
+                    phone_number=serializer.initial_data['phone_number'])
+            user.phone_code = randint(99999, 999999)
+            # todo send validation code
+            return Response(serializer.data, status.HTTP_200_OK)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class ObtainToken(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = MyTokenObtainPairSerializer
 
 # ----------Validate-------------
-
-
-@login_required
-def send_validation(request):
-    if request.method == 'GET':
-        return render(request, "users/send_validation.html")
-    else:
-        data = json.loads(request.body)
-        if data.get("type") == "phone":
-            pass
-        elif data.get("type") == "email":
-            request.user.email_code = randint(99999, 999999)
-            request.user.temp_email = data.get("email")
-            request.user.save()
-            send_mail("Orgachat Validation code",
-                      f"Orgachat Validation code: {request.user.email_code}", "officialorgachat@gmail.com", [data.get("email")])
-    return redirect("users:send_validation")
 
 
 def check_validation(request):
@@ -232,7 +140,7 @@ def add_friend(request, user_id):
     friend = get_object_or_404(User, pk=user_id)
     request.user.friends.add(friend)
     friend.friends.add(request.user)
-    room = Room.objects.create(name=friend.username, type="friend")
+    room = Chat.objects.create(name=friend.username, type="friend")
     room.save()
     room.chatters.add(request.user)
     room.chatters.add(friend)
@@ -247,7 +155,7 @@ def remove_friend(request, user_id):
     friend = get_object_or_404(User, pk=user_id)
     request.user.friends.remove(friend)
     friend.friends.remove(request.user)
-    rooms = Room.objects.filter(type='friend')
+    rooms = Chat.objects.filter(type='friend')
     for room in rooms:
         if request.user in room.chatters.all() and friend in room.chatters.all():
             room.delete()

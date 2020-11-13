@@ -82,11 +82,6 @@
                     <a class="dropdown-item" href="{% url 'users:about' %}">About</a>
                     <!-- <a class="dropdown-item" href="{% url 'users:about' %}"><i class="fas fa-question-circle"></i>
                         Frequently Asked Questions</a> -->
-                    <form action="{% url 'logoutuser' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="dropdown-item"
-                            onclick="return confirm('You are about to logout')">Logout</button>
-                    </form>
                 </div>
             </div>
             <!-- -----------End Dropdown------------ -->
@@ -181,26 +176,6 @@
     <!-- ------------------------------------ -->
     <!-- ------------------------------------ -->
     <!-- SERVICE WORKER.JS -->
-    <script>
-        // -------------------------END PWA-------------------------
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('{% url "sw.js" %}', {
-                    scope: '/'
-                })
-                .then(function (swReg) {
-                    console.log('Service Worker is registered', swReg);
-                    swRegistration = swReg;
-                    // initializeUI();
-                })
-                .catch(function (error) {
-                    console.error('Service Worker Error', error);
-                });
-        } else {
-            console.warn('Service Worker is not supported');
-            pushButton.textContent = 'Push Not Supported';
-        }
-        // -------------------------END PWA-------------------------
-    </script>
 </body>
 
 </html>

@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import resolve
-from .models import Room, Area, Message
+from .models import Chat, Area, Message
 
 
-admin.site.register(Room)
+admin.site.register(Chat)
 admin.site.register(Area)
 
 

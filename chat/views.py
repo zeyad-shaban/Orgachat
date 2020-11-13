@@ -1,46 +1,71 @@
+from chat.serializers import ChatSerializer
 import time
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import random
 import logging
 import json
-from users.models import HomepageArea
+from users.models import Category
 from django.core.exceptions import PermissionDenied
 from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
-from chat.models import Area, Message, Room
+from chat.models import Area, Message, Chat
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from webpush import send_user_notification
 from django.contrib.auth.decorators import login_required
 User = get_user_model()
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 logger = logging.getLogger('djpwa.pwa.views')
 
 
-def home(request):
+# def home(request):
+#     if request.method == 'GET':
+#         if request.user.is_authenticated:
+#             user_rooms = Chat.objects.filter(chatters=request.user)
+#             general_rooms = []
+#             for room in user_rooms:
+#                 if room.homepage_area.count() <= 0 or not room.get_homepage_area():
+#                     general_rooms.append(room)
+
+#             general_count = 0
+#             for room in general_rooms:
+#                 general_count += room.unread_count()
+#             if general_count <= 0:
+#                 general_count = ''
+#             return render(request, 'chat/home.html', {'general_rooms': general_rooms, "general_count": general_count})
+
+#         else:
+#             messages.error(request, 'Please create an account or login first')
+#             return redirect('signupuser')
+
+# !REQUEST.USER WON'T WORK HERE
+@api_view(('GET',))
+@permission_classes([IsAuthenticated,])
+def friends_chat(request):
     if request.method == 'GET':
-        if request.user.is_authenticated:
-            user_rooms = Room.objects.filter(chatters=request.user)
-            general_rooms = []
-            for room in user_rooms:
-                if room.homepage_area.count() <= 0 or not room.get_homepage_area():
-                    general_rooms.append(room)
+        friend_chats = Chat.objects.filter(chatters=request.user, type='friend')
+        serializer = ChatSerializer(friend_chats, many=True)
+        return Response(serializer.data)
 
-            general_count = 0
-            for room in general_rooms:
-                general_count += room.unread_count()
-            if general_count <= 0:
-                general_count = ''
-            return render(request, 'chat/home.html', {'general_rooms': general_rooms, "general_count": general_count})
 
-        else:
-            messages.error(request, 'Please create an account or login first')
-            return redirect('signupuser')
 
+@api_view(('GET', 'POST'))
+@permission_classes([IsAuthenticated,])
+def groups_chat(request):
+    if request.method == 'GET':
+        friend_chats = Chat.objects.filter(chatters=request.user, type='group')
+        serializer = ChatSerializer(friend_chats, many=True)
+        return Response(serializer.data)
+    else:
+        # todo create a group
+        pass
 
 @login_required
 def room(request, room_id, area_id=None):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     try:
         area_id = request.GET.get('area_id')
         if not area_id:
@@ -107,7 +132,7 @@ def room(request, room_id, area_id=None):
 
 @login_required
 def save_file_message(request, room_id):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     area = get_object_or_404(Area, pk=int(request.POST.get('area')))
 
     if request.FILES.get("video"):
@@ -135,7 +160,7 @@ def save_file_message(request, room_id):
 
 @login_required
 def record_audio_message(request, room_id):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     area = get_object_or_404(Area, pk=int(request.POST.get("area")))
     message = Message.objects.create(
         user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
@@ -145,7 +170,7 @@ def record_audio_message(request, room_id):
 
 @login_required
 def load_messages(request, room_id):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     if not request.user in room.chatters.all():
         raise PermissionDenied
     data = json.loads(request.body)
@@ -165,7 +190,7 @@ def create_group(request):
     if not request.user.is_authenticated:
         messages.warning(request, "Please Login to continue")
         return redirect("signupuser")
-    room = Room.objects.create(name=request.POST.get('name'), type='group')
+    room = Chat.objects.create(name=request.POST.get('name'), type='group')
     room.save()
     room.chatters.add(request.user)
     area = Area.objects.create(title='general', room=room)
@@ -176,14 +201,14 @@ def create_group(request):
 
 def add_user(request, user_id, room_id):
     user = get_object_or_404(User, pk=user_id)
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     room.chatters.add(user)
     return redirect('chat:room', room_id=room_id)
 
 
 def remove_user(request, user_id, room_id):
     user = get_object_or_404(User, pk=user_id)
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     room.chatters.remove(user)
     room.homepage_area.remove(room.get_homepage_area())
     message = Message.objects.create(
@@ -201,7 +226,7 @@ def remove_user(request, user_id, room_id):
 
 @login_required
 def create_area(request, room_id):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     if not request.user in room.chatters.all():
         raise PermissionDenied
     title = json.loads(request.body).get('title')
@@ -223,7 +248,7 @@ def mute_area(request, area_id):
 
 
 def create_homepage_area(request):
-    homepage_area = HomepageArea.objects.create(
+    homepage_area = Category.objects.create(
         title=request.POST.get('title'), user=request.user)
     homepage_area.save()
     return redirect('home')
@@ -231,11 +256,11 @@ def create_homepage_area(request):
 
 def move_room(request, homepage_area_id):
     try:
-        homepage_area = get_object_or_404(HomepageArea, pk=homepage_area_id)
+        homepage_area = get_object_or_404(Category, pk=homepage_area_id)
     except:
         homepage_area = None
     room_id = int(json.loads(request.body).get("room_id"))
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Chat, pk=room_id)
     curr_area = room.get_homepage_area()
     room.homepage_area.remove(curr_area)
     room.homepage_area.add(homepage_area)

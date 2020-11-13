@@ -33,9 +33,3 @@ def growth_model(request):
             hypo=hypo, desc=desc, effort=effort, messages_per_day=messages_per_day, repeat_rate=repeat_rate, new_users_per_day=new_users_per_day)
         growth_report.save()
         return redirect("metrics:growth_model")
-
-
-def user_installed(request):
-    request.user.is_installed = True
-    request.user.save()
-    return redirect("home")

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Apps
+    'rest_framework',
+    'rest_framework.authtoken',
     'users',
     'chat',
     'info',
@@ -111,9 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": "BObaAJsMXuJwzoG9zZSALTFquu_VukAEkKVtAOZe0iCd5YHXvS9VhZr2gQV6NUsQ2_8t68sh17wkMftHUKr_7RU",
-    "VAPID_PRIVATE_KEY":"7MgEqBEPZMHeju40i6yXU1__4cNVgdDBdP-fQAoMTmA",
+    "VAPID_PRIVATE_KEY": "7MgEqBEPZMHeju40i6yXU1__4cNVgdDBdP-fQAoMTmA",
     "VAPID_ADMIN_EMAIL": "zeyadshapan2004@gmail.com"
 }
 

@@ -18,16 +18,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 from chat import views as chat_views
 from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', chat_views.home, name="home"),
-    # Service Worker PWA
-    path('sw.js', TemplateView.as_view(template_name='chat/sw.js',
-                                       content_type='application/javascript'), name='sw.js',),
+
     path('webpush/', include('webpush.urls')),
 
     # Include
@@ -38,8 +37,8 @@ urlpatterns = [
 
     # AUTHENTICATION
     path('signup/', users_views.signupuser, name="signupuser"),
-    path('login/', users_views.loginuser, name="loginuser"),
-    path('logout/', users_views.logoutuser, name="logoutuser"),
+    path('api/token/', users_views.ObtainToken.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
