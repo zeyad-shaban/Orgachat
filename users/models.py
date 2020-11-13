@@ -257,7 +257,7 @@ class Category(models.Model):
 
 class User(AbstractUser):
     phone_number = PhoneNumberField(unique=True)
-    username = models.CharField(max_length=30, blank=True, null=True)
+    username = models.CharField(max_length=30)
     password = models.CharField(null=True, blank=True, max_length=20)
     about = models.CharField(
         max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
@@ -275,6 +275,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'phone_number'
 
+    def __str__(self):
+        return str(self.username)
 # Save auth token
 
 

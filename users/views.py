@@ -5,7 +5,6 @@ from chat.models import Area, Chat
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.serializers import serialize
 from django.db.models.query_utils import Q
@@ -34,16 +33,19 @@ User = get_user_model()
 def signupuser(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.initial_data['phone_number']
+        if not serializer.is_valid():
+            if 'is not valid' in serializer.errors['phone_number'][0]:
+                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        phone_number = serializer.initial_data['phone_number']
+        try:
             user = User.objects.get(phone_number=phone_number)
-            if not user:
-                User.objects.create_user(
-                    phone_number=serializer.initial_data['phone_number'])
-            user.phone_code = randint(99999, 999999)
-            # todo send validation code
-            return Response(serializer.data, status.HTTP_200_OK)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                phone_number=phone_number, username=phone_number)
+        user.phone_code = randint(99999, 999999)
+        user.save()
+        return Response(serializer.data, status.HTTP_200_OK)
+        # todo send validation code
 
 
 class ObtainToken(TokenObtainPairView):
@@ -86,7 +88,7 @@ def check_validation(request):
 # -------------------------
 
 
-@login_required
+@ login_required
 def profile(request):
     if request.method == 'GET':
         return render(request, "users/profile.html", {"user_profile_form": UserProfileForm(instance=request.user)})
@@ -134,7 +136,7 @@ def all_users(request):
 # -------------------------
 # ACTIONS
 # -------------------------
-@login_required
+@ login_required
 def add_friend(request, user_id):
     print("-------------CALLED-------------")
     friend = get_object_or_404(User, pk=user_id)
