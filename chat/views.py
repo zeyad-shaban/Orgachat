@@ -1,3 +1,6 @@
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from chat.serializers import ChatSerializer
 import time
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -12,12 +15,8 @@ from chat.models import Area, Message, Chat
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
-from webpush import send_user_notification
 from django.contrib.auth.decorators import login_required
 User = get_user_model()
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 logger = logging.getLogger('djpwa.pwa.views')
 
 
@@ -43,17 +42,17 @@ logger = logging.getLogger('djpwa.pwa.views')
 
 # !REQUEST.USER WON'T WORK HERE
 @api_view(('GET',))
-@permission_classes([IsAuthenticated,])
+@permission_classes([IsAuthenticated, ])
 def friends_chat(request):
     if request.method == 'GET':
-        friend_chats = Chat.objects.filter(chatters=request.user, type='friend')
+        friend_chats = Chat.objects.filter(
+            chatters=request.user, type='friend')
         serializer = ChatSerializer(friend_chats, many=True)
         return Response(serializer.data)
 
 
-
 @api_view(('GET', 'POST'))
-@permission_classes([IsAuthenticated,])
+@permission_classes([IsAuthenticated, ])
 def groups_chat(request):
     if request.method == 'GET':
         friend_chats = Chat.objects.filter(chatters=request.user, type='group')
@@ -62,6 +61,7 @@ def groups_chat(request):
     else:
         # todo create a group
         pass
+
 
 @login_required
 def room(request, room_id, area_id=None):
@@ -117,16 +117,6 @@ def room(request, room_id, area_id=None):
         message = Message.objects.create(
             user=request.user, text=data.get('text'), room=room, area=area)
         message.save()
-        # Web push
-        payload = {"head": room.title(), "body": message.__str__(), "icon": "/static/chat/img/favicon.png",
-                   "url": f"https://www.orgachat.com/chat/room/{room.id}/"}
-        for chatter in room.chatters.all():
-            if not chatter in message.area.muted_users.all() and chatter != request.user and (True):  # todo check for chatter url
-                try:
-                    send_user_notification(
-                        user=chatter, payload=payload, ttl=1000)
-                except Exception as err:
-                    pass
         return redirect('chat:room', room_id=room_id)
 
 

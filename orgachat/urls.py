@@ -27,8 +27,6 @@ from users import views as users_views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('webpush/', include('webpush.urls')),
-
     # Include
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),

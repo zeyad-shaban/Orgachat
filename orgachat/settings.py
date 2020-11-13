@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'metrics',
     # Packages
     'phonenumber_field',
-    'webpush',
     'django_cleanup',
 ]
 
