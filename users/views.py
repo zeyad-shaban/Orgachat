@@ -54,13 +54,18 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-# ----------Validate-------------
+@api_view(['GET', 'POST'])
+def all_users(request):
+    q = request.GET.get("q")
+    if q:
+        users = User.objects.filter(Q(username__icontains=q) | Q(
+            email__icontains=q) | Q(country__icontains=q)).order_by("-last_visit")
+    else:
+        users = User.objects.filter(
+            ~Q(id=request.user.id)).order_by("-last_visit")
 
-
-
-# -------------------------
-# USERS
-# -------------------------
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
 
 
 @ login_required
@@ -80,29 +85,6 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'viewed_user': viewed_user})
 
 
-def all_users(request):
-    q = request.GET.get("q")
-    if q:
-        users_list = User.objects.filter(Q(username__icontains=q) | Q(
-            email__icontains=q) | Q(country__icontains=q)).order_by("-last_visit")
-    else:
-        users_list = User.objects.filter(
-            ~Q(id=request.user.id)).order_by("-last_visit")
-    paginator = Paginator(users_list, 12)
-    try:
-        page = json.loads(request.body)["page"]
-    except:
-        page = 1
-    try:
-        users = paginator.page(page)
-    except EmptyPage:
-        users = []
-    except PageNotAnInteger:
-        users = paginator.page(1)
-    if request.method == 'GET':
-        return render(request, 'users/all_users.html', {'users': users, "users_count": users_list.count()})
-    else:
-        return JsonResponse({"users": serialize("json", users)})
 # -------------------------
 # END USERS
 # -------------------------
