@@ -42,7 +42,7 @@ def groups_chat(request):
         pass
 
 
-@api_view(('GET',))
+@api_view(('GET', 'POST'))
 # @permission_classes([IsAuthenticated])
 def get_chat(request):
     serializer = ChatSerializer(data=request.data)
