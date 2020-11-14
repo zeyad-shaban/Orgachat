@@ -1,10 +1,10 @@
+from django.core.serializers import serialize
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from chat.serializers import ChatSerializer
-import time
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import random
 import logging
 import json
 from users.models import Category
@@ -20,27 +20,6 @@ User = get_user_model()
 logger = logging.getLogger('djpwa.pwa.views')
 
 
-# def home(request):
-#     if request.method == 'GET':
-#         if request.user.is_authenticated:
-#             user_rooms = Chat.objects.filter(chatters=request.user)
-#             general_rooms = []
-#             for room in user_rooms:
-#                 if room.homepage_area.count() <= 0 or not room.get_homepage_area():
-#                     general_rooms.append(room)
-
-#             general_count = 0
-#             for room in general_rooms:
-#                 general_count += room.unread_count()
-#             if general_count <= 0:
-#                 general_count = ''
-#             return render(request, 'chat/home.html', {'general_rooms': general_rooms, "general_count": general_count})
-
-#         else:
-#             messages.error(request, 'Please create an account or login first')
-#             return redirect('signupuser')
-
-# !REQUEST.USER WON'T WORK HERE
 @api_view(('GET',))
 @permission_classes([IsAuthenticated, ])
 def friends_chat(request):
@@ -61,6 +40,37 @@ def groups_chat(request):
     else:
         # todo create a group
         pass
+
+
+@api_view(('GET',))
+# @permission_classes([IsAuthenticated])
+def get_chat(request):
+    serializer = ChatSerializer(data=request.data)
+
+    # ! DELETE THOSE AS SOON AS POSSIBLE!
+    user_id = serializer.initial_data["userId"]
+    request.user = get_object_or_404(User, pk=user_id)
+
+    type = serializer.initial_data["type"]
+    if type == "friend" or not type:
+        friend = get_object_or_404(
+            User, pk=serializer.initial_data["friendId"])
+
+        if request.user.id == friend.id:
+            return Response({'error': "You can't chat with yourself"}, status.HTTP_400_BAD_REQUEST)
+
+        chats = Chat.objects.filter(type=type, chatters=request.user)
+        chat = None
+        for chat in chats:
+            if friend in chat.chatters.all():
+                chat = chat
+        if not chat:
+            chat = Chat.objects.create(type=serializer.initial_data["type"])
+            chat.chatters.add(request.user)
+            chat.chatters.add(friend)
+    else:
+        chat = get_object_or_404(Chat, pk=serializer.initial_data["chatId"])
+    return Response({'chat': serialize('json', [chat]), 'messages': chat.message_set.all()})
 
 
 @login_required

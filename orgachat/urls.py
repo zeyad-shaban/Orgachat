@@ -20,8 +20,6 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenRefreshView
 
-
-from chat import views as chat_views
 from users import views as users_views
 
 urlpatterns = [

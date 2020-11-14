@@ -3,7 +3,6 @@ from users.models import Category
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
-from users.get_request import current_request
 User = get_user_model()
 
 
@@ -14,69 +13,14 @@ class Chat(models.Model):
     ]
     type = models.CharField(
         max_length=9, choices=type_choices, default='friend')
-    name = models.CharField(max_length=50)
+    title = models.CharField(max_length=50)
     chatters = models.ManyToManyField(User)
     homepage_area = models.ManyToManyField(Category, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
 
-    def title(self):
-        if self.type == 'friend':
-            curr_user = current_request().user
-
-            for chatter in self.chatters.all():
-                if chatter == curr_user:
-                    pass
-                else:
-                    return chatter.username
-        else:
-            return self.name
-
-    def unread_count(self):
-        unread_messages = self.message_set.filter(is_read=False)
-        output = []
-        for message in unread_messages:
-            if message.area and not current_request().user in message.area.muted_users.all() and message.user != current_request().user:
-                output.append(message)
-        if len(output) <= 0:
-            output = 0
-        else:
-            output = len(output)
-        return output
-
     def __str__(self):
-        return str(self.title())
+        return self.title
 
-    def last_message(self):
-        last_message = self.message_set.all().last()
-        if last_message:
-            sender = last_message.user
-            if sender == current_request().user:
-                sender = 'You'
-            try:
-                return f'({last_message.area.title}) — {sender}: {last_message}'
-            except:
-                return ''
-        else:
-            return ''
-
-    def imageURL(self):
-        if self.type == 'friend':
-            curr_user = current_request().user
-            for chatter in self.chatters.all():
-                if chatter == curr_user:
-                    pass
-                else:
-                    return chatter.avatar.url
-        elif self.type == 'group':
-            return "/media/users/img/avatar/DefUser.png"
-
-    def get_homepage_area(self):
-        curr_user = current_request().user
-        for area in self.homepage_area.all():
-            if area in curr_user.homepagearea_set.all():
-                return area
-
-        return False
 
 
 class Area(models.Model):
@@ -104,49 +48,6 @@ class Message(models.Model):
 
     is_read = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
-
-    def content(self):
-        if self.text:
-            return self.text
-        elif self.video:
-            return f"""
-            <video width="320" height="240" controls preload="none">
-                        <source src="{self.video.url}" type="video/mp4">
-                        <source src="{self.video.url}" type="video/mov">
-                        <source src="{self.video.url}" type="video/wmv">
-                        <source src="{self.video.url}" type="video/avi">
-                        <source src="{self.video.url}" type="video/avchd">
-                      Your browser does not support the video tag.
-                      </video> 
-            """
-        elif self.image:
-            return f'<img src="{self.image.url}" alt="" loading="lazy">'
-        elif self.file:
-            return f'<p><a href="{self.file.url}" download><i class="fas fa-download"></i> {self.filename()}</a></p>'
-        elif self.audio:
-            return f"""
-            <audio controls preload="metadata">
-                        <source src="{self.audio.url}" type="audio/pcm">
-                        <source src="{self.audio.url}" type="audio/wav">
-                        <source src="{self.audio.url}" type="audio/aiff">
-                            <source src="{self.audio.url}" type="audio/mp3">
-                                <source src="{self.audio.url}" type="audio/aac">
-                                <source src="{self.audio.url}" type="audio/ogg">
-                                <source src="{self.audio.url}" type="audio/flac">
-                                <source src="{self.audio.url}" type="audio/wma">
-                      Your browser does not support the audio element.
-                      </audio>
-            """
-        else:
-            return self.text
-
-    def is_muted(self):
-        show = True
-        if current_request().user in self.message.area.muted_users.all():
-            pass
-        else:
-            show = False
-        return show
 
     def filename(self):
         if self.video:
