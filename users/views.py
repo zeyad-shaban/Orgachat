@@ -54,25 +54,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-# @api_view(['POST',])
-# def loginuser(request):
-#     if request.method == 'POST':
-#         phone_number = request.data.get('phone_number')
-#         try:
-#             user = User.objects.get(phone_number=phone_number)
-#             if int(request.data.get('phone_code')) == user.phone_code and user.phone_code:
-#                 # user.phone_code = None
-#                 # user.save()
-#                 return Response({'phone_number': phone_number}, status.HTTP_200_OK)
-
-#             else:
-#                 return Response({'error': "Invalid code"}, status.HTTP_400_BAD_REQUEST)
-#         except Exception as error:
-#                 return Response({'error': error}, status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
 # ----------Validate-------------
 
 

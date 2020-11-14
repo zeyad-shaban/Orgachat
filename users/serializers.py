@@ -37,7 +37,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(MyTokenObtainPairSerializer, cls).get_token(user)
-        token['username'] = user.username
+        token['phoneNumber'] = user.phone_number
         token['email'] = user.email
+        token['username'] = user.username
+        token['about'] = user.about
+        token['last_visit'] = user.last_visit
+        token['avatarUri'] = user.avatar
+        token['country'] = user.country
+        token['categories'] = user.categories
+        token['friends'] = user.friends.all()
 
         return token
