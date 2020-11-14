@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from six import text_type
+from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -45,6 +46,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['avatarUri'] = user.avatar.url
         token['country'] = user.country
         token['categories'] = user.categories
-        token['friends'] = user.friends.all()
+        token['friends'] = serialize('json', user.friends.all())
 
         return token
