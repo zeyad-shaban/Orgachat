@@ -286,7 +286,6 @@
         function muteArea(url, btn) {
             var mXhr = new XMLHttpRequest();
             mXhr.open("GET", url, true)
-            console.log(btn)
             mXhr.send()
             if (btn.classList.contains('text-muted')) {
                 // Unmute it

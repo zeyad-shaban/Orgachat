@@ -34,7 +34,7 @@ def register(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if not serializer.is_valid():
-            if 'is not valid' in serializer.errors['phone_number'][0]:
+            if 'is not valid' in serializer.initial_data['phone_number'][0]:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         phone_number = serializer.initial_data['phone_number'].replace(' ', '')
         try:
