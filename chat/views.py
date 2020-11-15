@@ -17,8 +17,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 User = get_user_model()
-logger = logging.getLogger('djpwa.pwa.views')
-
 
 @api_view(['GET',])
 @permission_classes([IsAuthenticated, ])
