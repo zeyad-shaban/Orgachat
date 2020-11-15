@@ -14,13 +14,34 @@ class Chat(models.Model):
     type = models.CharField(
         max_length=9, choices=type_choices, default='friend')
     title = models.CharField(max_length=50)
+    image = models.FileField(
+        upload_to="chat/room/chat_image", blank=True, null=True)
     chatters = models.ManyToManyField(User)
-    homepage_area = models.ManyToManyField(Category, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False)
+
+    def to_json(self):
+        if self.type == "friend":
+            title = "OtherFriend Username"
+            imageUri = "OtherFriend Image URI"
+        else:
+            title = "A chat with a group"
+            imageUri = self.image
+
+        json_chat = {
+            "title": title,
+            "imageUri": imageUri,
+            "lastMessagge": self.message_set.all().last(),
+            "type": self.type,
+            "chatters": [chatter.to_json() for chatter in self.chatters.all()],
+            "isArchived": self.is_archived,
+            "isDeleted": self.is_deleted,
+        }
+
+        return json_chat
 
     def __str__(self):
         return self.title
-
 
 
 class Area(models.Model):
@@ -76,14 +97,14 @@ class Message(models.Model):
             'content': self.content(),
             "isText": isText,
             "date": self.date,
-            # todo "time_since": 
+            # todo "time_since":
         }
         return message
-    
+
     def __str__(self):
         if self.text:
             if len(self.text) > 50:
-                return "..." + self.text[:50] + "..."
+                return "..." + self.text[:30] + "..."
             else:
                 return self.text
         elif self.video:

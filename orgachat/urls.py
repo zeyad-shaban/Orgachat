@@ -31,11 +31,10 @@ urlpatterns = [
     path("info/", include("info.urls")),
     path("metrics/", include("metrics.urls")),
 
-    # AUTHENTICATION
     path('register/', users_views.register, name="register"),
-    path('api/token/', users_views.MyTokenObtainPairView.as_view(),
+    path('token/', users_views.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Apps
     'rest_framework',
-    'rest_framework.authtoken',
     'users',
     'chat',
     'info',
@@ -113,15 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-}
-
-
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": "BObaAJsMXuJwzoG9zZSALTFquu_VukAEkKVtAOZe0iCd5YHXvS9VhZr2gQV6NUsQ2_8t68sh17wkMftHUKr_7RU",
     "VAPID_PRIVATE_KEY": "7MgEqBEPZMHeju40i6yXU1__4cNVgdDBdP-fQAoMTmA",
@@ -145,21 +135,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'users.User'
-LOGIN_URL = '/signup/'
-
-# Email configrations
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'officialorgachat@gmail.com'
-EMAIL_HOST_PASSWORD = '<Orga44200444Chat>'
 
 try:
     from .local_settings import *

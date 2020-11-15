@@ -1,32 +1,23 @@
-import json
 from random import randint
-
 from chat.models import Area, Chat
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.core.serializers import serialize
 from django.db.models.query_utils import Q
-from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from users.forms import UserProfileForm
 from users.serializers import UserSerializer
-
 from .serializers import MyTokenObtainPairSerializer, UserSerializer
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-# -------------------------
-# AUTHENTICATION
-# -------------------------
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(('POST',))
@@ -47,11 +38,6 @@ def register(request):
         TokenObtainPairView()
         return Response(serializer.data, status.HTTP_200_OK)
         # todo send validation code
-
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    permission_classes = (AllowAny,)
-    serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['GET', 'POST'])

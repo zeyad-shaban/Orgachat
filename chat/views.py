@@ -47,13 +47,9 @@ def groups_chat(request):
 
 
 @api_view(('GET', 'POST'))
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_chat(request):
     serializer = ChatSerializer(data=request.data)
-
-    # ! DELETE THOSE AS SOON AS POSSIBLE!
-    user_id = serializer.initial_data["userId"]
-    request.user = get_object_or_404(User, pk=user_id)
 
     type = serializer.initial_data["type"]
     if type == "friend" or not type:
@@ -74,7 +70,7 @@ def get_chat(request):
             chat.chatters.add(friend)
     else:
         chat = get_object_or_404(Chat, pk=serializer.initial_data["chatId"])
-    return Response({'chat': serialize('json', [chat]), 'messages': chat.message_set.all()})
+    return Response({'chat': chat.to_json(), 'messages': chat.message_set.all()})
 
 
 @login_required
