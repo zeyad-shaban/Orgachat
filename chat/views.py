@@ -20,14 +20,9 @@ User = get_user_model()
 logger = logging.getLogger('djpwa.pwa.views')
 
 
-# ! REMOVE USERID
-@api_view(('GET', 'POST'))
-# @permission_classes([IsAuthenticated, ])
+@api_view(['GET',])
+@permission_classes([IsAuthenticated, ])
 def friends_chat(request):
-    # !REMOVE THOSE
-    serializer = ChatSerializer(data=request.data)
-    request.user = get_object_or_404(User, pk=serializer.initial_data['userId'])
-
     friend_chats = Chat.objects.filter(
         chatters=request.user, type='friend')
     serializer = ChatSerializer(friend_chats, many=True)
