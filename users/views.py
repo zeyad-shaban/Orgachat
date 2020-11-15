@@ -11,7 +11,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from users.forms import UserProfileForm
 from users.serializers import UserSerializer
 from .serializers import MyTokenObtainPairSerializer, UserSerializer
-
+import os
+from twilio.rest import Client
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -25,7 +26,7 @@ def register(request):
     if request.method == 'POST':
         serializer = UserSerializer(data=request.data)
         if not serializer.is_valid():
-            if 'is not valid' in serializer.initial_data['phone_number'][0]:
+            if 'is not valid' in serializer.errors['phone_number'][0]:
                 return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         phone_number = serializer.initial_data['phone_number'].replace(' ', '')
         try:
@@ -36,8 +37,20 @@ def register(request):
         user.phone_code = randint(99999, 999999)
         user.save()
         TokenObtainPairView()
+
+        # # Send validation code
+        # # ! HIde sensitive information
+        # account_sid = "AC17578aff15c18d15b452885c627b351f"
+        # auth_token = "cb454bd3db12a58f07eb35e52edd1491"
+        # client = Client(account_sid, auth_token)
+
+        # message = client.messages.create(
+        #     body=f'Orgachat code {user.phone_code}',
+        #     from_='+13157534823',
+        #     to=str(user.phone_number)
+        # )
+
         return Response(serializer.data, status.HTTP_200_OK)
-        # todo send validation code
 
 
 @api_view(['GET', 'POST'])
