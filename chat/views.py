@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from chat.serializers import ChatSerializer
+from chat.serializers import ChatSerializer, MessageSerializer
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import json
 from users.models import Category
@@ -67,61 +67,22 @@ def get_chat(request):
     return Response({'chat': chat.to_json(), 'messages': chat.message_set.all()})
 
 
-@login_required
-def room(request, room_id, area_id=None):
-    room = get_object_or_404(Chat, pk=room_id)
+@api_view(["POST"])
+@permission_classes([IsAuthenticated, ])
+def send_text_message(request):
+    serializer = MessageSerializer(data=request.data)
+    chat = get_object_or_404(Chat, pk=serializer.initial_data['chatId'])
     try:
-        area_id = request.GET.get('area_id')
-        if not area_id:
-            area_id = json.loads(request.body).get('area_id')
-    except:
-        pass
-    try:
-        requestedPage = json.loads(request.body).get("page")
-    except:
-        requestedPage = None
-    if request.method == 'GET' or requestedPage:
-        other_users = []
-        for user in User.objects.filter(friends=request.user):
-            if not user in room.chatters.all():
-                other_users.append(user)
-        if not request.user in room.chatters.all():
-            raise PermissionDenied
-        for message in room.message_set.filter(Q(is_read=False), ~Q(user=request.user)):
-            message.is_read = True
-            message.save()
-
-        room_messages_list = room.message_set.all()
-        data = {'room': room, 'other_users': other_users}
-        if area_id:
-            area = get_object_or_404(Area, pk=area_id)
-            room_messages_list = room.message_set.filter(area=area)
-            data["area"] = area
-
-        paginator = Paginator(room_messages_list, 20)
-        page = requestedPage
-        if not page:
-            page = 1
-        try:
-            room_messages = paginator.page(paginator.num_pages - (page-1))
-        except PageNotAnInteger:
-            room_messages = paginator.page(paginator.num_pages)
-        except EmptyPage:
-            room_messages = []
-
-        data["room_messages"] = room_messages
-        if not requestedPage:
-            return render(request, 'chat/room.html', data)
-        else:
-            json_messages = [message.json() for message in room_messages]
-            return JsonResponse({"messages": json_messages})
-    else:
-        data = json.loads(request.body)
-        area = get_object_or_404(Area, pk=data.get('area'))
-        message = Message.objects.create(
-            user=request.user, text=data.get('text'), room=room, area=area)
-        message.save()
-        return redirect('chat:room', room_id=room_id)
+        area = get_object_or_404(
+            Chat, pk=serializer.initial_data["areaId"])
+    except Exception as error:
+        area = None
+    text = serializer.initial_data['text']
+    if text.replace(" ", "") == "":
+        return Response({"error": "Text must be 1 character at least"}, status.HTTP_400_BAD_REQUEST)
+    message = Message.objects.create(
+        user=request.user, text=text, chat=chat, area=area)
+    return Response()
 
 
 @login_required

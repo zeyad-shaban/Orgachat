@@ -84,17 +84,18 @@ class Area(models.Model):
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    room = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     area = models.ForeignKey(
         Area, on_delete=models.SET_NULL, blank=True, null=True)
 
     text = models.TextField(blank=True, null=True)
-    video = models.FileField(upload_to="chat/room/vid", blank=True, null=True)
-    image = models.FileField(upload_to="chat/room/img", blank=True, null=True)
-    file = models.FileField(upload_to="chat/room/file", blank=True, null=True)
-    audio = models.FileField(upload_to="chat/room/aud", blank=True, null=True)
+    video = models.FileField(upload_to="chat/vid", blank=True, null=True)
+    image = models.FileField(upload_to="chat/img", blank=True, null=True)
+    file = models.FileField(upload_to="chat/file", blank=True, null=True)
+    audio = models.FileField(upload_to="chat/aud", blank=True, null=True)
 
     is_read = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
     def filename(self):

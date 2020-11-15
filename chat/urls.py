@@ -7,12 +7,9 @@ urlpatterns = [
      path('friends/', views.friends_chat, name="friends"),
      path('groups/', views.groups_chat, name="groups"),
      path('get_chat/', views.get_chat, name="get_chat"),
+     path('send_text_message/', views.send_text_message, name='send_text_message'),
 
 
-
-
-    path('room/<int:room_id>/', views.room,
-         kwargs={'area_id': None}, name='room'),
     path('load_messages/<int:room_id>/',
          views.load_messages, name='load_messages'),
 
