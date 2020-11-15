@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from users.forms import UserProfileForm
@@ -14,6 +14,7 @@ from .serializers import MyTokenObtainPairSerializer, UserSerializer
 import os
 from twilio.rest import Client
 from django.contrib.auth import get_user_model
+from rest_framework.permissions import IsAuthenticated
 User = get_user_model()
 
 
@@ -56,7 +57,8 @@ def register(request):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated,])
 def all_users(request):
     q = request.GET.get("q")
     if q:
