@@ -85,6 +85,12 @@ def send_text_message(request):
     return Response()
 
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated, ])
+def send_text_message(request):
+    pass
+
+
 @login_required
 def save_file_message(request, room_id):
     room = get_object_or_404(Chat, pk=room_id)

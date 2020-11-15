@@ -8,7 +8,7 @@ urlpatterns = [
      path('groups/', views.groups_chat, name="groups"),
      path('get_chat/', views.get_chat, name="get_chat"),
      path('send_text_message/', views.send_text_message, name='send_text_message'),
-
+     path('get_messages/', views.get_messages, name='get_messages'),
 
     path('load_messages/<int:room_id>/',
          views.load_messages, name='load_messages'),

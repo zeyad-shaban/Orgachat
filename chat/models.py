@@ -41,6 +41,7 @@ class Chat(models.Model):
 
     def preview_json(self):
         json_chat = {
+            "id": self.id,
             "title": self.get_title(),
             "lastMessagge": self.message_set.all().last(),
             "imageUri": self.get_imageUri(),
