@@ -25,7 +25,7 @@ def friends_chat(request):
         chatters=request.user, type='friend', is_deleted=False, is_archived=False)
     chats = [chat.preview_json() for chat in friend_chats.all()]
 
-    return Response([chats])
+    return Response(list(chats))
 
 
 @api_view(('GET', 'POST'))
