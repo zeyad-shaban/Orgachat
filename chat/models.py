@@ -3,6 +3,7 @@ from users.models import Category
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
+from users.get_request import current_request
 User = get_user_model()
 
 
@@ -15,10 +16,36 @@ class Chat(models.Model):
         max_length=9, choices=type_choices, default='friend')
     title = models.CharField(max_length=50)
     image = models.FileField(
-        upload_to="chat/room/chat_image", blank=True, null=True)
+        upload_to="chat/room/chat_image", blank=True, null=True, default="users/img/avatar/DefUser.png")
     chatters = models.ManyToManyField(User)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
+
+    def get_title(self):
+        if self.type == "friend":
+            curr_user = current_request().user
+            for chatter in self.chatters.all():
+                if not chatter == curr_user:
+                    return chatter.username
+        else:
+            return self.title
+
+    def get_imageUri(self):
+        if self.type == "friend":
+            curr_user = current_request().user
+            for chatter in self.chatters.all():
+                if not chatter == curr_user:
+                    return chatter.avatar.url
+        else:
+            return self.image
+
+    def preview_json(self):
+        json_chat = {
+            "title": self.get_title(),
+            "lastMessagge": self.message_set.all().last(),
+            "imageUri": self.get_imageUri(),
+        }
+        return json_chat
 
     def to_json(self):
         if self.type == "friend":

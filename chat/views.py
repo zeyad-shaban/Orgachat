@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from chat.serializers import ChatSerializer
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import logging
 import json
 from users.models import Category
 from django.core.exceptions import PermissionDenied
@@ -18,13 +17,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 User = get_user_model()
 
-@api_view(['GET',])
+
+@api_view(['GET', ])
 @permission_classes([IsAuthenticated, ])
 def friends_chat(request):
     friend_chats = Chat.objects.filter(
-        chatters=request.user, type='friend')
-    serializer = ChatSerializer(friend_chats, many=True)
-    return Response(serializer.data)
+        chatters=request.user, type='friend', is_deleted=False, is_archived=False)
+    chats = [chat.preview_json() for chat in friend_chats.all()]
+
+    return Response({'chats': chats})
 
 
 @api_view(('GET', 'POST'))
