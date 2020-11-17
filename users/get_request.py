@@ -9,7 +9,6 @@ _requests = {}
 def current_request():
     return _requests.get(current_thread().ident, None)
 
-
 class RequestMiddleware(MiddlewareMixin):
 
     def process_request(self, request):

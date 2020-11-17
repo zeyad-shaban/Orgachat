@@ -29,6 +29,7 @@ def register(request):
         if not serializer.is_valid():
             try:
                 if 'is not valid' in serializer.errors['phone_number'][0]:
+                    print("NOTA VALID PHONE NUMBER")
                     return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             except:
                 pass

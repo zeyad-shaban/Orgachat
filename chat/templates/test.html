@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+
+<body>
+    <input type="text" name="message" id="textInput" placeholder="WRite your message" id="">
+    <button type="submit" id="submitButton">Send the message</button>
+    <div id="log"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+
+            chatSocket.onmessage = e => {
+                const data = JSON.parse(e.data);
+                console.log(data)
+                document.querySelector("#log").innerHTML += data.message + "<br/>";
+            };
+            chatSocket.onclose = e => alert("Closed");
+            document.querySelector("#submitButton").onclick = () => {
+                const text = document.querySelector("#textInput").value
+                chatSocket.send(JSON.stringify({
+                    'message': text
+                }))
+            }
+        });
+    </script>
+</body>
+
+</html>

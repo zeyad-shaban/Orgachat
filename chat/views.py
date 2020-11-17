@@ -21,9 +21,8 @@ User = get_user_model()
 @api_view(['GET', ])
 @permission_classes([IsAuthenticated, ])
 def friends_chat(request):
-    friend_chats = Chat.objects.filter(
-        chatters=request.user, type='friend', is_deleted=False, is_archived=False)
-    chats = [chat.preview_json() for chat in friend_chats.all()]
+    friend_chats = Chat.objects.filter(chatters=request.user, type='friend', is_deleted=False, is_archived=False)
+    chats = [chat.to_json() for chat in friend_chats.all()]
 
     return Response(list(chats))
 
@@ -32,9 +31,9 @@ def friends_chat(request):
 @permission_classes([IsAuthenticated, ])
 def groups_chat(request):
     if request.method == 'GET':
-        friend_chats = Chat.objects.filter(chatters=request.user, type='group')
-        serializer = ChatSerializer(friend_chats, many=True)
-        return Response(serializer.data)
+        group_chats = Chat.objects.filter(chatters=request.user, type='group', is_archived=False)
+        chats = [chat.to_json() for chat in group_chats.all()]
+        return Response(list(chats))
     else:
         # todo create a group
         pass
@@ -64,7 +63,7 @@ def get_chat(request):
             chat.chatters.add(friend)
     else:
         chat = get_object_or_404(Chat, pk=serializer.initial_data["chatId"])
-    return Response({'chat': chat.to_json(), 'messages': chat.message_set.all()})
+    return Response({'chat': chat.to_json(), 'messages': serialize('json', chat.message_set.all())})
 
 
 @api_view(["POST"])
@@ -82,12 +81,13 @@ def send_text_message(request):
         return Response({"error": "Text must be 1 character at least"}, status.HTTP_400_BAD_REQUEST)
     message = Message.objects.create(
         user=request.user, text=text, chat=chat, area=area)
+    message.save()
     return Response()
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated, ])
-def send_text_message(request):
+def get_messages(request):
     pass
 
 

@@ -1,4 +1,5 @@
 import os
+from django.core.serializers import serialize
 from users.models import Category
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -37,36 +38,26 @@ class Chat(models.Model):
                 if not chatter == curr_user:
                     return chatter.avatar.url
         else:
-            return self.image
+            return self.image.url
 
-    def preview_json(self):
-        json_chat = {
-            "id": self.id,
-            "title": self.get_title(),
-            "lastMessagge": self.message_set.all().last(),
-            "imageUri": self.get_imageUri(),
-        }
-        return json_chat
+    def last_message(self):
+        messages = self.message_set.all()
+        if messages.count() > 0:
+            return messages.last().__str__()
+        return ""
 
     def to_json(self):
-        if self.type == "friend":
-            title = "OtherFriend Username"
-            imageUri = "OtherFriend Image URI"
-        else:
-            title = "A chat with a group"
-            imageUri = self.image
-
-        json_chat = {
-            "title": title,
-            "imageUri": imageUri,
-            "lastMessagge": self.message_set.all().last(),
+        return {
+            "id": self.id,
+            "title": self.get_title(),
+            "lastMessagge": self.last_message(),
+            "messages":  [message.to_json() for message in self.message_set.all().reverse()],
+            "imageUri": self.get_imageUri(),
             "type": self.type,
             "chatters": [chatter.to_json() for chatter in self.chatters.all()],
             "isArchived": self.is_archived,
             "isDeleted": self.is_deleted,
         }
-
-        return json_chat
 
     def __str__(self):
         return self.title
@@ -111,7 +102,19 @@ class Message(models.Model):
         else:
             return self.text
 
-    def json(self):
+    def content(self):
+        if self.text:
+            return self.text
+        elif self.video:
+            return self.video.url
+        elif self.image:
+            return self.image.url
+        elif self.file:
+            return self.file.url
+        elif self.audio:
+            return self.audio.url
+
+    def to_json(self):
         isText = False
         if self.text:
             isText = True
@@ -120,22 +123,21 @@ class Message(models.Model):
         else:
             area_title = None
         message = {
-            'user': self.user.username,
-            'area': area_title,
             'id': self.id,
+            'user': self.user.to_json(),
+            'area': area_title,
             'content': self.content(),
             "isText": isText,
-            "date": self.date,
+            # "date": self.date,
             # todo "time_since":
         }
         return message
 
     def __str__(self):
         if self.text:
-            if len(self.text) > 50:
-                return "..." + self.text[:30] + "..."
-            else:
-                return self.text
+            if self.text.replace(" ", "") == "":
+                return ""
+            return self.text[:30]
         elif self.video:
             return "🎥 Video"
         elif self.image:

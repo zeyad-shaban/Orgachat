@@ -278,6 +278,7 @@ class User(AbstractUser):
         except:
             categories = []
         return {
+            "id": self.id,
             "phone_number": str(self.phone_number),
             "username": self.username,
             "about": self.about,
