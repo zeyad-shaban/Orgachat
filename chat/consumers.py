@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 import json
 from django.shortcuts import get_object_or_404
-from .models import Message, Chat
+from .models import Channel, Message, Chat
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -31,7 +31,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         json_data = json.loads(text_data)
         chat = await sync_to_async(get_object_or_404)(Chat, pk=int(self.chat_name))
-        message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, text=json_data['text'])
+        if chat.type == 'group':
+            try:
+                channelId = int(json_data['channelId'])
+                channel = await sync_to_async(get_object_or_404)(Channel, pk=channelId)
+            except:
+                try:
+                    channel = chat.channel_set.first()
+                except:
+                    channel = None
+        else:
+            channel=None
+
+        message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, text=json_data['text'], channel=channel)
         await self.channel_layer.group_send(
             self.chat_name,
             {
