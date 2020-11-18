@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import resolve
-from .models import Chat, Area, Message
+from .models import Chat, Channel, Message
 
 
 admin.site.register(Chat)
-admin.site.register(Area)
+admin.site.register(Channel)
 
 
 @admin.register(Message)

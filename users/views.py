@@ -1,5 +1,5 @@
 from random import randint
-from chat.models import Area, Chat
+from chat.models import Channel, Chat
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
@@ -29,7 +29,6 @@ def register(request):
         if not serializer.is_valid():
             try:
                 if 'is not valid' in serializer.errors['phone_number'][0]:
-                    print("NOTA VALID PHONE NUMBER")
                     return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
             except:
                 pass
@@ -54,7 +53,6 @@ def register(request):
         #     from_='+13157534823',
         #     to=str(user.phone_number)
         # )
-
         return Response(serializer.data, status.HTTP_200_OK)
 
 
@@ -108,7 +106,7 @@ def add_friend(request, user_id):
     room.save()
     room.chatters.add(request.user)
     room.chatters.add(friend)
-    area = Area.objects.create(title='general', room=room)
+    area = Channel.objects.create(title='general', room=room)
     area.save()
     messages.success(
         request, f'{friend.username} is now a friend, start chatting here <a href="/">Here</a>')

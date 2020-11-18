@@ -10,7 +10,7 @@ from users.models import Category
 from django.core.exceptions import PermissionDenied
 from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
-from chat.models import Area, Message, Chat
+from chat.models import Channel, Message, Chat
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
@@ -21,8 +21,9 @@ User = get_user_model()
 @api_view(['GET', ])
 @permission_classes([IsAuthenticated, ])
 def friends_chat(request):
-    friend_chats = Chat.objects.filter(chatters=request.user, type='friend', is_deleted=False, is_archived=False)
-    chats = [chat.to_json() for chat in friend_chats.all()]
+    friend_chats = Chat.objects.filter(
+        chatters=request.user, type='friend', is_deleted=False, is_archived=False)
+    chats = [chat.to_json_preview() for chat in friend_chats.all()]
 
     return Response(list(chats))
 
@@ -31,39 +32,62 @@ def friends_chat(request):
 @permission_classes([IsAuthenticated, ])
 def groups_chat(request):
     if request.method == 'GET':
-        group_chats = Chat.objects.filter(chatters=request.user, type='group', is_archived=False)
-        chats = [chat.to_json() for chat in group_chats.all()]
+        group_chats = Chat.objects.filter(
+            chatters=request.user, type='group', is_archived=False)
+        chats = [chat.to_json_preview() for chat in group_chats.all()]
         return Response(list(chats))
     else:
-        # todo create a group
-        pass
+        chat = Chat.objects.create(
+            title=request.data.get('title'), type="group")
+        chat.chatters.add(request.user)
+        
+        return Response({"message": "Successfully created the group"}, status.HTTP_200_OK)
 
 
 @api_view(('GET', 'POST'))
 @permission_classes([IsAuthenticated])
-def get_chat(request):
+def create_chat(request):
     serializer = ChatSerializer(data=request.data)
 
-    type = serializer.initial_data["type"]
-    if type == "friend" or not type:
-        friend = get_object_or_404(
-            User, pk=serializer.initial_data["friendId"])
+    friend = get_object_or_404(
+        User, pk=serializer.initial_data["friendId"])
 
-        if request.user.id == friend.id:
-            return Response({'error': "You can't chat with yourself"}, status.HTTP_400_BAD_REQUEST)
+    if request.user.id == friend.id:
+        return Response({'error': "You can't chat with yourself"}, status.HTTP_400_BAD_REQUEST)
 
-        chats = Chat.objects.filter(type=type, chatters=request.user)
-        chat = None
-        for chat in chats:
-            if friend in chat.chatters.all():
-                chat = chat
-        if not chat:
-            chat = Chat.objects.create(type=serializer.initial_data["type"])
-            chat.chatters.add(request.user)
-            chat.chatters.add(friend)
+    chats = Chat.objects.filter(type=f'friend', chatters=request.user)
+    chat = None
+    for chat in chats:
+        if friend in chat.chatters.all():
+            chat = chat
+    if not chat:
+        chat = Chat.objects.create(type='friend')
+        chat.chatters.add(request.user)
+        chat.chatters.add(friend)
+    return Response({'chat': chat.to_json_preview(), 'messages': serialize('json', chat.message_set.all())})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_chat(request, chatId):
+    chat = get_object_or_404(Chat, pk=chatId)
+    if not request.user in chat.chatters.all():
+        return Response({"Error": 'You don\'t belong to this chat'}, status.HTTP_401_UNAUTHORIZED)
+
+    if chat.type == 'group':
+        try:
+            channelId = int(request.GET.get('channelId'))
+            channel = get_object_or_404(Channel, pk=channelId)
+        except:
+            try:
+                channel = chat.channel_set.first()
+            except:
+                channel = None
+        json_chat = chat.to_json(channel)
+        json_chat['channel'] = channel.to_json()
     else:
-        chat = get_object_or_404(Chat, pk=serializer.initial_data["chatId"])
-    return Response({'chat': chat.to_json(), 'messages': serialize('json', chat.message_set.all())})
+        json_chat = chat.to_json()
+    return Response(json_chat, status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -72,15 +96,15 @@ def send_text_message(request):
     serializer = MessageSerializer(data=request.data)
     chat = get_object_or_404(Chat, pk=serializer.initial_data['chatId'])
     try:
-        area = get_object_or_404(
+        channel = get_object_or_404(
             Chat, pk=serializer.initial_data["areaId"])
     except Exception as error:
-        area = None
+        channel = None
     text = serializer.initial_data['text']
     if text.replace(" ", "") == "":
         return Response({"error": "Text must be 1 character at least"}, status.HTTP_400_BAD_REQUEST)
     message = Message.objects.create(
-        user=request.user, text=text, chat=chat, area=area)
+        user=request.user, text=text, chat=chat, channel=channel)
     message.save()
     return Response()
 
@@ -94,7 +118,7 @@ def get_messages(request):
 @login_required
 def save_file_message(request, room_id):
     room = get_object_or_404(Chat, pk=room_id)
-    area = get_object_or_404(Area, pk=int(request.POST.get('area')))
+    area = get_object_or_404(Channel, pk=int(request.POST.get('area')))
 
     if request.FILES.get("video"):
         for video in request.FILES.getlist("video"):
@@ -122,7 +146,7 @@ def save_file_message(request, room_id):
 @login_required
 def record_audio_message(request, room_id):
     room = get_object_or_404(Chat, pk=room_id)
-    area = get_object_or_404(Area, pk=int(request.POST.get("area")))
+    area = get_object_or_404(Channel, pk=int(request.POST.get("area")))
     message = Message.objects.create(
         user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
     message.save()
@@ -139,7 +163,7 @@ def load_messages(request, room_id):
         new_messages = room.message_set.filter(
             ~Q(user=request.user), Q(id__gt=data.get('last_id')))
     else:
-        area = get_object_or_404(Area, pk=data.get('area_id'))
+        area = get_object_or_404(Channel, pk=data.get('area_id'))
         new_messages = room.message_set.filter(
             ~Q(user=request.user), Q(id__gt=data.get('last_id')), Q(area=area))
     json_new_messages = [message.json() for message in new_messages]
@@ -154,7 +178,7 @@ def create_group(request):
     room = Chat.objects.create(name=request.POST.get('name'), type='group')
     room.save()
     room.chatters.add(request.user)
-    area = Area.objects.create(title='general', room=room)
+    area = Channel.objects.create(title='general', room=room)
     area.save()
     messages.success(request, 'Created successfully')
     return redirect('home')
@@ -191,14 +215,14 @@ def create_area(request, room_id):
     if not request.user in room.chatters.all():
         raise PermissionDenied
     title = json.loads(request.body).get('title')
-    area = Area.objects.create(title=title, room=room)
+    area = Channel.objects.create(title=title, room=room)
     area.save()
     messages.success(request, 'Successfully created area')
     return redirect('chat:room', room_id=room.id)
 
 
 def mute_area(request, area_id):
-    area = get_object_or_404(Area, pk=area_id)
+    area = get_object_or_404(Channel, pk=area_id)
     if request.user in area.muted_users.all():
         area.muted_users.remove(request.user)
     else:
@@ -232,7 +256,7 @@ def move_room(request, homepage_area_id):
 
 
 def star_area(request, area_id):
-    area = get_object_or_404(Area, pk=area_id)
+    area = get_object_or_404(Channel, pk=area_id)
     if request.user in area.star_users.all():
         area.star_users.remove(request.user)
     else:

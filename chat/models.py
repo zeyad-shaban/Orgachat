@@ -46,15 +46,29 @@ class Chat(models.Model):
             return messages.last().__str__()
         return ""
 
-    def to_json(self):
+    def to_json(self, channel=None):
         return {
             "id": self.id,
             "title": self.get_title(),
-            "lastMessagge": self.last_message(),
-            "messages":  [message.to_json() for message in self.message_set.all().reverse()],
-            "imageUri": self.get_imageUri(),
             "type": self.type,
+            "lastMessagge": self.last_message().__str__(),
+            "imageUri": self.get_imageUri(),
+
             "chatters": [chatter.to_json() for chatter in self.chatters.all()],
+            "messages":  [message.to_json() for message in self.message_set.filter(channel=channel).reverse()],
+            "channels": [channel.to_json() for channel in self.channel_set.all()],
+
+            "isArchived": self.is_archived,
+            "isDeleted": self.is_deleted,
+        }
+
+    def to_json_preview(self):
+        return {
+            "id": self.id,
+            "title": self.get_title(),
+            "type": self.type,
+            "lastMessagge": self.last_message().__str__(),
+            "imageUri": self.get_imageUri(),
             "isArchived": self.is_archived,
             "isDeleted": self.is_deleted,
         }
@@ -63,12 +77,20 @@ class Chat(models.Model):
         return self.title
 
 
-class Area(models.Model):
+class Channel(models.Model):
     title = models.CharField(max_length=30)
-    room = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     muted_users = models.ManyToManyField(User, blank=True)
-    star_users = models.ManyToManyField(
-        User, blank=True, related_name='star_users')
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'chat': {
+                'id': self.chat.id
+            },
+            'muted_users': [user.to_json() for user in self.muted_users.all()],
+        }
 
     def __str__(self):
         return self.title
@@ -77,8 +99,8 @@ class Area(models.Model):
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    area = models.ForeignKey(
-        Area, on_delete=models.SET_NULL, blank=True, null=True)
+    channel = models.ForeignKey(
+        Channel, on_delete=models.SET_NULL, blank=True, null=True)
 
     text = models.TextField(blank=True, null=True)
     video = models.FileField(upload_to="chat/vid", blank=True, null=True)
@@ -118,14 +140,14 @@ class Message(models.Model):
         isText = False
         if self.text:
             isText = True
-        if self.area:
-            area_title = self.area.title
+        if self.channel:
+            channel = self.channel.title
         else:
-            area_title = None
+            channel = None
         message = {
             'id': self.id,
             'user': self.user.to_json(),
-            'area': area_title,
+            'channel': channel,
             'content': self.content(),
             "isText": isText,
             # "date": self.date,
