@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'hm=gq9#go8p)an2t-ncuwcul53oexrb+-m1tyv-%*13@x%sp1%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com', 'orgachat.pythonanywhere.com', 'orgachat.heroku.com']
 
