@@ -24,11 +24,11 @@ from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    path('', users_views.index, name='index'),
+    
     # Include
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),
-    path("info/", include("info.urls")),
     path("metrics/", include("metrics.urls")),
 
     path('register/', users_views.register, name="register"),

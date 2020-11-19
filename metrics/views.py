@@ -27,7 +27,6 @@ def growth_model(request):
             user=User.objects.get(id=2)), ~Q(user=User.objects.get(id=3)),
             Q(date__gte=three_days)).count()) / 3
         # todo not accurate
-        repeat_rate = User.objects.filter(last_visit__gte=three_days).count()
         new_users_per_day = User.objects.filter(date_joined__gte=three_days).count()
         growth_report = GrowthReport.objects.create(
             hypo=hypo, desc=desc, effort=effort, messages_per_day=messages_per_day, repeat_rate=repeat_rate, new_users_per_day=new_users_per_day)

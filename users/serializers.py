@@ -42,7 +42,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         token['username'] = user.username
         token['about'] = user.about
-        token['last_visit'] = user.last_visit
         token['avatarUri'] = user.avatar.url
         token['country'] = user.country
         token['categories'] = user.categories

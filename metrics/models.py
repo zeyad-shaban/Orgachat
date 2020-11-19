@@ -12,6 +12,7 @@ class GrowthReport(models.Model):
     effort = models.CharField(
         choices=effort_choices, max_length=70)
     messages_per_day = models.FloatField()
-    repeat_rate = models.FloatField()
+    # todo get repeat rate
+    # repeat_rate = models.FloatField()
     new_users_per_day = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)

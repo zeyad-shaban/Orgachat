@@ -258,7 +258,6 @@ class User(AbstractUser):
     password = models.CharField(null=True, blank=True, max_length=20)
     about = models.CharField(
         max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
-    last_visit = models.DateTimeField(blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
     email = models.EmailField(blank=True, null=True)
     avatar = models.FileField(
@@ -282,7 +281,6 @@ class User(AbstractUser):
             "phone_number": str(self.phone_number),
             "username": self.username,
             "about": self.about,
-            "last_visit": self.last_visit,
             "avatar": self.avatar.url,
             "country": self.country,
             "categories": categories,

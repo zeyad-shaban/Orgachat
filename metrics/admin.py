@@ -6,7 +6,7 @@ from django.contrib import admin
 class GrowthReportAdmin(admin.ModelAdmin):
     '''Admin View for GrowthReport'''
 
-    list_display = ('hypo', 'messages_per_day', 'repeat_rate',
+    list_display = ('hypo', 'messages_per_day',
                     'new_users_per_day', 'date',)
     readonly_fields = ('date',)
     ordering = ('-date',)

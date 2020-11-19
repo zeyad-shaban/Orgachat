@@ -1,21 +1,20 @@
+from django.shortcuts import render
 from random import randint
-from chat.models import Channel, Chat
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
-from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from users.forms import UserProfileForm
 from users.serializers import UserSerializer
 from .serializers import MyTokenObtainPairSerializer, UserSerializer
-import os
 from twilio.rest import Client
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 User = get_user_model()
+
+
+def index(request):
+    return render(request, 'users/index.html', {"installs": User.objects.count()})
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -42,17 +41,17 @@ def register(request):
         user.save()
         TokenObtainPairView()
 
-        # # Send validation code
-        # # ! HIde sensitive information
-        # account_sid = "AC17578aff15c18d15b452885c627b351f"
-        # auth_token = "cb454bd3db12a58f07eb35e52edd1491"
-        # client = Client(account_sid, auth_token)
+        # Send validation code
+        # ! HIde sensitive information
+        account_sid = "AC17578aff15c18d15b452885c627b351f"
+        auth_token = "cb454bd3db12a58f07eb35e52edd1491"
+        client = Client(account_sid, auth_token)
 
-        # message = client.messages.create(
-        #     body=f'Orgachat code {user.phone_code}',
-        #     from_='+13157534823',
-        #     to=str(user.phone_number)
-        # )
+        message = client.messages.create(
+            body=f'Orgachat code {user.phone_code}',
+            from_='+13157534823',
+            to=str(user.phone_number)
+        )
         return Response(serializer.data, status.HTTP_200_OK)
 
 
@@ -62,10 +61,10 @@ def all_users(request):
     q = request.GET.get("q")
     if q:
         users = User.objects.filter(Q(username__icontains=q) | Q(
-            email__icontains=q) | Q(country__icontains=q)).order_by("-last_visit")
+            email__icontains=q) | Q(country__icontains=q))
     else:
         users = User.objects.filter(
-            ~Q(id=request.user.id)).order_by("-last_visit")
+            ~Q(id=request.user.id))
 
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)

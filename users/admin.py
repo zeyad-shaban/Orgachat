@@ -7,14 +7,13 @@ User = get_user_model()
 
 class MyUserAdmin(UserAdmin):
     ordering = ('-date_joined', )
-    list_display = ('username', 'email', 'last_visit',
+    list_display = ('username', 'email',
                     'date_joined')
 
 
 MyUserAdmin.list_filter += ('date_joined',)
 MyUserAdmin.fieldsets += (('Identifiers', {'fields': (
     'friends', 'phone_number', 'avatar', 'about', 'country',)}),)
-MyUserAdmin.fieldsets += (('Metrics', {'fields': ('last_visit',)}),)
 
 admin.site.register(User, MyUserAdmin)
 
