@@ -78,68 +78,13 @@ def friends(request):
     return Response(serializer.data, status.HTTP_200_OK)
 
 
-@ login_required
-def profile(request):
-    if request.method == 'GET':
-        return render(request, "users/profile.html", {"user_profile_form": UserProfileForm(instance=request.user)})
-    else:
-        form = UserProfileForm(instance=request.user,
-                               data=request.POST, files=request.FILES)
-        form.save()
-        return redirect("users:profile")
-
-
-def view_user(request, user_id):
-    print(user_id)
-    viewed_user = get_object_or_404(User, pk=user_id)
-    return render(request, 'users/view_user.html', {'viewed_user': viewed_user})
-
-
-# -------------------------
-# END USERS
-# -------------------------
-
-
-# -------------------------
-# ACTIONS
-# -------------------------
-@ login_required
-def add_friend(request, user_id):
-    print("-------------CALLED-------------")
-    friend = get_object_or_404(User, pk=user_id)
-    request.user.friends.add(friend)
-    friend.friends.add(request.user)
-    room = Chat.objects.create(name=friend.username, type="friend")
-    room.save()
-    room.chatters.add(request.user)
-    room.chatters.add(friend)
-    area = Channel.objects.create(title='general', room=room)
-    area.save()
-    messages.success(
-        request, f'{friend.username} is now a friend, start chatting here <a href="/">Here</a>')
-    return redirect('users:all_users')
-
-
-def remove_friend(request, user_id):
-    friend = get_object_or_404(User, pk=user_id)
-    request.user.friends.remove(friend)
-    friend.friends.remove(request.user)
-    rooms = Chat.objects.filter(type='friend')
-    for room in rooms:
-        if request.user in room.chatters.all() and friend in room.chatters.all():
-            room.delete()
-    messages.success(
-        request, f'You removed {friend.username} from your friend list')
-    return redirect('users:all_users')
-
-# -------------------------
-# END ACTIONS
-# -------------------------
-
-# --------------------
-# ABOUT
-# --------------------
-
-
-def about(request):
-    return render(request, "users/about.html")
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_account(request):
+    try:
+        request.user.username = request.data.get('username')
+        request.user.about = request.data.get('about')
+        request.user.save()
+        return Response({"message": "successfully udpated"}, status.HTTP_200_OK)
+    except Exception as error:
+        return Response({"error": "Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
