@@ -115,6 +115,7 @@ def send_text_message(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
 def add_member(request):
     data = request.data.get('userId')
     chat = get_object_or_404(Chat, pk=data.get('chatId'))
@@ -140,153 +141,9 @@ def add_member(request):
         return Response({"message": "added"}, status.HTTP_200_OK)
 
 
-@login_required
-def save_file_message(request, room_id):
-    room = get_object_or_404(Chat, pk=room_id)
-    area = get_object_or_404(Channel, pk=int(request.POST.get('area')))
-
-    if request.FILES.get("video"):
-        for video in request.FILES.getlist("video"):
-            message = Message.objects.create(
-                user=request.user, video=video, room=room, area=area)
-            message.save()
-    elif request.FILES.get("image"):
-        for image in request.FILES.getlist("image"):
-            message = Message.objects.create(
-                user=request.user, image=image, room=room, area=area)
-            message.save()
-    elif request.FILES.get("file"):
-        for file in request.FILES.getlist("file"):
-            message = Message.objects.create(
-                user=request.user, file=file, room=room, area=area)
-            message.save()
-    elif request.FILES.get("audio"):
-        for audio in request.FILES.getlist("audio"):
-            message = Message.objects.create(
-                user=request.user, audio=audio, room=room, area=area)
-            message.save()
-    return redirect("chat:room", room_id=room.id)
-
-
-@login_required
-def record_audio_message(request, room_id):
-    room = get_object_or_404(Chat, pk=room_id)
-    area = get_object_or_404(Channel, pk=int(request.POST.get("area")))
-    message = Message.objects.create(
-        user=request.user, audio=request.FILES.get("audio"), room=room, area=area)
-    message.save()
-    return redirect("chat:room", room_id=room.id)
-
-
-@login_required
-def load_messages(request, room_id):
-    room = get_object_or_404(Chat, pk=room_id)
-    if not request.user in room.chatters.all():
-        raise PermissionDenied
-    data = json.loads(request.body)
-    if not data.get('area_id'):
-        new_messages = room.message_set.filter(
-            ~Q(user=request.user), Q(id__gt=data.get('last_id')))
-    else:
-        area = get_object_or_404(Channel, pk=data.get('area_id'))
-        new_messages = room.message_set.filter(
-            ~Q(user=request.user), Q(id__gt=data.get('last_id')), Q(area=area))
-    json_new_messages = [message.json() for message in new_messages]
-    return JsonResponse({'new_messages': json_new_messages})
-
-
-# --------Group------------
-def create_group(request):
-    if not request.user.is_authenticated:
-        messages.warning(request, "Please Login to continue")
-        return redirect("signupuser")
-    room = Chat.objects.create(name=request.POST.get('name'), type='group')
-    room.save()
-    room.chatters.add(request.user)
-    area = Channel.objects.create(title='general', room=room)
-    area.save()
-    messages.success(request, 'Created successfully')
-    return redirect('home')
-
-
-def add_user(request, user_id, room_id):
-    user = get_object_or_404(User, pk=user_id)
-    room = get_object_or_404(Chat, pk=room_id)
-    room.chatters.add(user)
-    return redirect('chat:room', room_id=room_id)
-
-
-def remove_user(request, user_id, room_id):
-    user = get_object_or_404(User, pk=user_id)
-    room = get_object_or_404(Chat, pk=room_id)
-    room.chatters.remove(user)
-    room.homepage_area.remove(room.get_homepage_area())
-    message = Message.objects.create(
-        room=room, text=f"{request.user.username} removed {user.username}", user=request.user)
-    message.save()
-    if room.chatters.count() <= 0:
-        room.delete()
-    if user == request.user:
-        return redirect('home')
-    else:
-        return redirect('chat:room', room_id=room_id)
-
-# ----------Area------------
-
-
-@login_required
-def create_area(request, room_id):
-    room = get_object_or_404(Chat, pk=room_id)
-    if not request.user in room.chatters.all():
-        raise PermissionDenied
-    title = json.loads(request.body).get('title')
-    area = Channel.objects.create(title=title, room=room)
-    area.save()
-    messages.success(request, 'Successfully created area')
-    return redirect('chat:room', room_id=room.id)
-
-
-def mute_area(request, area_id):
-    area = get_object_or_404(Channel, pk=area_id)
-    if request.user in area.muted_users.all():
-        area.muted_users.remove(request.user)
-    else:
-        area.muted_users.add(request.user)
-    return redirect('chat:room', area.room.id)
-
-# ---------Homepage Areas-------------
-
-
-def create_homepage_area(request):
-    homepage_area = Category.objects.create(
-        title=request.POST.get('title'), user=request.user)
-    homepage_area.save()
-    return redirect('home')
-
-
-def move_room(request, homepage_area_id):
-    try:
-        homepage_area = get_object_or_404(Category, pk=homepage_area_id)
-    except:
-        homepage_area = None
-    room_id = int(json.loads(request.body).get("room_id"))
-    room = get_object_or_404(Chat, pk=room_id)
-    curr_area = room.get_homepage_area()
-    room.homepage_area.remove(curr_area)
-    room.homepage_area.add(homepage_area)
-    room.save()
-    return redirect('home')
-
-# --------------Star-----------------
-
-
-def star_area(request, area_id):
-    area = get_object_or_404(Channel, pk=area_id)
-    if request.user in area.star_users.all():
-        area.star_users.remove(request.user)
-    else:
-        for aarea in area.room.area_set.all():
-            if request.user in aarea.star_users.all():
-                aarea.star_users.remove(request.user)
-        area.star_users.add(request.user)
-    return redirect('chat:room', area.room.id)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
+def create_channel(request, chatId):
+    chat = get_object_or_404(Chat, pk=chatId)
+    channel = Channel.objects.create(title=request.data.get('title'), chat=chat)
+    return Response({'channel': channel.to_json()}, status.HTTP_201_CREATED)
