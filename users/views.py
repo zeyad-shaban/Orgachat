@@ -35,7 +35,7 @@ def register(request):
         try:
             user = User.objects.get(phone_number=phone_number)
         except User.DoesNotExist:
-            user = User.objects.create_user(phone_number=phone_number)
+            user = User.objects.create(phone_number=phone_number, username=phone_number)
         user.phone_code = randint(99999, 999999)
         user.save()
         TokenObtainPairView()
