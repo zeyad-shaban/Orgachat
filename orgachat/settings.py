@@ -26,7 +26,7 @@ SECRET_KEY = 'hm=gq9#go8p)an2t-ncuwcul53oexrb+-m1tyv-%*13@x%sp1%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com', 'orgachat.pythonanywhere.com', 'orgachat.heroku.com']
+ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com', 'orgachat.pythonanywhere.com', 'orgachat.herokuapp.com']
 
 
 # Application definition
