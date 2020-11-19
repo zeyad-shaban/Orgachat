@@ -33,6 +33,8 @@ def register(request):
                 pass
         phone_number = serializer.initial_data['phone_number'].replace(' ', '')
         try:
+            print(
+                f"=================================================================================================================================================================={phone_number}==================================================================================================================================================================")
             user = User.objects.get(phone_number=phone_number)
         except User.DoesNotExist:
             user = User.objects.create_user(
@@ -56,7 +58,7 @@ def register(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated,])
+@permission_classes([IsAuthenticated, ])
 def all_users(request):
     q = request.GET.get("q")
     if q:
