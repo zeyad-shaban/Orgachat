@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+import django_heroku
 from pathlib import Path
 from datetime import timedelta
 
@@ -170,3 +171,6 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+
+django_heroku.settings(locals())
