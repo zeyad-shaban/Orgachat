@@ -150,8 +150,8 @@ class Message(models.Model):
             'channel': channel,
             'content': self.content(),
             "isText": isText,
-            # "date": self.date,
-            # todo "time_since":
+            "is_read": self.is_read,
+            "is_deleted": self.is_deleted,
         }
         return message
 

@@ -1,3 +1,4 @@
+from users.serializers import UserSerializer
 from django.core.serializers import serialize
 from rest_framework import status
 from rest_framework.response import Response
@@ -40,7 +41,7 @@ def groups_chat(request):
         chat = Chat.objects.create(
             title=request.data.get('title'), type="group")
         chat.chatters.add(request.user)
-        
+
         return Response({"message": "Successfully created the group"}, status.HTTP_200_OK)
 
 
@@ -64,6 +65,10 @@ def create_chat(request):
         chat = Chat.objects.create(type='friend')
         chat.chatters.add(request.user)
         chat.chatters.add(friend)
+    if not friend in request.user.friends.all():
+        request.user.friends.add(friend)
+        friend.friends.add(request.user)
+
     return Response({'chat': chat.to_json_preview(), 'messages': serialize('json', chat.message_set.all())})
 
 
@@ -109,10 +114,30 @@ def send_text_message(request):
     return Response()
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated, ])
-def get_messages(request):
-    pass
+@api_view(['POST'])
+def add_member(request):
+    data = request.data.get('userId')
+    chat = get_object_or_404(Chat, pk=data.get('chatId'))
+    if not data.get('userId'):
+        # todo show users who are not in the group
+        q = request.GET.get("q")
+        if q:
+            users_list = User.objects.filter(Q(username__icontains=q) | Q(
+                email__icontains=q) | Q(country__icontains=q)).order_by("-friends")
+        else:
+            users_list = User.objects.filter(
+                ~Q(id=request.user.id)).order_by("-friends")
+
+        users = [user for user in users_list if not user in chat.chatters.all()]
+
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    else:
+        user = get_object_or_404(User, pk=data.get('userId'))
+        if not user in chat.chatters.all():
+            chat.chatters.add(user)
+        # Todo check if user doesn't allow anyone to add him to the group
+        return Response({"message": "added"}, status.HTTP_200_OK)
 
 
 @login_required

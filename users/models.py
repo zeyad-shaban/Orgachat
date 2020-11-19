@@ -286,6 +286,7 @@ class User(AbstractUser):
             "avatar": self.avatar.url,
             "country": self.country,
             "categories": categories,
+            # "friends": [friend.to_json() for friend in self.friends.all()],
         }
 
     def __str__(self):

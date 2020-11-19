@@ -71,6 +71,13 @@ def all_users(request):
     return Response(serializer.data)
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def friends(request):
+    serializer = UserSerializer(request.user.friends.all(), many=True)
+    return Response(serializer.data, status.HTTP_200_OK)
+
+
 @ login_required
 def profile(request):
     if request.method == 'GET':
