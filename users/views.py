@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 from random import randint
 from django.db.models.query_utils import Q
@@ -12,7 +13,6 @@ from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 User = get_user_model()
-from django.core.mail import send_mail
 
 
 def index(request):
@@ -40,8 +40,11 @@ def register(request):
 
     # Send the validation code
     try:
-        send_mail('Orgachat Validation Code', f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
-    except:
+        send_mail('Orgachat Validation Code',
+                  f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
+    except Exception as error:
+        print("====================================================================================================================================" +
+              error + "====================================================================================================================================")
         return Response({'error': f"Coudn't send validation code to {email}. \n Tip: we support Gmails only for now"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'message': 'successfully send validation code'}, status.HTTP_200_OK)
