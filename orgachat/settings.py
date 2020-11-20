@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'chat',
     'metrics',
     # Packages
-    'phonenumber_field',
     'django_cleanup',
 ]
 
@@ -157,6 +156,20 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=360),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=400),
 }
+
+
+# -----EMAIL-----
+
+# Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'officialorgachat@gmail.com'
+EMAIL_HOST_PASSWORD = '<Orga44200444Chat>'
+
+
+
 
 
 STATIC_URL = '/static/'

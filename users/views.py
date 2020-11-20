@@ -10,8 +10,9 @@ from .serializers import MyTokenObtainPairSerializer, UserSerializer
 from twilio.rest import Client
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
-from phonenumber_field.validators import validate_international_phonenumber
+from django.conf import settings
 User = get_user_model()
+from django.core.mail import send_mail
 
 
 def index(request):
@@ -24,39 +25,24 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 @api_view(('POST',))
 def register(request):
-    phone_number = request.data.get('phone_number').replace(' ', '')
-
-    # Validate phone number
-    try:
-        validate_international_phonenumber(phone_number)
-    except:
-        return Response({'error': f"{phone_number} Is Invalid phone number"}, status.HTTP_400_BAD_REQUEST)
+    email = request.data.get('email').replace(' ', '')
 
     # Save validation code
     try:
-        user = User.objects.get(phone_number=phone_number)
+        user = User.objects.get(email=email)
     except User.DoesNotExist:
-        user = User.objects.create(
-            phone_number=phone_number, username=phone_number)
+        user = User.objects.create(email=email, username=email)
     except Exception as error:
         return Response({'error': f'Internal Server Error 500 \n Please report this problem to us officialorgachat@gmail.com'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    user.phone_code = randint(99999, 999999)
+    user.email_code = randint(99999, 999999)
     user.save()
 
     # Send the validation code
     try:
-        account_sid = "AC17578aff15c18d15b452885c627b351f"
-        auth_token = "cb454bd3db12a58f07eb35e52edd1491"
-        client = Client(account_sid, auth_token)
-
-        message = client.messages.create(
-            body=f'Orgachat code {user.phone_code}',
-            from_='+13157534823',
-            to=str(user.phone_number)
-        )
+        send_mail('Orgachat Validation Code', f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
     except:
-        return Response({'error': f"Coudn't send validation code to {phone_number}" }, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': f"Coudn't send validation code to {email}. \n Tip: we support Gmails only for now"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'message': 'successfully send validation code'}, status.HTTP_200_OK)
 

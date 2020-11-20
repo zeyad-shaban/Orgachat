@@ -16,15 +16,16 @@ class UserSerializer(ModelSerializer):
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        phone_number = attrs.get("phone_number")
-        phone_code = int(attrs.get("password"))
+        email = attrs.get("email")
+        email_code = int(attrs.get("password"))
         try:
-            self.user = User.objects.get(phone_number=phone_number)
+            self.user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': "User doesn't exist"}, status.HTTP_404_NOT_FOUND)
-        # Do the verification with the phone_code here, if error, return a response with an error status code
-        if int(phone_code) == self.user.phone_code and self.user.phone_code:
-            self.user.phone_code = None
+        # Do the verification with the email_code here, if error, return a response with an error status code
+        if int(email_code) == self.user.email_code and self.user.email_code:
+            self.user.email_code = None
+            self.user.is_confirmed = True
             self.user.save()
 
             refresh = self.get_token(self.user)
@@ -38,7 +39,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super(MyTokenObtainPairSerializer, cls).get_token(user)
-        token['phoneNumber'] = str(user.phone_number)
         token['email'] = user.email
         token['username'] = user.username
         token['about'] = user.about

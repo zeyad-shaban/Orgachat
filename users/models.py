@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 COUNTRIES = (
@@ -253,23 +252,24 @@ class Category(models.Model):
 
 
 class User(AbstractUser):
-    phone_number = PhoneNumberField(unique=True)
+    email = models.EmailField(unique=True)
     username = models.CharField(max_length=30)
     password = models.CharField(null=True, blank=True, max_length=20)
+    is_confirmed = models.BooleanField(default=False)
+    
     about = models.CharField(
         max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
     friends = models.ManyToManyField('User', blank=True)
-    email = models.EmailField(blank=True, null=True)
     avatar = models.FileField(
         upload_to='users/img/avatar', default="users/img/avatar/DefUser.png")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
     # Validations
     email_code = models.IntegerField(blank=True, null=True)
-    phone_code = models.IntegerField(blank=True, null=True)
     categories = models.ForeignKey(
         Category, on_delete=models.CASCADE, blank=True, null=True)
 
-    USERNAME_FIELD = 'phone_number'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS=[]
 
     def to_json(self):
         try:
@@ -278,7 +278,6 @@ class User(AbstractUser):
             categories = []
         return {
             "id": self.id,
-            "phone_number": str(self.phone_number),
             "username": self.username,
             "about": self.about,
             "avatar": self.avatar.url,
