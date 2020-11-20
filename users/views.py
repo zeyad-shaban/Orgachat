@@ -40,6 +40,8 @@ def register(request):
 
     # Send the validation code
     try:
+        print("====================================================================================================================================" +
+              settings.EMAIL_HOST_USER + "====================================================================================================================================")
         send_mail('Orgachat Validation Code',
                   f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
     except Exception as error:
