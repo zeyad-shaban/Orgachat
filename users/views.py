@@ -10,6 +10,7 @@ from .serializers import MyTokenObtainPairSerializer, UserSerializer
 from twilio.rest import Client
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
+from phonenumber_field.validators import validate_international_phonenumber
 User = get_user_model()
 
 
@@ -23,25 +24,28 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 @api_view(('POST',))
 def register(request):
-    if request.method == 'POST':
-        serializer = UserSerializer(data=request.data)
-        if not serializer.is_valid():
-            try:
-                if 'is not valid' in serializer.errors['phone_number'][0]:
-                    return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-            except:
-                pass
-        phone_number = serializer.initial_data['phone_number'].replace(' ', '')
-        try:
-            user = User.objects.get(phone_number=phone_number)
-        except User.DoesNotExist:
-            user = User.objects.create(phone_number=phone_number, username=phone_number)
-        user.phone_code = randint(99999, 999999)
-        user.save()
-        TokenObtainPairView()
+    phone_number = request.data.get('phone_number').replace(' ', '')
 
-        # Send validation code
-        # ! HIde sensitive information
+    # Validate phone number
+    try:
+        validate_international_phonenumber(phone_number)
+    except:
+        return Response({'error': f"{phone_number} Is Invalid phone number"}, status.HTTP_400_BAD_REQUEST)
+
+    # Save validation code
+    try:
+        user = User.objects.get(phone_number=phone_number)
+    except User.DoesNotExist:
+        user = User.objects.create(
+            phone_number=phone_number, username=phone_number)
+    except Exception as error:
+        return Response({'error': f'Internal Server Error 500 \n Please report this problem to us officialorgachat@gmail.com'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    user.phone_code = randint(99999, 999999)
+    user.save()
+
+    # Send the validation code
+    try:
         account_sid = "AC17578aff15c18d15b452885c627b351f"
         auth_token = "cb454bd3db12a58f07eb35e52edd1491"
         client = Client(account_sid, auth_token)
@@ -51,7 +55,10 @@ def register(request):
             from_='+13157534823',
             to=str(user.phone_number)
         )
-        return Response(serializer.data, status.HTTP_200_OK)
+    except:
+        return Response({'error': f"Coudn't send validation code to {phone_number}" }, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({'message': 'successfully send validation code'}, status.HTTP_200_OK)
 
 
 @api_view(['GET'])
