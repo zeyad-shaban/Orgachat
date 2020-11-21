@@ -16,7 +16,6 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DJANGO_SETTINGS_MODULE = "orgachat.settings"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -81,7 +80,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'orgachat.wsgi.application'
-ASGI_APPLICATION = 'orgachat.asgi.application'
+ASGI_APPLICATION = 'orgachat.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -153,9 +152,7 @@ SIMPLE_JWT = {
 }
 
 
-# -----EMAIL-----
-
-# Gmail
+# Mail
 SENDGRID_API_KEY = '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'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
@@ -185,5 +182,3 @@ try:
     django_heroku.settings(locals())
 except:
     pass
-
-
