@@ -80,7 +80,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'orgachat.wsgi.application'
-ASGI_APPLICATION = 'orgachat.asgi.application'
+ASGI_THREADS = 5
+ASGI_APPLICATION = 'orgachat.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
