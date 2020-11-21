@@ -38,10 +38,10 @@ def register(request):
     user.save()
 
     # Send the validation code
-    try:
-        send_mail('Orgachat Validation Code',f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
-    except:
-        return Response({'error': f"Coudn't send validation code to {email}. \n Tip: we support Gmails only for now"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # try:
+    send_mail('Orgachat Validation Code',f'Your validation code is {user.email_code}', settings.EMAIL_HOST_USER, (user.email,), fail_silently=False)
+    # except:
+    #     return Response({'error': f"Coudn't send validation code to {email}. \n Tip: we support Gmails only for now"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'message': 'successfully send validation code'}, status.HTTP_200_OK)
 
