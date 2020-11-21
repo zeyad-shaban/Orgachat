@@ -81,7 +81,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'orgachat.wsgi.application'
-ASGI_THREADS = 5
 ASGI_APPLICATION = 'orgachat.routing.application'
 
 # Database
@@ -136,9 +135,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')]
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
-        "ROUTING": "orgachat.routing.channel_routing",
     },
 }
 
