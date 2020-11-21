@@ -7,11 +7,21 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 """
 
-import os
 import django
-from channels.routing import get_default_application
-from django.core.management import call_command
+django.setup()
+
+import os
+
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from chat import routing as chat_routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'orgachat.settings')
-django.setup()
-application = get_default_application()
+
+application = ProtocolTypeRouter({
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            chat_routing.websocket_urlpatterns,
+        )
+    ),
+})

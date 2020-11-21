@@ -16,7 +16,7 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DJANGO_SETTINGS_MODULE = "orgachat.settings"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -81,7 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'orgachat.wsgi.application'
-ASGI_APPLICATION = 'orgachat.routing.application'
+ASGI_APPLICATION = 'orgachat.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -185,3 +185,5 @@ try:
     django_heroku.settings(locals())
 except:
     pass
+
+

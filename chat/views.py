@@ -5,17 +5,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from chat.serializers import ChatSerializer, MessageSerializer
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import json
-from users.models import Category
-from django.core.exceptions import PermissionDenied
 from django.db.models.query_utils import Q
-from django.http.response import JsonResponse
 from chat.models import Channel, Message, Chat
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 User = get_user_model()
 
 
