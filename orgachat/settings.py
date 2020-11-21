@@ -27,7 +27,8 @@ SECRET_KEY = '00f7dd404d69c07b97e91a7529ff86e2acec325d785bddf3f7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com', 'orgachat.pythonanywhere.com', 'orgachat.herokuapp.com']
+ALLOWED_HOSTS = ['www.orgachat.com', 'orgachat.com',
+                 'orgachat.pythonanywhere.com', 'orgachat.herokuapp.com']
 
 
 # Application definition
@@ -113,12 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": "BObaAJsMXuJwzoG9zZSALTFquu_VukAEkKVtAOZe0iCd5YHXvS9VhZr2gQV6NUsQ2_8t68sh17wkMftHUKr_7RU",
-    "VAPID_PRIVATE_KEY": "7MgEqBEPZMHeju40i6yXU1__4cNVgdDBdP-fQAoMTmA",
-    "VAPID_ADMIN_EMAIL": "zeyadshapan2004@gmail.com"
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -162,15 +157,16 @@ SIMPLE_JWT = {
 # -----EMAIL-----
 
 # Gmail
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+SENDGRID_API_KEY = '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'
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'officialorgachat@gmail.com'
-EMAIL_HOST_PASSWORD = '<Orga44200444Chat>'
 
-
-
+DEFAULT_FROM_EMAIL = 'officialorgachat@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
 STATIC_URL = '/static/'
