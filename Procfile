@@ -1,1 +1,1 @@
-web: gunicorn orgachat.wsgi
+web: gunicorn orgachat.asgi
