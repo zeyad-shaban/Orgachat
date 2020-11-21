@@ -41,19 +41,11 @@ def groups_chat(request):
 @api_view(('GET', 'POST'))
 @permission_classes([IsAuthenticated])
 def create_chat(request):
-    serializer = ChatSerializer(data=request.data)
-
-    friend = get_object_or_404(
-        User, pk=serializer.initial_data["friendId"])
-
+    friend = get_object_or_404(User, pk=request.data.get("friendId"))
     if request.user.id == friend.id:
         return Response({'error': "You can't chat with yourself"}, status.HTTP_400_BAD_REQUEST)
 
-    chats = Chat.objects.filter(type=f'friend', chatters=request.user)
-    chat = None
-    for chat in chats:
-        if friend in chat.chatters.all():
-            chat = chat
+    chat = Chat.objects.filter(type=f'friend', chatters=request.user).filter(chatters=friend).first()
     if not chat:
         chat = Chat.objects.create(type='friend')
         chat.chatters.add(request.user)

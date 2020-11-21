@@ -29,7 +29,7 @@ def register(request):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        user = User.objects.create(email=email, username=email.split('@')[0])
+        user = User.objects.create(email=email, username=''.join([i for i in email.split('@')[0] if not i.isdigit()]))
     except Exception as error:
         return Response({'error': f'Internal Server Error 500 \n Please report this problem to us officialorgachat@gmail.com'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -38,7 +38,8 @@ def register(request):
 
     # Send the validation code
     try:
-        send_mail('Orgachat Validation Code',f'Your validation code is {user.email_code}.', 'officialorgachat@gmail.com', (user.email,), fail_silently=False)
+        send_mail('Orgachat Validation Code',
+                  f'Your validation code is {user.email_code}.', 'officialorgachat@gmail.com', (user.email,), fail_silently=False)
     except:
         return Response({'error': f"Coudn't send validation code to {email}. \n Tip: we support Gmails only for now"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -51,10 +52,9 @@ def all_users(request):
     q = request.GET.get("q")
     if q:
         users = User.objects.filter(Q(username__icontains=q) | Q(
-            email__icontains=q) | Q(country__icontains=q))
+            email__icontains=q) | Q(country__icontains=q), is_confirmed=True)
     else:
-        users = User.objects.filter(
-            ~Q(id=request.user.id))
+        users = User.objects.filter(~Q(id=request.user.id), is_confirmed=True)
 
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
@@ -75,5 +75,5 @@ def update_account(request):
         request.user.about = request.data.get('about')
         request.user.save()
         return Response({"message": "successfully udpated"}, status.HTTP_200_OK)
-    except Exception as error:
+    except:
         return Response({"error": "Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
