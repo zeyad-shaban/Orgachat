@@ -30,7 +30,7 @@ def register(request):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        user = User.objects.create(email=email, username=email)
+        user = User.objects.create(email=email, username=email.split('@')[0])
     except Exception as error:
         return Response({'error': f'Internal Server Error 500 \n Please report this problem to us officialorgachat@gmail.com'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
