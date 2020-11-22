@@ -34,6 +34,7 @@ def groups_chat(request):
         chat = Chat.objects.create(
             title=request.data.get('title'), type="group")
         chat.chatters.add(request.user)
+        Channel.objects.create(title="general", chat=chat)
 
         return Response({"message": "Successfully created the group"}, status.HTTP_200_OK)
 
@@ -45,7 +46,8 @@ def create_chat(request):
     if request.user.id == friend.id:
         return Response({'error': "You can't chat with yourself"}, status.HTTP_400_BAD_REQUEST)
 
-    chat = Chat.objects.filter(type=f'friend', chatters=request.user).filter(chatters=friend).first()
+    chat = Chat.objects.filter(type=f'friend', chatters=request.user).filter(
+        chatters=friend).first()
     if not chat:
         chat = Chat.objects.create(type='friend')
         chat.chatters.add(request.user)
@@ -74,7 +76,11 @@ def get_chat(request, chatId):
             except:
                 channel = None
         json_chat = chat.to_json(channel)
-        json_chat['channel'] = channel.to_json()
+        if channel:
+            json_chat['channel'] = channel.to_json()
+        else:
+            json_chat['channel'] = channel
+
     else:
         json_chat = chat.to_json()
     return Response(json_chat, status.HTTP_200_OK)
@@ -130,5 +136,15 @@ def add_member(request):
 @permission_classes([IsAuthenticated, ])
 def create_channel(request, chatId):
     chat = get_object_or_404(Chat, pk=chatId)
-    channel = Channel.objects.create(title=request.data.get('title'), chat=chat)
+    channel = Channel.objects.create(
+        title=request.data.get('title'), chat=chat)
     return Response({'channel': channel.to_json()}, status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, ])
+def leave_group(request, chatId):
+    chat = get_object_or_404(Chat, pk=chatId)
+    if request.user in chat.chatters.all():
+        chat.chatters.remove(request.user)
+    return Response({'message': 'successfully removed from the group'}, status.HTTP_200_OK)

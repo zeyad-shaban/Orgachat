@@ -11,4 +11,5 @@ urlpatterns = [
     path('send_text_message/', views.send_text_message, name='send_text_message'),
     path('add_member/', views.add_member, name='add_member'),
     path('groups/<int:chatId>/channels/create/', views.create_channel, name='create_channel'),
+    path('groups/leave_group/<int:chatId>/', views.leave_group, name='leave_group')
 ]
