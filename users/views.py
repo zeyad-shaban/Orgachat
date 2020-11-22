@@ -29,7 +29,8 @@ def register(request):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        user = User.objects.create(email=email, username=''.join([i for i in email.split('@')[0] if not i.isdigit()]))
+        user = User.objects.create(email=email, username=''.join(
+            [i for i in email.split('@')[0] if not i.isdigit()]))
     except Exception as error:
         return Response({'error': f'Internal Server Error 500 \n Please report this problem to us officialorgachat@gmail.com'}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -77,3 +78,14 @@ def update_account(request):
         return Response({"message": "successfully udpated"}, status.HTTP_200_OK)
     except:
         return Response({"error": "Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_expo_push_token(request):
+    try:
+        request.user.expo_push_token = request.data.get('expoPushToken')
+        request.user.save()
+        return Response({'user': request.user.to_json()}, status.HTTP_200_OK)
+    except:
+        return Response({'error': f"Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)

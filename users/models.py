@@ -252,21 +252,27 @@ class Category(models.Model):
 
 
 class User(AbstractUser):
+    # * Main
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=30)
     password = models.CharField(null=True, blank=True, max_length=20)
     is_confirmed = models.BooleanField(default=False)
-    
+
+    # Extra info
     about = models.CharField(
         max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
-    friends = models.ManyToManyField('User', blank=True)
     avatar = models.FileField(
         upload_to='users/img/avatar', default="users/img/avatar/DefUser.png")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
-    # Validations
-    email_code = models.IntegerField(blank=True, null=True)
+
+    # Society
+    friends = models.ManyToManyField('User', blank=True)
     categories = models.ForeignKey(
         Category, on_delete=models.CASCADE, blank=True, null=True)
+
+    # advance for backend
+    email_code = models.IntegerField(blank=True, null=True)
+    expo_push_token = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS=[]
