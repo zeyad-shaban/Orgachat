@@ -51,7 +51,8 @@ class Chat(models.Model):
         if self.type == 'friend':
             messages = [message for message in messages]
         else:
-            messages = [message for message in messages if not user in message.channel.muted_users.all()]
+            messages = [
+                message for message in messages if not user in message.channel.muted_users.all()]
         return len(messages)
 
     def to_json(self, channel=None):
@@ -59,7 +60,7 @@ class Chat(models.Model):
             "id": self.id,
             "title": self.get_title(),
             "type": self.type,
-            "lastMessagge": self.last_message().__str__(),
+            "lastMessage": self.last_message().__str__(),
             "imageUri": self.get_imageUri(),
 
             "chatters": [chatter.to_json() for chatter in self.chatters.all()],
@@ -75,7 +76,7 @@ class Chat(models.Model):
             "id": self.id,
             "title": self.get_title(),
             "type": self.type,
-            "lastMessagge": self.last_message().__str__(),
+            "lastMessage": f'{self.last_message().user.username}: {self.last_message().__str__()}',
             "unreadCount": self.get_unread_count(),
             "imageUri": self.get_imageUri(),
             "isArchived": self.is_archived,
@@ -127,15 +128,22 @@ class Message(models.Model):
 
     def save(self, *args, **kwargs):
         super(Message, self).save(*args, **kwargs)
-        
+
         # Send notification
         for chatter in self.chat.chatters.filter(~Q(id=self.user.id)):
             if not chatter in self.channel.muted_users.all():
                 try:
-                    print(f"SEND NOTIFICATION NOW to {self.user.expo_push_token}")
+                    from exponent_server_sdk import PushClient, PushMessage
+                    response = PushClient().publish(
+                        PushMessage(to=chatter.expo_push_token,
+                                    body=f'{self.user.username}: {self.__str__()}',
+                                    data={'_displayInForegrouond': True,
+                                          'chadId': self.chat.id}
+                                    )
+                    )
                 except:
                     pass
-        
+
         self.read_users.add(self.user)
 
     def filename(self):
