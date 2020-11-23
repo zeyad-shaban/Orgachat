@@ -76,33 +76,11 @@ def get_chat(request, chatId):
             except:
                 channel = None
         json_chat = chat.to_json(channel)
-        if channel:
-            json_chat['channel'] = channel.to_json()
-        else:
-            json_chat['channel'] = channel
+        json_chat['channel'] = channel.to_json()
 
     else:
         json_chat = chat.to_json()
     return Response(json_chat, status.HTTP_200_OK)
-
-
-@api_view(["POST"])
-@permission_classes([IsAuthenticated, ])
-def send_text_message(request):
-    serializer = MessageSerializer(data=request.data)
-    chat = get_object_or_404(Chat, pk=serializer.initial_data['chatId'])
-    try:
-        channel = get_object_or_404(
-            Chat, pk=serializer.initial_data["areaId"])
-    except Exception as error:
-        channel = None
-    text = serializer.initial_data['text']
-    if text.replace(" ", "") == "":
-        return Response({"error": "Text must be 1 character at least"}, status.HTTP_400_BAD_REQUEST)
-    message = Message.objects.create(
-        user=request.user, text=text, chat=chat, channel=channel)
-    message.save()
-    return Response()
 
 
 @api_view(['POST'])

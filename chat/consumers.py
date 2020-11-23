@@ -3,7 +3,7 @@ from asgiref.sync import sync_to_async
 import json
 from django.shortcuts import get_object_or_404
 from .models import Channel, Message, Chat
-from django.forms.models import model_to_dict
+from django.db.models.query_utils import Q
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -39,7 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 except:
                     channel = None
         else:
-            channel=None
+            channel = None
 
         message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, text=json_data['text'], channel=channel)
         await self.channel_layer.group_send(

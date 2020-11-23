@@ -82,6 +82,9 @@ class Channel(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     muted_users = models.ManyToManyField(User, blank=True)
 
+    def is_muted(self):
+        return current_request().user in self.muted_users
+
     def to_json(self):
         return {
             'id': self.id,
@@ -89,7 +92,7 @@ class Channel(models.Model):
             'chat': {
                 'id': self.chat.id
             },
-            'muted_users': [user.to_json() for user in self.muted_users.all()],
+            'is_muted': self.is_muted(),
         }
 
     def __str__(self):
