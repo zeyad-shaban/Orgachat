@@ -66,6 +66,8 @@ def get_chat(request, chatId):
     if not request.user in chat.chatters.all():
         return Response({"Error": 'You don\'t belong to this chat'}, status.HTTP_401_UNAUTHORIZED)
 
+    [message.read_users.add(request.user) for message in chat.message_set.filter(~Q(read_users=request.user))]
+        
     if chat.type == 'group':
         try:
             channelId = int(request.GET.get('channelId'))

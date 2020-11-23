@@ -1,6 +1,4 @@
 import os
-from django.core.serializers import serialize
-from users.models import Category
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
@@ -46,6 +44,11 @@ class Chat(models.Model):
             return messages.last().__str__()
         return ""
 
+    def get_unread_count(self):
+        user = current_request().user
+        messages = self.message_set.filter(~Q(read_users=user))
+        return messages.count()
+
     def to_json(self, channel=None):
         return {
             "id": self.id,
@@ -68,6 +71,7 @@ class Chat(models.Model):
             "title": self.get_title(),
             "type": self.type,
             "lastMessagge": self.last_message().__str__(),
+            "unreadCount": self.get_unread_count(),
             "imageUri": self.get_imageUri(),
             "isArchived": self.is_archived,
             "isDeleted": self.is_deleted,
@@ -112,8 +116,13 @@ class Message(models.Model):
     audio = models.FileField(upload_to="chat/aud", blank=True, null=True)
 
     is_read = models.BooleanField(default=False)
+    read_users = models.ManyToManyField(User, related_name="read_users")
     is_deleted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super(Message, self).save(*args, **kwargs)
+        return  self.read_users.add(self.user)
 
     def filename(self):
         if self.video:
