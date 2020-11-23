@@ -3,7 +3,6 @@ from asgiref.sync import sync_to_async
 import json
 from django.shortcuts import get_object_or_404
 from .models import Channel, Message, Chat
-from django.db.models.query_utils import Q
 from django.contrib.auth import get_user_model
 User = get_user_model()
 

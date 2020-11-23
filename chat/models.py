@@ -127,7 +127,16 @@ class Message(models.Model):
 
     def save(self, *args, **kwargs):
         super(Message, self).save(*args, **kwargs)
-        return  self.read_users.add(self.user)
+        
+        # Send notification
+        for chatter in self.chat.chatters.filter(~Q(id=self.user.id)):
+            if not chatter in self.channel.muted_users.all():
+                try:
+                    print(f"SEND NOTIFICATION NOW to {self.user.expo_push_token}")
+                except:
+                    pass
+        
+        self.read_users.add(self.user)
 
     def filename(self):
         if self.video:
