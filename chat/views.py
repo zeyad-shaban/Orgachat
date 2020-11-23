@@ -125,4 +125,6 @@ def leave_group(request, chatId):
     chat = get_object_or_404(Chat, pk=chatId)
     if request.user in chat.chatters.all():
         chat.chatters.remove(request.user)
-    return Response({'message': 'successfully removed from the group'}, status.HTTP_200_OK)
+    if chat.chatters.count() <= 0:
+        chat.delete()
+    return Response({'message': 'successfully left the group'}, status.HTTP_200_OK)

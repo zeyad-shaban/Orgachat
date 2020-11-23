@@ -83,7 +83,7 @@ class Channel(models.Model):
     muted_users = models.ManyToManyField(User, blank=True)
 
     def is_muted(self):
-        return current_request().user in self.muted_users
+        return current_request().user in self.muted_users.all()
 
     def to_json(self):
         return {
