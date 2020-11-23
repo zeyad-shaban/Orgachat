@@ -66,8 +66,6 @@ def get_chat(request, chatId):
     if not request.user in chat.chatters.all():
         return Response({"Error": 'You don\'t belong to this chat'}, status.HTTP_401_UNAUTHORIZED)
 
-    [message.read_users.add(request.user) for message in chat.message_set.filter(~Q(read_users=request.user))]
-        
     if chat.type == 'group':
         try:
             channelId = int(request.GET.get('channelId'))
@@ -79,8 +77,12 @@ def get_chat(request, chatId):
                 channel = None
         json_chat = chat.to_json(channel)
         json_chat['channel'] = channel.to_json()
+        [message.read_users.add(request.user) for message in chat.message_set.filter(
+            ~Q(read_users=request.user), Q(channel=channel))]
 
     else:
+        [message.read_users.add(request.user) for message in chat.message_set.filter(
+            ~Q(read_users=request.user))]
         json_chat = chat.to_json()
     return Response(json_chat, status.HTTP_200_OK)
 
@@ -119,6 +121,18 @@ def create_channel(request, chatId):
     channel = Channel.objects.create(
         title=request.data.get('title'), chat=chat)
     return Response({'channel': channel.to_json()}, status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, ])
+def toggle_mute_channel(request, channelId):
+    channel = get_object_or_404(Channel, pk=channelId)
+    if request.user in channel.muted_users.all():
+        channel.muted_users.remove(request.user)
+    else:
+        channel.muted_users.add(request.user)
+
+    return Response({'channel': channel.to_json()}, status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -1,5 +1,6 @@
 import os
 from django.contrib.auth import get_user_model
+from django.core.checks import messages
 from django.db import models
 from django.db.models.query_utils import Q
 from users.get_request import current_request
@@ -47,7 +48,11 @@ class Chat(models.Model):
     def get_unread_count(self):
         user = current_request().user
         messages = self.message_set.filter(~Q(read_users=user))
-        return messages.count()
+        if self.type == 'friend':
+            messages = [message for message in messages]
+        else:
+            messages = [message for message in messages if not user in message.channel.muted_users.all()]
+        return len(messages)
 
     def to_json(self, channel=None):
         return {
