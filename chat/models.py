@@ -42,8 +42,10 @@ class Chat(models.Model):
     def last_message(self):
         messages = self.message_set.all()
         if messages.count() > 0:
+            if self.type== 'group':
+                return f'{messages.last().user.username}: {messages.last().__str__()}'
             return messages.last().__str__()
-        return ""
+        return None
 
     def get_unread_count(self):
         user = current_request().user
@@ -60,7 +62,7 @@ class Chat(models.Model):
             "id": self.id,
             "title": self.get_title(),
             "type": self.type,
-            "lastMessage": self.last_message().__str__(),
+            "lastMessage": self.last_message(),
             "imageUri": self.get_imageUri(),
 
             "chatters": [chatter.to_json() for chatter in self.chatters.all()],
@@ -76,7 +78,7 @@ class Chat(models.Model):
             "id": self.id,
             "title": self.get_title(),
             "type": self.type,
-            "lastMessage": f'{self.last_message().user.username}: {self.last_message().__str__()}',
+            "lastMessage": self.last_message(),
             "unreadCount": self.get_unread_count(),
             "imageUri": self.get_imageUri(),
             "isArchived": self.is_archived,
