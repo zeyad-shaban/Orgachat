@@ -262,7 +262,7 @@ class User(AbstractUser):
     about = models.CharField(
         max_length=190, default="Hi, I use Orgachat!", blank=True, null=True)
     avatar = models.FileField(
-        upload_to='users/img/avatar', default="users/img/avatar/DefUser.png")
+        upload_to='users/avatars', default="users/img/avatar/DefUser.png")
     country = models.CharField(choices=COUNTRIES, max_length=50, default="ZZ")
 
     # Society

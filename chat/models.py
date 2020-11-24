@@ -16,7 +16,7 @@ class Chat(models.Model):
         max_length=9, choices=type_choices, default='friend')
     title = models.CharField(max_length=50)
     image = models.FileField(
-        upload_to="chat/room/chat_image", blank=True, null=True, default="users/img/avatar/DefUser.png")
+        upload_to="chat/chat_avatars", blank=True, null=True, default="users/img/avatar/DefUser.png")
     chatters = models.ManyToManyField(User)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
@@ -118,10 +118,10 @@ class Message(models.Model):
         Channel, on_delete=models.SET_NULL, blank=True, null=True)
 
     text = models.TextField(blank=True, null=True)
-    video = models.FileField(upload_to="chat/vid", blank=True, null=True)
-    image = models.FileField(upload_to="chat/img", blank=True, null=True)
-    file = models.FileField(upload_to="chat/file", blank=True, null=True)
-    audio = models.FileField(upload_to="chat/aud", blank=True, null=True)
+    video = models.FileField(upload_to="videos", blank=True, null=True)
+    image = models.FileField(upload_to="images", blank=True, null=True)
+    file = models.FileField(upload_to="files", blank=True, null=True)
+    audio = models.FileField(upload_to="audios", blank=True, null=True)
 
     is_read = models.BooleanField(default=False)
     read_users = models.ManyToManyField(User, related_name="read_users")
@@ -148,6 +148,18 @@ class Message(models.Model):
 
         self.read_users.add(self.user)
 
+    def type(self):
+        if self.text:
+            return "text"
+        elif self.video:
+            return 'video'
+        elif self.image:
+            return 'image'
+        elif self.file:
+            return 'file'
+        elif self.audio:
+            return 'audio'
+
     def filename(self):
         if self.video:
             return os.path.basename(self.video.name)
@@ -173,9 +185,6 @@ class Message(models.Model):
             return self.audio.url
 
     def to_json(self):
-        isText = False
-        if self.text:
-            isText = True
         if self.channel:
             channel = self.channel.title
         else:
@@ -185,7 +194,7 @@ class Message(models.Model):
             'user': self.user.to_json(),
             'channel': channel,
             'content': self.content(),
-            "isText": isText,
+            "type": self.type(),
             "is_read": self.is_read,
             "is_deleted": self.is_deleted,
         }

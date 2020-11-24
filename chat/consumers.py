@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Channel, Message, Chat
 from django.contrib.auth import get_user_model
 User = get_user_model()
-
+from base64 import b64decode
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -40,7 +40,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             channel = None
 
-        message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, text=json_data['text'], channel=channel)
+        # Saving channel
+        message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, channel=channel)
+        if json_data.get('text'):
+            message.text = json_data.get('text')
+        elif json_data.get('type') and json_data.get('fd'):
+            file = json_data.get('fd')
+            message.image = file
+        
+        await sync_to_async(message.save)()
+
         await self.channel_layer.group_send(
             self.chat_name,
             {

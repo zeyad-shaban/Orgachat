@@ -23,7 +23,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 @api_view(('POST',))
 def register(request):
-    email = request.data.get('email').replace(' ', '')
+    email = request.data.get('email').replace(' ', '').lower()
 
     # Save validation code
     try:
