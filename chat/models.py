@@ -133,7 +133,7 @@ class Message(models.Model):
 
         # Send notification
         for chatter in self.chat.chatters.filter(~Q(id=self.user.id)):
-            if not chatter in self.channel.muted_users.all():
+            if self.channel and not chatter in self.channel.muted_users.all():
                 try:
                     from exponent_server_sdk import PushClient, PushMessage
                     response = PushClient().publish(
