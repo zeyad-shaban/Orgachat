@@ -139,7 +139,7 @@ class Message(models.Model):
                     response = PushClient().publish(
                         PushMessage(to=chatter.expo_push_token,
                                     body=f'{self.user.username}: {self.__str__()}',
-                                    data={'_displayInForegrouond': True,
+                                    data={'_displayInForeground': True,
                                           'chadId': self.chat.id}
                                     )
                     )
