@@ -1,12 +1,15 @@
+from datetime import timedelta
 from metrics.models import GrowthReport
 from django.utils.timezone import now
 import datetime
-from django.db.models.query_utils import Q
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect, render
-from chat.models import Message
 from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.timezone import now
 User = get_user_model()
+
+
+REPORT_DAYS = 3
 
 
 @staff_member_required
@@ -14,6 +17,7 @@ def index(request):
     return render(request, "metrics/index.html")
 
 
+# * Should be done once every 3 days
 @staff_member_required
 def growth_model(request):
     if request.method == 'GET':
@@ -22,13 +26,22 @@ def growth_model(request):
         hypo = request.POST.get("hypo")
         desc = request.POST.get("desc")
         effort = request.POST.get("effort")
-        three_days = now() - datetime.timedelta(days=3)
-        messages_per_day = (Message.objects.filter(~Q(user=User.objects.get(id=1)), ~Q(
-            user=User.objects.get(id=2)), ~Q(user=User.objects.get(id=3)),
-            Q(date__gte=three_days)).count()) / 3
-        # todo not accurate
-        new_users_per_day = User.objects.filter(date_joined__gte=three_days).count()
-        growth_report = GrowthReport.objects.create(
-            hypo=hypo, desc=desc, effort=effort, messages_per_day=messages_per_day, repeat_rate=repeat_rate, new_users_per_day=new_users_per_day)
-        growth_report.save()
+
+        users = User.objects.all()
+        # 1.repeat rate
+        repeat_users = User.objects.filter(last_seen__gt=now() - timedelta(days=REPORT_DAYS),
+                                           date_joined__lt=now() - timedelta(days=REPORT_DAYS)
+                                           )
+        repeat_rate = repeat_users.count() / users.count() * 100
+
+        # 2. messages per user
+        messages_per_user = sum([user.message_set.filter(
+            date__gt=now() - timedelta(days=REPORT_DAYS)).count() for user in users]) / users.count()
+
+        # 3. new users per day
+        new_users_per_day = User.objects.filter(
+            date_joined__gt=now() - timedelta(days=3)).count() / REPORT_DAYS
+
+        GrowthReport.objects.create(hypo=hypo, desc=desc, effort=effort, repeat_rate=repeat_rate,
+                                    messages_per_user=messages_per_user, new_users_per_day=new_users_per_day)
         return redirect("metrics:growth_model")

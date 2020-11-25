@@ -304,7 +304,7 @@ class User(AbstractUser):
 
     def last_seen_humanize(self):
         timesince = humanize.naturaltime(timezone.now() - self.last_seen)
-        if timesince == 'now' or timezone.now() - self.last_seen < timedelta(seconds=120):
+        if timesince == 'now' or timezone.now() - self.last_seen < timedelta(minutes=2):
             return 'Online'
         return timesince
 
