@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.models import UserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -294,7 +295,7 @@ class User(AbstractUser):
     # advance for stuff
     email_code = models.IntegerField(blank=True, null=True)
     expo_push_token = models.TextField(blank=True, null=True)
-    last_seen = models.DurationField(default=timedelta)
+    last_seen = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -302,9 +303,10 @@ class User(AbstractUser):
 
 
     def last_seen_humanize(self):
-        if humanize.naturaltime(datetime.now() - self.last_seen) == 'now':
+        timesince = humanize.naturaltime(timezone.now() - self.last_seen)
+        if timesince == 'now' or timezone.now() - self.last_seen < timedelta(seconds=120):
             return 'Online'
-        return humanize.naturaltime(datetime.now() - self.last_seen)
+        return timesince
 
 
     def to_json(self):
