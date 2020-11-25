@@ -7,8 +7,10 @@ User = get_user_model()
 
 class MyUserAdmin(UserAdmin):
     ordering = ('-date_joined', )
-    list_display = ('username', 'email',
-                    'date_joined')
+    list_display = ('email', 'date_joined', 'last_seen_humanize')
+
+    def last_seen_humanize(self, obj):
+        return obj.last_seen_humanize()
 
 
 MyUserAdmin.list_filter += ('date_joined',)
@@ -19,8 +21,8 @@ admin.site.register(User, MyUserAdmin)
 
 
 @admin.register(Category)
-class HomepageAreaAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     '''Admin View for Category'''
 
-    list_display = ('title', 'user', 'date')
+    list_display = ('title', 'is_muted', 'date')
     readonly_fields = ('date',)

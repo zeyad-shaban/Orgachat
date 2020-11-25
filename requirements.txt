@@ -29,6 +29,7 @@ exponent-server-sdk==1.0.0
 filelock==3.0.12
 hiredis==1.1.0
 http-ece==1.1.0
+humanize==3.1.0
 hyperlink==20.0.1
 idna==2.10
 incremental==17.5.0
