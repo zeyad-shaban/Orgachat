@@ -16,7 +16,7 @@ class UserSerializer(ModelSerializer):
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        email = attrs.get("email")
+        email = attrs.get("email").replace(' ', '').lower()
         email_code = int(attrs.get("password"))
         try:
             self.user = User.objects.get(email=email)

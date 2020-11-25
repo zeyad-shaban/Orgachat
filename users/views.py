@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.shortcuts import render
+from datetime import datetime
 from random import randint
 from django.db.models.query_utils import Q
 from rest_framework import status
@@ -89,3 +90,11 @@ def save_expo_push_token(request):
         return Response({'user': request.user.to_json()}, status.HTTP_200_OK)
     except:
         return Response({'error': f"Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def update_last_seen(request):
+    request.user.last_seen = datetime.now()
+    request.user.save()
+    return Response({'user': request.user.to_json()})
