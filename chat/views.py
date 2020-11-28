@@ -1,12 +1,14 @@
+from django.views.decorators.csrf import csrf_exempt
+import json
 from users.serializers import UserSerializer
 from django.core.serializers import serialize
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from chat.serializers import ChatSerializer, MessageSerializer
 from django.db.models.query_utils import Q
-from chat.models import Channel, Message, Chat
+from chat.models import Channel,  Chat, Message
+from .serializers import MessageSerializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -66,15 +68,9 @@ def get_chat(request, chatId):
     if not request.user in chat.chatters.all():
         return Response({"Error": 'You don\'t belong to this chat'}, status.HTTP_401_UNAUTHORIZED)
 
+    channel = chat.get_channel(request.GET.get('channelId'))
+
     if chat.type == 'group':
-        try:
-            channelId = int(request.GET.get('channelId'))
-            channel = get_object_or_404(Channel, pk=channelId)
-        except:
-            try:
-                channel = chat.channel_set.first()
-            except:
-                channel = None
         json_chat = chat.to_json(channel)
         json_chat['channel'] = channel.to_json()
         [message.read_users.add(request.user) for message in chat.message_set.filter(
@@ -85,6 +81,26 @@ def get_chat(request, chatId):
             ~Q(read_users=request.user))]
         json_chat = chat.to_json()
     return Response(json_chat, status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_file(request, chatId, type):
+    chat = get_object_or_404(Chat, pk=chatId)
+    channel = chat.get_channel(request.GET.get('channelId'))
+    file=request.FILES.get('file')
+
+    message = Message.objects.create(chat=chat, user=request.user, channel=channel)
+
+    if type == 'image':
+        message.image = file
+    elif type == 'video':
+        message.video = file
+    elif type == 'audio':
+        message.audio = file
+    
+    message.save()
+    return Response(MessageSerializer(message).data, status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

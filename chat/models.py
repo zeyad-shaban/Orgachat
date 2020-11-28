@@ -1,8 +1,8 @@
 import os
 from django.contrib.auth import get_user_model
-from django.core.checks import messages
 from django.db import models
 from django.db.models.query_utils import Q
+from django.shortcuts import get_object_or_404
 from users.get_request import current_request
 User = get_user_model()
 
@@ -20,6 +20,26 @@ class Chat(models.Model):
     chatters = models.ManyToManyField(User)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
+
+    def get_channel(self, channelId):
+        """
+        function to get the channel from a given ID, if the id is invalid it will
+        get the first channel it finds in the group, otherwise returns none.
+        If it's a friend chat it will always return none.
+        """
+        if self.type == 'group':
+            try:
+                channel = get_object_or_404(Channel, pk=int(channelId))
+            except:
+                try:
+                    channel = self.channel_set.first()
+                except:
+                    channel = None
+
+        else:
+            channel = None
+
+        return channel
 
     def get_title(self):
         if self.type == "friend":
@@ -42,7 +62,7 @@ class Chat(models.Model):
     def last_message(self):
         messages = self.message_set.all()
         if messages.count() > 0:
-            if self.type== 'group':
+            if self.type == 'group':
                 return f'{messages.last().user.username}: {messages.last().__str__()}'
             return messages.last().__str__()
         return None
@@ -120,11 +140,11 @@ class Message(models.Model):
     text = models.TextField(blank=True, null=True)
     video = models.FileField(upload_to="videos", blank=True, null=True)
     image = models.FileField(upload_to="images", blank=True, null=True)
-    file = models.FileField(upload_to="files", blank=True, null=True)
+    document = models.FileField(upload_to="documents", blank=True, null=True)
     audio = models.FileField(upload_to="audios", blank=True, null=True)
 
     is_read = models.BooleanField(default=False)
-    read_users = models.ManyToManyField(User, related_name="read_users")
+    read_users = models.ManyToManyField(User, related_name="read_users", blank=True)
     is_deleted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
@@ -155,8 +175,8 @@ class Message(models.Model):
             return 'video'
         elif self.image:
             return 'image'
-        elif self.file:
-            return 'file'
+        elif self.document:
+            return 'document'
         elif self.audio:
             return 'audio'
 
@@ -165,8 +185,8 @@ class Message(models.Model):
             return os.path.basename(self.video.name)
         elif self.image:
             return os.path.basename(self.image.name)
-        elif self.file:
-            return os.path.basename(self.file.name)
+        elif self.document:
+            return os.path.basename(self.document.name)
         elif self.audio:
             return os.path.basename(self.audio.name)
         else:
@@ -179,8 +199,8 @@ class Message(models.Model):
             return self.video.url
         elif self.image:
             return self.image.url
-        elif self.file:
-            return self.file.url
+        elif self.document:
+            return self.document.url
         elif self.audio:
             return self.audio.url
 
@@ -203,13 +223,15 @@ class Message(models.Model):
     def __str__(self):
         if self.text:
             if self.text.replace(" ", "") == "":
-                return ""
+                return " "
             return self.text[:30]
         elif self.video:
             return "🎥 Video"
         elif self.image:
             return "📷 Image"
-        elif self.file:
-            return "🗂 File"
+        elif self.document:
+            return "🗂 Document"
         elif self.audio:
             return "🔊 Audio"
+        else:
+            return '🕵🏽‍♂️ Undefined media type'

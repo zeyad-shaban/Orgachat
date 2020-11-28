@@ -11,5 +11,6 @@ urlpatterns = [
     path('add_member/', views.add_member, name='add_member'),
     path('groups/<int:chatId>/channels/create/', views.create_channel, name='create_channel'),
     path('groups/leave_group/<int:chatId>/', views.leave_group, name='leave_group'),
-    path('groups/channels/toggle_mute_channel/<int:channelId>/', views.toggle_mute_channel, name='toggle_mute_channel')
+    path('groups/channels/toggle_mute_channel/<int:channelId>/', views.toggle_mute_channel, name='toggle_mute_channel'),
+    path('upload_file/<int:chatId>/<str:type>/', views.upload_file, name='upload_file')
 ]

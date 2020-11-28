@@ -19,7 +19,7 @@ class MessageAdmin(admin.ModelAdmin):
             return obj.video.url
         elif obj.image:
             return obj.image.url
-        elif obj.file:
-            return obj.file.url
+        elif obj.document:
+            return obj.document.url
         elif obj.audio:
             return obj.audio.url

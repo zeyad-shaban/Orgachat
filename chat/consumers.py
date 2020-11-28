@@ -40,7 +40,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             channel = None
 
-        # Saving channel
         message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, channel=channel)
         if json_data.get('text'):
             message.text = json_data.get('text')
