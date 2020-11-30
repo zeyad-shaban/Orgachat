@@ -100,7 +100,7 @@ def upload_file(request, chatId, type):
         message.audio = file
     
     message.save()
-    return Response(MessageSerializer(message).data, status.HTTP_201_CREATED)
+    return Response(message.to_json(), status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

@@ -1,3 +1,4 @@
+from base64 import b64decode
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 import json
@@ -5,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from .models import Channel, Message, Chat
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from base64 import b64decode
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -40,20 +41,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             channel = None
 
-        message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, channel=channel)
         if json_data.get('text'):
-            message.text = json_data.get('text')
-        elif json_data.get('type') and json_data.get('fd'):
-            file = json_data.get('fd')
-            message.image = file
-        
-        await sync_to_async(message.save)()
+            message = await sync_to_async(Message.objects.create)(user=self.user, chat=chat, channel=channel, text=json_data.get('text'))
+            await sync_to_async(message.save)()
+            message = message.to_json()
+        else:
+            try:
+                message = await sync_to_async(Message.objects.get)(id=json_data.get('message')['id'])
+                message = await sync_to_async(message.to_json)()
+            except:
+                return
 
         await self.channel_layer.group_send(
             self.chat_name,
             {
                 'type': 'send_message',
-                'message': message.to_json()
+                'message': message
             }
         )
 
