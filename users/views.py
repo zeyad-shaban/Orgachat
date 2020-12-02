@@ -79,8 +79,13 @@ def friends(request):
 @permission_classes([IsAuthenticated])
 def update_account(request):
     try:
-        request.user.username = request.data.get('username')
-        request.user.about = request.data.get('about')
+        if request.FILES.get('file'):
+            request.user.avatar = request.FILES.get('file')
+            request.user.username = request.GET.get('username')
+            request.user.about = request.GET.get('about')
+        else:
+            request.user.username = request.data.get('username')
+            request.user.about = request.data.get('about')
         request.user.save()
         return Response({"message": "successfully udpated"}, status.HTTP_200_OK)
     except:
