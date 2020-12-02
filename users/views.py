@@ -17,6 +17,12 @@ User = get_user_model()
 def index(request):
     return render(request, 'users/index.html', {"installs": User.objects.count()})
 
+def privacypolicy(request):
+    return render(request, 'users/privacypolicy.html')
+
+def termsandconditions(request):
+    return render(request, 'users/termsandconditions.html')
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer

@@ -1,33 +1,19 @@
+{% extends 'users/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="{% static 'users/favicon.png' %}"/>
-    <title>Orgachat</title>
+{% block title %}Install{% endblock title %}
 
-    <style>
-        body {
-            background: #222;
-        }
+{% block content %}
+<style>
+    .container {
+        text-align: center;
+    }
+</style>
 
-        .container {
-            text-align: center;
-        }
 
-    </style>
-
-</head>
-
-<body>
-    <div class="container">
-        <img class="logo"
-            src="{% static 'users/icon.png' %}">
-        <br>
-        <button class="primary">Install App</button>
-    </div>
-</body>
-
-</html>
+<div class="container">
+    <img class="logo" src="{% static 'users/icon.png' %}">
+    <br>
+    <button class="primary">Install App</button>
+</div>
+{% endblock content %}

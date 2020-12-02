@@ -25,6 +25,8 @@ from users import views as users_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', users_views.index, name='index'),
+    path('privacypolicy/', users_views.privacypolicy, name='privacypolicy'),
+    path('termsandconditions/', users_views.termsandconditions, name='termsandconditions'),
     
     # Include
     path('users/', include('users.urls')),
