@@ -80,7 +80,7 @@ def get_chat(request, chatId):
         [message.read_users.add(request.user) for message in chat.message_set.filter(
             ~Q(read_users=request.user))]
         json_chat = chat.to_json()
-    return Response(json_chat, status.HTTP_200_OK)
+    return Response({'chat': json_chat, 'messages': json_chat['messages']}, status.HTTP_200_OK)
 
 
 @api_view(['POST'])

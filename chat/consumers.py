@@ -31,11 +31,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         chat = await sync_to_async(get_object_or_404)(Chat, pk=int(self.chat_name))
         if chat.type == 'group':
             try:
-                channelId = int(json_data['channelId'])
-                channel = await sync_to_async(get_object_or_404)(Channel, pk=channelId)
+                channel = await sync_to_async(Channel.objects.get)(id=int(json_data['channelId']))
             except:
                 try:
-                    channel = chat.channel_set.first()
+                    channel = await sync_to_async(chat.channel_set.first)()
                 except:
                     channel = None
         else:

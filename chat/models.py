@@ -86,7 +86,7 @@ class Chat(models.Model):
             "imageUri": self.get_imageUri(),
 
             "chatters": [chatter.to_json() for chatter in self.chatters.all()],
-            "messages":  [message.to_json() for message in self.message_set.filter(channel=channel).reverse()],
+            "messages":  [message.to_json() for message in self.message_set.filter(channel=channel).order_by('-id')],
             "channels": [channel.to_json() for channel in self.channel_set.all()],
 
             "isArchived": self.is_archived,
@@ -234,4 +234,4 @@ class Message(models.Model):
         elif self.audio:
             return "🔊 Audio"
         else:
-            return '🕵🏽‍♂️ Undefined media type'
+            return '✖︎ Unknown media type ✖︎'
