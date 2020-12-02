@@ -277,7 +277,7 @@ class User(AbstractUser):
     # * Main
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=30)
-    password = models.CharField(null=True, blank=True, max_length=20)
+    password = models.TextField(null=True, blank=True)
     is_confirmed = models.BooleanField(default=False)
 
     # Extra info
