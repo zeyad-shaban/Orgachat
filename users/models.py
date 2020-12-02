@@ -267,10 +267,9 @@ class MyUserManager(UserManager):
         )
         user.set_password(password)
         user.is_staff = True
-        user.is_superuser=True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
-
 
 
 class User(AbstractUser):
@@ -301,13 +300,15 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     objects = MyUserManager()
 
+    def update_last_seen(self):
+        self.last_seen = timezone.now()
+        return self.save()
 
     def last_seen_humanize(self):
         timesince = humanize.naturaltime(timezone.now() - self.last_seen)
         if timesince == 'now' or timezone.now() - self.last_seen < timedelta(minutes=2):
             return 'Online'
         return timesince
-
 
     def to_json(self):
         try:

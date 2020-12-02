@@ -57,6 +57,7 @@ def register(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, ])
 def all_users(request):
+    request.user.update_last_seen()
     q = request.GET.get("q")
     if q:
         users = User.objects.filter(Q(username__icontains=q) | Q(
@@ -71,6 +72,7 @@ def all_users(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def friends(request):
+    request.user.update_last_seen()
     serializer = UserSerializer(request.user.friends.all(), many=True)
     return Response(serializer.data, status.HTTP_200_OK)
 
@@ -78,6 +80,7 @@ def friends(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def update_account(request):
+    request.user.update_last_seen()
     try:
         if request.FILES.get('file'):
             request.user.avatar = request.FILES.get('file')
@@ -101,11 +104,3 @@ def save_expo_push_token(request):
         return Response({'user': request.user.to_json()}, status.HTTP_200_OK)
     except:
         return Response({'error': f"Internal Server Error 500"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def update_last_seen(request):
-    request.user.last_seen = timezone.now()
-    request.user.save()
-    return Response({'user': request.user.to_json()})
