@@ -93,9 +93,10 @@ def upload_file(request, chatId, type):
     request.user.update_last_seen()
     chat = get_object_or_404(Chat, pk=chatId)
     channel = chat.get_channel(request.GET.get('channelId'))
-    file=request.FILES.get('file')
+    file = request.FILES.get('file')
 
-    message = Message.objects.create(chat=chat, user=request.user, channel=channel)
+    message = Message.objects.create(
+        chat=chat, user=request.user, channel=channel)
 
     if type == 'image':
         message.image = file
@@ -103,7 +104,7 @@ def upload_file(request, chatId, type):
         message.video = file
     elif type == 'audio':
         message.audio = file
-    
+
     message.save()
     return Response(message.to_json(), status.HTTP_201_CREATED)
 
@@ -111,7 +112,7 @@ def upload_file(request, chatId, type):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, ])
 def add_member(request):
-    request.user.update_last_seen( )
+    request.user.update_last_seen()
     data = request.data.get('userId')
     chat = get_object_or_404(Chat, pk=data.get('chatId'))
     if not data.get('userId'):
@@ -119,15 +120,12 @@ def add_member(request):
         q = request.GET.get("q")
         if q:
             users_list = User.objects.filter(Q(username__icontains=q) | Q(
-                email__icontains=q) | Q(country__icontains=q)).order_by("-friends")
+                email__icontains=q)).order_by("-friends")
         else:
             users_list = User.objects.filter(
                 ~Q(id=request.user.id)).order_by("-friends")
 
-        users = [user for user in users_list if not user in chat.chatters.all()]
-
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+        return Response([user.to_json() for user in users_list if not user in chat.chatters.all()])
     else:
         user = get_object_or_404(User, pk=data.get('userId'))
         if not user in chat.chatters.all():

@@ -57,7 +57,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['about'] = user.about
         token['avatarUri'] = user.avatar.url
-        token['country'] = user.country
         token['categories'] = user.categories
         token['friends'] = serialize('json', user.friends.all())
 

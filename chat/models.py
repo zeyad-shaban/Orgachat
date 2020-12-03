@@ -1,10 +1,12 @@
 import os
+from cloudinary.models import CloudinaryField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404
 from users.get_request import current_request
 User = get_user_model()
+from django.conf import settings
 
 
 class Chat(models.Model):
@@ -15,8 +17,7 @@ class Chat(models.Model):
     type = models.CharField(
         max_length=9, choices=type_choices, default='friend')
     title = models.CharField(max_length=50)
-    image = models.FileField(
-        upload_to="chat/chat_avatars", blank=True, null=True, default="users/img/avatar/DefUser.png")
+    image = CloudinaryField(resource_type='image', default=settings.DEFAULT_USER_AVATAR)
     chatters = models.ManyToManyField(User)
     is_deleted = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
@@ -138,13 +139,14 @@ class Message(models.Model):
         Channel, on_delete=models.SET_NULL, blank=True, null=True)
 
     text = models.TextField(blank=True, null=True)
-    video = models.FileField(upload_to="videos", blank=True, null=True)
-    image = models.FileField(upload_to="images", blank=True, null=True)
+    audio = CloudinaryField(resource_type='raw', blank=True, null=True)
+    image = CloudinaryField(resource_type='image', blank=True, null=True)
+    video = CloudinaryField(resource_type="video", blank=True, null=True)
     document = models.FileField(upload_to="documents", blank=True, null=True)
-    audio = models.FileField(upload_to="audios", blank=True, null=True)
 
     is_read = models.BooleanField(default=False)
-    read_users = models.ManyToManyField(User, related_name="read_users", blank=True)
+    read_users = models.ManyToManyField(
+        User, related_name="read_users", blank=True)
     is_deleted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 

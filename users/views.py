@@ -61,12 +61,11 @@ def all_users(request):
     q = request.GET.get("q")
     if q:
         users = User.objects.filter(Q(username__icontains=q) | Q(
-            email__icontains=q) | Q(country__icontains=q), is_confirmed=True)
+            email__icontains=q), is_confirmed=True)
     else:
         users = User.objects.filter(~Q(id=request.user.id), is_confirmed=True)
 
-    serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
+    return Response([user.to_json() for user in users])
 
 
 @api_view(["GET"])

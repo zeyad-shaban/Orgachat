@@ -10,6 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -152,7 +157,15 @@ SIMPLE_JWT = {
 }
 
 
-# Mail
+# --------file upload----------
+cloudinary.config(
+    cloud_name="orgachat-com",
+    api_key="599294371921842",
+    api_secret="mRzTDDMtZrFfOWT9aDr7p9lI2QQ"
+)
+# --------END file upload----------
+
+# ------Mail-------
 SENDGRID_API_KEY = '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'
 
 EMAIL_HOST = 'smtp.sendgrid.net'
@@ -163,6 +176,7 @@ EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'officialorgachat@gmail.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# ------END Mail-------
 
 
 STATIC_URL = '/static/'
@@ -171,6 +185,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'users.User'
+DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/orgachat-com/image/upload/v1606966402/o4khxzqguuehfugrx0zt.png'
 
 try:
     from .local_settings import *
