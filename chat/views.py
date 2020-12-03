@@ -116,16 +116,9 @@ def add_member(request):
     data = request.data.get('userId')
     chat = get_object_or_404(Chat, pk=data.get('chatId'))
     if not data.get('userId'):
-        # todo show users who are not in the group
-        q = request.GET.get("q")
-        if q:
-            users_list = User.objects.filter(Q(username__icontains=q) | Q(
-                email__icontains=q)).order_by("-friends")
-        else:
-            users_list = User.objects.filter(
-                ~Q(id=request.user.id)).order_by("-friends")
+        users = User.objects.filter(~Q(id=request.user.id), friends=request.user)
 
-        return Response([user.to_json() for user in users_list if not user in chat.chatters.all()])
+        return Response([user.to_json() for user in users if not user in chat.chatters.all()])
     else:
         user = get_object_or_404(User, pk=data.get('userId'))
         if not user in chat.chatters.all():
