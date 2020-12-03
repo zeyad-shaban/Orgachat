@@ -8,11 +8,154 @@
     <link rel="icon" type="image/png" href="{% static 'users/favicon.png' %}" />
     <meta name="description" content="{% block desc %}{% endblock desc %}">
     <title>{% block title %} {% endblock title %} | Orgachat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
 </head>
 
 <body>
+    <script async src="https://kit.fontawesome.com/78f2495e06.js" crossorigin="anonymous"></script>
+
+    <nav class="navbar navbar-expand-lg navbar-expand-md navbar-expand-sm navbar-expand navbar-light" style="background-color: #3d5998">
+        <a class="navbar-brand" href="/" style="color: white; font-size: 170%">
+            <img src="{% static 'users/favicon.png' %}" width="70" height="70" class="d-inline-block align-top"
+                loading="lazy">
+            Orgachat
+        </a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <a href="https://www.twitter.com/orgachat" class="icon-button twitter" target="_blank" ><i class="icon-twitter fab fa-twitter"></i><span></span></a>
+                <a href="https://www.youtube.com/channel/UCLb42dgmeMCA0gYP_1P6EzA" class="icon-button youtube" target="_blank" ><i class="fa fa-youtube"></i><span></span></a>
+            </ul>
+        </div>
+    </nav>
     {% block content %}
     {% endblock content %}
+
+    <style>
+        html {
+            font-size: 2.5em;
+        }
+
+        body {
+            background-color: #fff;
+            padding: 25px;
+            text-align: center;
+        }
+
+        /* Wrapper */
+        .icon-button {
+            background-color: white;
+            border-radius: 2.6rem;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 1.3rem;
+            height: 2.6rem;
+            line-height: 2.6rem;
+            margin: 0 5px;
+            position: relative;
+            text-align: center;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            width: 2.6rem;
+        }
+
+        /* Circle */
+        .icon-button span {
+            border-radius: 0;
+            display: block;
+            height: 0;
+            left: 50%;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            -o-transition: all 0.3s;
+            transition: all 0.3s;
+            width: 0;
+        }
+
+        .icon-button:hover span {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: 2.6rem;
+            margin: -1.3rem;
+        }
+
+        /* Icons */
+        .icon-button i {
+            background: none;
+            color: white;
+            height: 2.6rem;
+            left: 0;
+            line-height: 2.6rem;
+            position: absolute;
+            top: 0;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            -o-transition: all 0.3s;
+            transition: all 0.3s;
+            width: 2.6rem;
+            z-index: 10;
+        }
+
+
+
+
+
+        .twitter span {
+            background-color: #4099ff;
+        }
+
+        .youtube span {
+            background-color: #bb0000;
+        }
+
+        .icon-button .icon-twitter {
+            color: #4099ff;
+        }
+
+        .icon-button .fa-youtube {
+            color: #bb0000;
+        }
+
+        .icon-button:hover .icon-twitter,
+        .icon-button:hover .fa-youtube{
+            color: white;
+        }
+
+        @media all and (max-width: 680px) {
+            .icon-button {
+                border-radius: 1.6rem;
+                font-size: 0.8rem;
+                height: 1.6rem;
+                line-height: 1.6rem;
+                width: 1.6rem;
+            }
+
+            .icon-button:hover span {
+                width: 1.6rem;
+                height: 1.6rem;
+                border-radius: 1.6rem;
+                margin: -0.8rem;
+            }
+
+            /* Icons */
+            .icon-button i {
+                height: 1.6rem;
+                line-height: 1.6rem;
+                width: 1.6rem;
+            }
+
+            body {
+
+                padding: 10px;
+            }
+        }
+    </style>
 </body>
 
 </html>
